@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/license/license_details.css' %}">
+
+
+
+<div class="row align-items-start">
+  
+<div class="col-md-12  create-pg">
+    <div class="create_project_sec scroll-line">
+    {% include "header.html" %}
+
+    
+    {% if user.is_superuser == 1 %}
+      <div class="card-create-user">
+        <div class="card user-profile-card">
+          <div class="row head-txt-ful" id="basic-table button-types">
+            <div class="col-12 text-right">
+              <a class="btn detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+            </div>
+          </div>
+          <div class="card-header">
+            <h4 class="card-title">User Profile</h4>
+          </div>
+          <table class="table table_align tab-wit user-tbl-ui">
+            <tbody>
+              <tr>
+                <th>
+                    <span class="font-weight-bold">Name</span>
+                </th>
+                <td>{{user.name}} {{user.lastname|default:''}}</td>
+              </tr>
+            
+              <tr>
+                <th class="font-weight-bold">Email</th>
+                <td>{{user.email}}</td>
+              </tr>
+
+              <tr>
+                <th class="font-weight-bold">Designation</th>
+                <td>{{user.designation|default:''}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    {% else %}
+    <div class="col-12">
+      <div class="card user-profile-card">
+        <!-- <div class="row head-txt-ful" id="basic-table button-types">
+          {% comment %} <div class="col-sm-12 upg-btns"> {% endcomment %}
+              {% user_rights_permission 'Manage License' request as checkpermission %}
+              <div class="col-8">
+                {% if checkpermission %}
+              <a class="btn detail-button update_license mr-1" href="{%url 'license:upgradelicense' %}" >Update License</a>
+              {% endif %}
+              <a class="btn detail-button update_license" href="{%url 'license:changepassword' %}" >Change Password</a>
+
+              {% checklicense_expire request as check_renew %}
+              {% if check_renew  %}
+              <a class="btn detail-button update_license" href="{%url 'custom_auth:renewlicense' %}" >Renew License</a>
+              {% endif %}
+              <a class="btn detail-button update_license mr-1" href="{%url 'license:editprofile' request.user.id %}" >Edit</a>
+              {% if request.user.is_admin == 1 and request.user.licence_type != 'Individual' %}
+                <a class="btn detail-button update_license mr-1" href="{%url 'license:editcompanyprofile'%}" >Edit Company Profile</a>
+              {% endif %}
+
+              </div>
+
+              <div class="col-4 text-right">
+                <a class="btn detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+              </div>
+
+        {% comment %} </div> {% endcomment %}
+      </div> -->
+        <div class="col-4 text-right">
+          <a class="btn detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+        </div>
+        {% comment %} {% user_rights_permission 'View Log in and Log out Data of Users' request as checkpermission %}
+        {% if checkpermission %}
+        <div >
+          <a class="btn detail-button user-log" href="{% url 'custom_auth:userlog' %}" >User log</a>
+        </div>
+        {% endif %} {% endcomment %}
+        <div class="card-header">
+          <h4 class="card-title">User Profile</h4>
+        </div>
+
+        <div id="createuser-url" data-base-url="{% url 'custom_auth:user_create' %}?type=clientadmin"></div>
+
+        <div id="license-url" data-base-url="{% url 'custom_auth:license_details' %}"></div>
+
+        <table class="table table_align tab-wit">
+          <tbody>
+            {% if user.licence_type != 'Individual' %}
+              <tr>
+                <th class="font-weight-bold">Company Name</th>
+                <td>{{company.company_name}}</td>
+              </tr>
+            {% endif %}
+            <tr>
+              <th>
+                  <span class="font-weight-bold">Name</span>
+              </th>
+              <td>{{user.name}} {{user.lastname}}</td>
+            </tr>
+            {% if user.licence_type != 'Individual' %}
+            <tr>
+              <th>
+                  <span class="font-weight-bold">Designation</span>
+              </th>
+              <td>{{user.designation}}</td>
+            </tr>
+            {% endif %}
+          
+            <tr>
+              <th class="font-weight-bold">Email</th>
+              <td>{{user.email}}</td>
+            </tr>
+            <tr>
+              <th class="font-weight-bold">License Type</th>
+              <td>
+                {% if user.licence_type == 'CompanyPlan' %} 
+                  Company 
+                {% elif user.licence_type == 'Enterprise'%}
+                  Enterprise
+                {%else%}
+                  {{user.licence_type}} 
+                {%endif%}
+                / {{subscription_type}}</td>
+            </tr>
+            <tr>
+              <th class="font-weight-bold">Date of Subscription</th>
+              <td>
+                {% if user.licence_type != 'Individual' %} 
+                {% changedateformat company.start_date  %}
+                
+                {%else%} 
+                {% changedateformat user.start_date  %}
+              
+                {%endif%}
+              </td>
+            </tr>
+            <tr>
+              <th class="font-weight-bold">Expiry Information</th>
+              <td>
+                {% if user.licence_type != 'Individual' %} 
+                  {% changedateformat company.end_date  %} 
+                {%else%} 
+                  {% changedateformat user.end_date  %} 
+                {%endif%}</td>
+            </tr>
+            
+            
+         
+          </tbody>
+        </table>
+        {% if user.licence_type != 'Individual' %}
+        {% user_rights_permission 'View Subscription' request as view_subscription %}
+        {% if view_subscription %}
+          <div class="card-header">
+            <h4 class="card-title">License Details</h4>
+          </div>
+          
+          <div class="table-responsive card-body tab-wit p-0">
+              <input type="hidden" class="company_id" value="{{company.id}}">
+              <table class="table table_align">
+                <tbody>
+                  <tr>
+                    <th class="">
+                        <span class="font-weight-bold">Number of Users</span>
+                    </th>
+       
+                    <th>
+                      <span class="font-weight-bold">Date</span>
+                    </th>
+                 
+                  </tr>
+                  
+                {% for package in packages %}
+                {{package.created}}
+                  <tr>
+                    <td>{{package.concurrent_users}}</td>
+                    {% change_date_format package.created as dateformat %}
+                    <td>{% changedateformat dateformat  %}</td> 
+                  </tr>
+                  {% endfor %}
+
+                  {% for licence in license_detail %}
+                 
+                  <tr>
+                    <td>{{licence.concurrent_users}}</td>
+                    {% change_date_format licence.created as dateformat %}
+                    <td>{% changedateformat dateformat  %}</td> 
+                  </tr>
+                  
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div> 
+        {%endif%}         
+        {%endif%}         
+      </div>
+    </div>
+    {%endif%}
+    
+    {% include "footer.html" %}
+</div>
+</div>
+<!-- <div class="col-md-2">
+    {% include "userheader.html" %}
+  </div> -->
+<style>
+  .lic-view-hed {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.lic-view-det{
+    color: #fff !important;
+    text-decoration: underline;
+}
+
+.lic-clr{
+  background-image: linear-gradient( 182deg , #7c0201,#bb1111 ) !important;
+    padding: 5px 5px;
+    border-radius: 5px;
+}
+
+.lic-clr2{
+  background-image: linear-gradient( 182deg , #017c65,#11bbb3 ) !important;
+    padding: 5px 5px;
+    border-radius: 5px;
+}
+</style>
+
+</div>
+
+
+{%endblock%}
+{% block scripts %}
+{{block.super}}
+<script>
+  var licence_type="{{licence_type}}"
+</script>
+<script src="{% static 'js/auth/licence_details.js' %}"></script>
+{%endblock%}

@@ -1,0 +1,592 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load rig_filters %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/project/create_project.css' %}">
+<div class="container-fluid">
+<div class="row align-items-start common-row-space">
+  {% getcountries countries as countries %}
+  {% include 'projectsidemenu.html' %} 
+
+    <div class="col-12 p-0  create-pg main-section"> 
+      <div class="create_project_sec_well scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+        <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+
+        {% include "projectheader.html" %}
+        <!-- <div class="row" id="basic-table">     -->
+        <div class="col-md-12">
+          {% include "welldetails_menu.html" %}
+        </div>
+        <div class="col-md-12">
+          {% include "welldetailssubmenu.html" %}
+        </div>
+
+        <div class="rig-det">
+          <div class="row common-row-space">
+            <!-- <div class="col-2">
+        {% include "rig_menu.html" %}  
+    </div> -->
+            {% if rig_count == 0 %}
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Rig Informations</h4>
+                </div>
+                <div class="card-body">
+                  <form class="form form-horizontal" method="POST" name="rigform" id="rigform">
+                    {% csrf_token %}
+                    <input type="hidden" id="well" class="form-control" name="well" value="{{well_id}}">
+                    <div class="col-12 onshore environment-fields">
+                      <div class="form-group row">
+                        <div class="col-sm-3 col-form-label">
+                          <label class="project-edit-name" for="ground_elevation">Rig Name</label>
+                        </div>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" name="rig_name"
+                            placeholder="Rig Name">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 onshore environment-fields">
+                      <div class="form-group row">
+                        <div class="col-sm-3 col-form-label">
+                          <label class="project-edit-name" for="ground_elevation">Rig Contractor</label>
+                        </div>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" name="rig_contractor"
+                            placeholder="Rig Contractor">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 onshore environment-fields">
+                      <div class="form-group row">
+                        <div class="col-sm-3 col-form-label">
+                          <label class="project-edit-name" for="ground_elevation">Rig Type</label>
+                        </div>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" name="rig_type"
+                            placeholder="Rig Type">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-12 common-txt-center">
+                      <button type="submit" name="rig_form" id="submit"
+                        class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                    </div>
+
+
+                  </form>
+                </div>
+              </div>
+            </div>
+            {%else%}
+            <div class="col-12 p-0">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title p-0 m-0 common-txt-center">Rig Detail</h4>
+                </div>
+                <div class="table-responsive card-body">
+                  <table class="table">
+                    <tbody>
+                      {%for rig in rig_data%}
+                      <tr>
+                        <th>
+                          <span class="font-weight-bold">Rig Name</span>
+                        </th>
+                        <td>{{rig.rig_name}}</td>
+                      </tr>
+                      <tr>
+                        <th>
+                          <span class="font-weight-bold">Rig Contractor</span>
+                        </th>
+                        <td>{{rig.rig_contractor}}</td>
+                      </tr>
+                      <tr>
+                        <th>
+                          <span class="font-weight-bold">Rig Type</span>
+                        </th>
+                        <td>{{rig.rig_type}}</td>
+                      </tr>
+                      {%endfor%}
+                    </tbody>
+                  </table>
+                  <div class="row" id="basic-table">
+                    <div class="col-sm-12 p-0 common-txt-center">
+                      <a onclick="confirmation(event)" class="btn btn-primary waves-effect detail-button"
+                        href="/wells/rig/delete/{{well_id}}?name=rig"> <span class="action-delete-well"><i
+                            class="feather icon-trash"></i> Delete</span></a>
+                            {% user_rights_permission 'Edit Data' request as checkpermission %}
+                            {% if checkpermission %}
+                              <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="/wells/rig/all_edit/{{well_id}}?name=rig"> 
+                              <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span>
+                              </a>
+                            {%endif%}
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {%endif%}
+            <div class="col-12 rig_bottom pl-0 pr-0">
+              <div class="row">
+                <div class="col-3"></div>
+                <div class="col-6">
+                  <div class="tab">
+                    <ul class="nav nav-tabs env_sub_type rig-mnu-type justify-content-center" role="tablist">
+                      <li class="nav-item rig-mnu-a">
+                        <a class="nav-link" data-toggle="tab" role="tab" aria-selected="true"
+                          href="#surfacepipe">Surface Pipe</a>
+                      </li>
+                      <li class="nav-item rig-mnu-a">
+                        <a class="nav-link" data-toggle="tab" role="tab" aria-selected="true" href="#mudpump">Mud
+                          Pump</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-3"></div>
+
+              </div>
+              <div class="tab-content">
+                <div class="tab-pane fade " id="surfacepipe">
+                  {% if surface_count == 0 %}
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Create Surface Pipe Data</h4>
+                    </div>
+                    <div class="card-body">
+                      <form class="form form-horizontal" method="POST" name="surfacepipingform" id="surfacepipingform">
+                        {% csrf_token %}
+                        <input type="hidden" id="well" class="form-control" name="well" value="{{well_id}}">
+                        <div class="row">
+                          <div class="col-12">
+                            <div class="form-group row">
+                              <div class="col-sm-3 col-form-label">
+                                <label for="rating">Standpipe Pressure Rating({%display_pressureunit request.session.unit%})</label>
+                              </div>
+                              <div class="col-sm-3 value-par">
+                                <input type="number" step="any" id="rating" class="form-control edit-sur-face" name="rating"
+                                  placeholder="Rating"><span class="surface_rating"></span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-12">
+                            <table class="table sur-face-edit" id="surfacepipeaddtable">
+                              <h4 class="card-title text-center">Surface Piping Data Table</h4>
+                              <tr>
+                                <th>Name</th>
+                                <th>Length({%display_lengthunit request.session.unit%})</th>
+                                <th>ID{%display_diameterunit request.session.unit%}</th>
+                                <th>ACTIONS</th>
+                              </tr>
+                              {% for names in surface_names %}
+                              <tr id="surfacepipingrow">
+                                <td><input type="text" id="name" class="form-control edit-sur-face text-left" name="name" placeholder="Name"
+                                    value="{{names.surfacepiping_name }}"><span class="surface_name"></span></td>
+                                    
+                                <td class="edit-sur-td"><input type="number" step="any" id="length" class="form-control edit-sur-face" name="length"
+                                    placeholder="Length"><span class="surface_length"></span></td>
+                                <td class="edit-sur-td"><input type="number" step="any" id="identity" class="form-control edit-sur-face" name="identity"
+                                    placeholder="ID"><span class="surface_id"></span></td>
+                                <td>
+                                  <button type="button" name="add" class="surfaceaddrows iconaction" /><i
+                                    class="fa fa-plus"></i></button>
+                                  <button type="button" name="removerow" class="surfaceremoverows iconaction" /><i
+                                    class="fa fa-trash"></i></button>
+                                </td>
+                              </tr>
+                              {% endfor %}
+   
+                            </table>
+                          </div>
+
+
+                          <div class="col-sm-12 common-txt-center">
+                            <button type="submit" name="surface_form"
+                              class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button surface_submit">Submit</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  {%else%}
+                  <div class="card">
+
+                    <div class="card-header">
+                      <h4 class="card-title">Surface Piping Details</h4>
+                    </div>
+                    <div class="stand-css">
+                      <span class="font-weight-bold">Standpipe Pressure Rating ({%display_pressureunit request.session.unit%})</span>
+                      <span>{{surface.rating|default_if_none:'-'}}</span>
+                    </div>
+                    <div class="table-responsive card-body">
+                      {% comment %} <table class="table table_css surface-rating">
+                        <tbody>
+                          <tr>
+                            <th>
+                              <span class="font-weight-bold">Standpipe Pressure Rating ({%display_pressureunit request.session.unit%})</span>
+                            </th>
+                            <td>{{surface.rating|default_if_none:'-'}}</td>
+                          </tr>
+                        </tbody>
+                      </table> {% endcomment %}
+
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th class="common-txt-center">
+                              <span class="font-weight-bold">Name</span>
+                            </th>
+                            <th class="common-txt-center">
+                              <span class="font-weight-bold">Length({%display_lengthunit request.session.unit|default_if_none:'-'%})</span>
+                            </th>
+                            <th class="common-txt-center">
+                              <span class="font-weight-bold">ID{%display_diameterunit request.session.unit|default_if_none:'-'%}</span>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for surfacepipe in surfacepipedata %}
+
+                          <tr>
+                            <td>
+                              {{ surfacepipe.name }}
+                            </td>
+                            <td class="common-txt-center">
+                              {{ surfacepipe.length|default:"-" }}
+                            </td>
+                            <td class="common-txt-center">
+                              {{ surfacepipe.identity|default:'-'}}
+                            </td>
+                          </tr>
+                          {% endfor %}
+
+                        </tbody>
+                      </table>
+
+                      <div class="row" id="basic-table">
+
+                        <div class="col-sm-12 common-txt-center">
+                          <a onclick="confirmation(event)" name="surface_delete"
+                            class="btn btn-primary waves-effect detail-button"
+                            href="/wells/rig/delete/{{well_id}}?name=surface"> <span
+                              class="action-delete-well delete "><i class="feather icon-trash delete"></i>
+                              Delete</span></a>
+                              {% user_rights_permission 'Edit Data' request as checkpermission %}
+                              {% if checkpermission %}
+                                <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="/wells/rig/all_edit/{{well_id}}?name=surface">
+                                  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span>
+                                </a>
+                              {%endif%}
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  {%endif%}
+                </div>
+                <!-- Surface for End -->
+                <!-- Mud pump for Start -->
+                <div class="tab-pane fade" id="mudpump">
+                  {% if mudpump_count == 0 %}
+                  <div class="col-12">
+                    <div class="card">
+                      <div class="card-header">
+                        <h4 class="card-title">Create MudPump </h4>
+                      </div>
+                      <div class="card-body">
+                        <form class="form form-horizontal" method="POST" id="mudpumpform" name="mudpumpform">
+                          {% csrf_token %}
+                          <input type="hidden" id="well" class="form-control" name="well" value={{well_id}}>
+                          <input type="hidden" id="unit" class="form-control" value={{well.project.unit}}>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="form-group row">
+                                <div class="col-sm-3 col-form-label">
+                                  <label class="project-edit-name" for="pump_manufacturer">Pump Manufacturer</label>
+                                </div>
+                                <div class="col-sm-9">
+                                  <select class="form-control select2 pump_manufacturer" name="master" id="manumaster">
+                                    <option value="">-- manufacturer master --</option>
+                                    {% for obj in manufactureres %}
+                                    <option value="{{obj.id}}">{{obj.name}}</option>
+                                    {% endfor %}
+
+                                  </select>
+                                  <span class="pump_manufacturer_error"></span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-12">
+                              <div class="form-group row">
+                                <div class="col-sm-3 col-form-label">
+                                  <label class="project-edit-name" for="pump_name">Pump Name</label>
+                                  <input type="hidden" id="pump_name" value="">
+
+                                </div>
+                                <div class="col-sm-9">
+
+                                  <select class="form-control pump_name" name="pump_name_select" id="pump_name_select">
+                                    <option value="">-- Pump Name --</option>
+                                  </select>
+                                  <span class="pump_name_error"></span>
+                                </div>
+                              </div>
+                            </div>
+                       
+
+                            <div class="col-12">
+                              <div class="form-group row">
+                                <div class="col-sm-3 col-form-label">
+                                  <label class="project-edit-name" for="pump_type">Pump Type</label>
+                                </div>
+                                <div class="col-sm-9">
+                                  <select class="form-control pump_type" id="types" name="pump_type">
+                                    <option value="">-- Pump Type --</option>
+                                    <option value="Triplex">Triplex</option>
+                                    <option value="Duplex">Duplex</option>
+                                  </select>
+                                </div>
+                                <span class="pump_type_error"></span>
+                              </div>
+                            </div>
+
+                            <div class="col-12">
+                              <div class="form-group row">
+                                <div class="col-sm-3 col-form-label">
+                                  <label class="project-edit-name" for="stroke_length">Stroke
+                                    Length{%display_diameterunit well.project.unit%}</label>
+                                </div>
+                                <div class="col-sm-9">
+                                  <input type="number" step="any" id="stroke_length" class="form-control stroke_length" name="stroke_length"
+                                    placeholder="Stroke Length"><span class="stoke_length_error"></span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-12">
+                              <div class="form-group row">
+                                <div class="col-sm-3 col-form-label">
+                                  <label class="project-edit-name" for="number_of_pumps">Number of Pumps</label>
+                                </div>
+                                <div class="col-sm-9">
+                                  <input type="number" step="any" id="number_of_pumps" class="form-control number_of_pumps" name="number_of_pumps"
+                                    placeholder="Number of Pumps"><span class="no_of_pump_error"></span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-12">
+                              <table class="table mudpumpdata">
+                                <h4 class="card-title text-center">Mud Pump Data Table</h4>
+                                <tr class="linearsize">
+                                  <th class="label linersize">Liner Size{%display_diameterunit well.project.unit%}<span
+                                      id="linearsizeunit"></span></th>{%for i in colum%}
+                                      <td class="edit-sur-td"><input type="number" step="any" class="form-control linear_size edit-sur-face" name="linear_size" id="linear_size">
+                                        <span class="linersize_error"></span>
+                                      </td>
+                                  {%endfor%}
+                                </tr>
+                                <tr class="pressure">
+                                  <th class="label">Max Discharge Pressure({%display_pressureunit well.project.unit%})<span
+                                      id="pressureunit"></span></th>{%for i in colum%}<td class="edit-sur-td"><input type="number" step="any"
+                                      class="form-control edit-sur-face max_discharge_pressure" name="max_discharge_pressure"><span class="max_discharge_error"></span></td>{%endfor%}
+                                </tr>
+                              </table>
+                            </div>
+
+
+                            <div class="col-12">
+                              <table class="table mudpumptable" id="mudpumptable">
+                                <tr>
+                                  <th class="label">Pump Speed(SPM)</th>
+                                  <th class="flowrateth label text-center" colspan="4">Flowrate ({%display_flowrateunit well.project.unit%})<span id="flowrateunit"></span>
+                                </tr>
+                                {%for i in row%}
+                                <tr class="flowrate">
+                                  <th class="edit-sur-td"><input type="number" step="any" class="form-control pump_speed edit-sur-face" name="pump_speed"
+                                      id="pump_speed"><span class="pump_speed_error"></span></th>{%for i in colum%}<td class="edit-sur-td"><input type="number" step="any"
+                                      class="form-control edit-sur-face flowrate" name="flowrate" id="flowrate"><span class="flowrate_error"></span></td>{%endfor%}
+                                </tr>
+                                {%endfor%}
+                              </table>
+                            </div>
+
+
+                            <div class="col-12 mb-2">
+                              <button type="button"
+                                class="btn btn-outline-secondary pull-right removemudpumpcolumn-master">Remove
+                                Column</button>&nbsp;
+                              <button type="button"
+                                class="btn btn-outline-secondary pull-right removemudpumprow-master mr-2">Remove
+                                Row</button>
+                              <button type="button"
+                                class="btn btn-outline-secondary pull-right addmudpumpcolumn mr-2">Add
+                                Column</button>&nbsp;
+                              <button type="button" class="btn btn-outline-secondary pull-right addmudpumprow mr-2">Add
+                                Row</button>
+
+                            </div>
+
+                            <div class="col-sm-12 common-txt-center">
+                              <button type="submit" name="mud_pump"
+                                class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button mudpump_submit">Submit</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  {%else%}
+                  <div class="col-12 p-0">
+                    <div class="card">
+                      <div class="card-header">
+                        <h4 class="card-title">Mud Pump Details</h4>
+                      </div>
+                      <div class="table-responsive">
+                        <table class="table">
+                          <tbody>
+                            <tr>
+                              <th>
+                                <span class="font-weight-bold">Pump Manufacturer</span>
+                              </th>
+                              {% getpumpmanufacture mud.pump_manufacturer as pumpmanufacture %}
+                              <td>{{pumpmanufacture.name}}</td>
+                            </tr>
+                            <tr>
+                              <th>
+                                <span class="font-weight-bold">Pump Name</span>
+                              </th>
+                              {% getpumpdetails mud.pump_name as pumpdetails %}
+
+                              <td>{{pumpdetails.name}}</td>
+                            </tr>
+                            <tr>
+                              <th>
+                                <span class="font-weight-bold">Pump Type</span>
+                              </th>
+                              <td>{{mud.pump_type}}</td>
+                            </tr>
+                            <tr>
+                              <th>
+                                <span class="font-weight-bold">Stroke Length {%display_diameterunit request.session.unit%}</span>
+                              </th>
+                              <td>{{mud.stroke_length|diameterunit:mud.well.project.unit}}</td>
+                            </tr>
+                            <tr>
+                              <th>
+                                <span class="font-weight-bold">Number of Pumps</span>
+                              </th>
+                              <td>{{mud.number_of_pumps}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div class="col-12">
+                          <table class="table">
+                            <h4 class="card-title text-center">Mud Pump Data Table</h4>
+                            <tr class="linearsize">
+                              <th>Liner Size {%display_diameterunit request.session.unit%}</th>
+                              {% for obj in mud.mudpumpdata_set.all %}
+                              <td>{{obj.linear_size}}</td>
+                              {% endfor %}
+                            </tr>
+                            <tr class="pressure">
+                              <th>Max Discharge Pressure ({%display_pressureunit request.session.unit%})</th>
+                              {% for obj in mud.mudpumpdata_set.all %}
+                              <td>{{obj.max_discharge_pressure}}</td>
+                              {% endfor %}
+                            </tr>
+                          </table>
+                        </div>
+                        <div class="col-12">
+                          <table class="table mudpumptable  mb-0 tab-wid1">
+                            <tr>
+                              <th>Pump Speed (SPM)</th>
+                              <th class="flowrateth common-txt-center">Flowrate ({%display_flowrateunit request.session.unit%})</th>
+                            </tr>
+                            <table class="table">
+                            {% for speed in mud.mudpumpspeed_set.all %}
+                            <tr class="flowrate tab-wid2">
+                              
+                              <td>
+                                {{speed.pump_speed}}
+                              </td>
+                              {% for flowrateobj in speed.mudpumpflowrate_set.all %}
+
+                              <td>
+                                {{flowrateobj.flowrate}}
+                              </td>
+                              {% endfor %}
+                            
+                            </tr>
+                            {% endfor %}
+                          </table>
+                          </table>
+                          <div class="row" id="basic-table">
+                            <div class="col-sm-12 common-txt-center">
+                              <a onclick="confirmation(event)" class="btn btn-primary waves-effect detail-button" href="/wells/rig/delete/{{well_id}}?name=mudpump"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+                              {% user_rights_permission 'Edit Data' request as checkpermission %}
+                              {% if checkpermission %}
+                              <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="/wells/rig/all_edit/{{well_id}}?name=mudpump"> <span class="action-edit-well"><i class="feather icon-edit"></i>Edit</span></a>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {%endif%}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        {% include "footer.html" %}
+      </div>
+    </div>
+   
+  </div>
+</div>
+</div>
+
+<style>
+  .iconaction
+  {
+    border:0;
+    background:transparent;
+    box-shadow:none;
+    font-size:15px;
+    color:#7367F0;
+  }
+  </style>
+<script>
+  $('#number_of_pumps').val(3);
+
+
+  var storedArray = JSON.parse(sessionStorage.getItem("items"));
+  var well_id = '{{well_id}}'
+  if (well_id == storedArray[1]) {
+    $('.warning').show();
+  } else {
+    $('.warning').hide();
+  }
+</script>
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+  <script src="{% static 'js/menuactive.js' %}"></script>
+  <script src="{% static 'js/rig_mudpump_surface/edit.js' %}"></script>
+  <script src="{% static 'js/rig_mudpump_surface/validations.js' %}"></script>
+
+
+{%endblock%}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<section id="data-list-view" class="data-list-view-header">
+  <div class="container-fluid">
+  <div class="row align-items-start common-row-space">
+    <div class="col-md-12  create-pg">
+    <div class="create_project_sec scroll-line">
+    {% include "header.html" %}
+    <div class="card-create-user">
+        <div class="card import-box">
+          <div class="card-header">
+            <h4 class="card-title">Import Data</h4>
+          </div>
+          <div class="card-body import">
+           <button type="submit" class="btn btn-primary detail-button"> <a  href="{% url 'muddata:downloadmuddatacsv' wellphase_id %}">  <span class="action-create-well"><i class="feather "></i>Download format</span></a></button>
+          </div>
+          
+          <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <input type="file" name="myfile">
+              <button type="submit" class="detail-button import_upload">Upload</button>
+            </form>
+          </div>
+        </div>
+      </div>
+        {% include "footer.html" %}
+      </div>
+    </div>
+    <div class="col-md-2">
+      {% include "userheader.html" %}
+  </div>
+    </div>
+  </div>
+    </section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+</style>
+
+
+
+{% endblock %}

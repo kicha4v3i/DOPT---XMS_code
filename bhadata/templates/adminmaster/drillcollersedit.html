@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+  <div class="container-fluid">
+    <div class="row common-row-space" id="">
+      <div class="col-md-10  create-pg p-0">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Drill Collars Edit</h4>
+            </div>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="row">
+                    
+                    <div class="col-12">
+                        <table class="table table-borderless" id="drillcollerstable">
+                            <tr><th>Nominal OD</th><th>Nominal ID</th><th>Weight</th><th>Type</th><th>Connection type</th><th>OD</th><th>ID</th><th>ACTIONS</th></tr>
+                            {%for coller in drillcollers%}
+                            <tr id="drillcollersrow">
+                                <td><input id="normal_od" type="text" class="form-control" name="normal_od" placeholder="Nominal OD" value="{{coller.normal_od}}"></td>
+                                <td><input id="normal_id" type="text" class="form-control" name="normal_id" placeholder="Nominal ID" value="{{coller.normal_id}}"></td>
+                                <td><input id="weight" type="text" class="form-control" name="weight" placeholder="Weight" value="{{coller.weight}}"></td>
+                                <td>
+                                  <select class="form-control" id="pipe_type" name="pipe_type">
+                                    <option value="">-Type-</option>
+                                    <option value="Slick" {% if "Slick" == coller.pipe_type %} selected {% endif %} >Slick</option>
+                                    <option value="Spiral" {% if "Spiral" == coller.pipe_type %} selected {% endif %}>Spiral</option>
+                                </select>
+                                </td>
+                                <td><input id="connection_type" type="text" class="form-control" name="connection_type" placeholder="Connection type" value="{{coller.connection_type}}"></td>
+                                <td><input id="tool_od" type="text" class="form-control" name="tool_od" placeholder="OD" value="{{coller.tool_od}}"></td>
+                                <td><input id="tool_id" type="text" class="form-control" name="tool_id" placeholder="ID" value="{{coller.tool_id}}"></td>
+                                <td class="common-txt-center">
+                                    <a type="button" name="add" id="iconaction" class="drillcollersaddrow iconaction "><i class="fa fa-plus"></i></a>
+                                    <a type="button" name="removerow" id="iconaction" class="drillcollerremoverows iconaction"><i class="fa fa-trash"></i></a>
+                                </td>        
+                            </tr>
+                            {%endfor%}
+                            <tr id="drillcollersrow2" style="display:none">
+                              <td><input id="normal_od" type="text" class="form-control" name="normal_od" placeholder="Nominal OD" ></td>
+                              <td><input id="normal_id" type="text" class="form-control" name="normal_id" placeholder="Nominal ID" ></td>
+                              <td><input id="weight" type="text" class="form-control" name="weight" placeholder="Weight" ></td>
+                              <td>
+                                <select class="form-control" id="pipe_type" name="pipe_type">
+                                  <option value="">-Type-</option>
+                                  <option value="Slick" >Slick</option>
+                                  <option value="Spiral" >Spiral</option>
+                              </select>
+                              </td>
+                              <td><input id="connection_type" type="text" class="form-control" name="connection_type" placeholder="Connection type" ></td>
+                              <td><input id="tool_od" type="text" class="form-control" name="tool_od" placeholder="OD" ></td>
+                              <td><input id="tool_id" type="text" class="form-control" name="tool_id" placeholder="ID" ></td>
+                              <td class="common-txt-center">
+                                  <a type="button" name="add" id="iconaction" class="drillcollersaddrow iconaction"><i class="fa fa-plus"></i></a>
+                                  <a type="button" name="removerow" id="iconaction" class="drillcollerremoverows iconaction"><i class="fa fa-trash"></i></a>
+                              </td>        
+                          </tr>
+                        </table>
+                        <div class="col-sm-12 pb-3">
+                          <button type="submit" class="btn btn-primary detail-button">submit</button>
+                          <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                      </div>
+          </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+      </div>
+</div>
+<div class="col-md-2">
+  {% include "userheader.html" %}
+</div>
+</div>
+</div>
+      
+    </section>
+    <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+<script>
+ 
+</script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<section>
+    <div class="row" id="basic-table">
+        <div class="col-3">
+            {% include "secondmenu.html" %}  
+        </div>
+        <div class="col-9">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="project-edit-name" for="well_phase">Select Phase</label>
+                        </div>
+                        <div class="col-6">
+                            <select class="form-control" id="well_phases" name="well_phases">
+                                <option value="">--  Well Phases --</option>
+                                {% for wellphases in wellphase %}                           
+                                  <option value="{{ wellphases.id }}" {%if wellphase_id == wellphases.id %} selected {% endif %}>{{ wellphases.phase_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="Hydraulics-menu-div">
+                        <div class="col-3">
+                            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="?type=mud">  <span class="action-create-well"><i class="feather "></i>Mud Data</span></a>
+                        </div>   
+                        <div class="col-3">
+                            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="?type=rheogram">  <span class="action-create-well"><i class="feather "></i>Rheogram</span></a>
+                        </div>
+                        <div class="col-3">
+                            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="?type=bha">  <span class="action-create-well"><i class="feather "></i>BHA Data</span></a>
+                        </div>
+                        <div class="col-3">
+                            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="?type=drillbit">  <span class="action-create-well"><i class="feather "></i>Drill Bit Data</span></a>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script>
+$(function() {
+    $('#Hydraulics-menu-div').hide();
+    $('#well_phases').change(function(){
+        $('#Hydraulics-menu-div').show();
+        var wellphase_id=$(this).val();
+    })
+
+})
+</script>
+{% endblock %}

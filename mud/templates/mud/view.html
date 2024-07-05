@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+  
+<section>
+    <!-- <div class="row" id="basic-table"> -->
+      <div class="row align-items-start">
+        <div class="col-md-10  create-pg">
+          <div class="create_project_sec scroll-line new-cru-well">
+            {% include "header.html" %}
+      <div class="col-md-12">
+        {% include "welldetails_menu.html" %} 
+      </div>
+      <div class="col-12">
+        {% include "welldetailssubmenu.html" %}  
+      </div>
+      <div class="rig-det">
+        <div class="row">
+      <div class="col-2">
+        {% include "rig_menu.html" %}  
+    </div>
+        <div class="col-10">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Mud Pump Details</h4>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Pump Manufacturer</span>
+                    </th>
+                    <td>{{mud.pump_manufacturer}}</td>
+                  </tr>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Pump Name</span>
+                    </th>
+                    <td>{{mud.pump_name}}</td>
+                  </tr> 
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Pump Type</span>
+                    </th>
+                    <td>{{mud.pump_type}}</td>
+                  </tr>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Stroke Length {%display_diameterunit request.session.unit%}</span>
+                    </th>
+                    <td>{{mud.stroke_length|diameterunit:mud.well.project.unit}}</td>
+                  </tr>               
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Number of Pumps</span>
+                    </th>
+                    <td>{{mud.number_of_pumps}}</td>
+                  </tr>               
+                </tbody>
+              </table>
+
+              <div class="col-12">
+                <table class="table">
+                    <h4 class="card-title text-center">Mud Pump Data Table</h4>
+                    <tr  class="linearsize"><th>Liner Size {%display_diameterunit request.session.unit%}</th>
+                        {% for obj in mud.mudpumpdata_set.all %}
+                        <td>{{obj.linear_size|diameterunit:mud.well.project.unit}}</td>   
+                        {% endfor %}
+                    </tr>
+                    <tr class="pressure"><th>Max Discharge Pressure {%display_pressureunit request.session.unit%}</th>
+                        {% for obj in mud.mudpumpdata_set.all %}
+                        <td>{{obj.max_discharge_pressure|pressureunit:mud.well.project.unit}}</td>   
+                        {% endfor %}
+                    </tr>
+                </table>
+              </div>
+
+            <div class="col-12">
+                <table class="table mudpumptable">
+                    <tr><th>Pump Speed (SPM)</th><th class="flowrateth" >Flowrate{%display_flowrateunit request.session.unit%}</th></tr>
+
+                    {% for speed in mud.mudpumpspeed_set.all %}
+                    <tr class="flowrate"> <td>
+                        {{speed.pump_speed}} SPM
+                    </td>
+                    {% for flowrateobj in speed.mudpumpflowrate_set.all %}
+
+                    <td>
+                        {{flowrateobj.flowrate|flowrateunit:mud.well.project.unit}}
+                    </td>
+                    {% endfor %}
+
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                <div class="row" id="basic-table">
+  
+                  <div class="col-sm-9 offset-sm-3">
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                      <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect detail-button" href="{% url 'mud:delete' mud.pk %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+          
+                      <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'mud:edit' mud.pk %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+          
+                  </div>
+                  </div>
+              
+
+            </div>
+            </div>
+          </div>
+          </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+          <div class="col-md-12 warning"></div>
+      </div>
+      </div>
+
+      <!-- <div class="row" id="basic-table">
+  
+        <div class="col-sm-9 offset-sm-3">
+          <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+            <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect detail-button" href="{% url 'mud:delete' mud.pk %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+
+            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'mud:edit' mud.pk %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+
+        </div>
+        </div>
+     -->
+      
+    </section>
+<script>
+  var storedArray = JSON.parse(sessionStorage.getItem("items"));
+    var well_id='{{well_id}}'
+    if(well_id == storedArray[1]){
+      $('.warning').show();
+    }else{
+      $('.warning').hide();
+    }
+</script>
+{% endblock %}

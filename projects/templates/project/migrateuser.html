@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+
+
+<section id="data-list-view" class="data-list-view-header">
+    
+    <div class="row align-items-start">
+        <div class="col-12 p-0 create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+                <form class="form form-horizontal" method="POST" id="migrateuser_form">
+                    {% csrf_token %}
+  <div class="card card-create-user">
+                    <div class="table-responsive table-hover table-striped user-table-lists">
+                        {% if projects|length > 0 %}
+                        <div class="projects">
+                            <h4 class="card-title text-center">Projects11 </h4>
+                            <table class="table table_css">
+                                <thead>
+                                    <th>Project Name</th>
+                                    <th>Users</th>
+                                </thead>
+                                <tbody>
+                                    {% for project in projects %}
+                                    <input type="hidden" name="project_id" value="{{project.project.id}}">
+                                        <tr>
+                                            <td>{{project.project.project_name}}</td>
+                                            <td>
+                                                {% getusers_project user_id project.project.id request.company.id as users %}
+                                                <select name="project_user" class="form-control projectusers">
+                                                    <option value="">--Select--</option>
+                                                    {% for user in users %}
+                                                        <option value="{{user.id}}">{{user.name}} {{user.lastname}}</option>
+                                                    {% endfor %}
+                                                </select>
+
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                        {% if wells|length > 0 %}
+                        <div class="wells">
+                            <h4 class="card-title">Wells </h4>
+                            <table class="table table_css">
+                                <thead>
+                                    <th>Well Name</th>
+                                    <th>Users</th>
+                                </thead>
+                                <tbody>
+                                    {% for well in wells %}
+                                        <input type="hidden" name="well_id" value="{{well.well.id}}">
+                                        <tr>
+                                            <td>{{well.well.name}}</td>
+                                            <td>
+                                                {% getusers_well user_id well.well.id request.company.id as users %}
+                                                <select name="well_user" class="form-control well_users">
+                                                    <option value="">--Select--</option>
+                                                    {% for user in users %}
+                                                        <option value="{{user.id}}">{{user.name}} {{user.lastname}}</option>
+                                                    {% endfor %}
+                                                </select>
+
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                        <div class="col-sm-12 text-center pt-1 pb-1">
+                            <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                        </div>
+                    </div>
+                </div>
+                    
+                </form>
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+    var csrf = '{{ csrf_token }}';
+    var projects_length="{{projects|length}}"
+    var wells_length="{{wells|length}}"
+
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/auth/user.js' %}"></script>
+<script src="{% static 'js/auth/migrateuser.js' %}"></script>
+
+{%endblock%}

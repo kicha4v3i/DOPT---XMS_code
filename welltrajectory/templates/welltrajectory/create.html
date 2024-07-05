@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<div class="row">
+  {% getcountries countries as countries %}
+  {% include "projectsidemenu.html" %}
+  <div class="col-12 p-0  create-pg main-section">
+    <div class="create_project_sec scroll-line new-cru-well">
+      {% comment %} <div class="well-name-list">{{well.name}}</div>
+      <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+
+      {% include "projectheader.html" %}
+      <div class="col-12">
+        {% include "welldetails_menu.html" %}
+      </div>
+      <div class="col-12">
+        {% include "welldetailssubmenu.html" %}
+      </div>
+      <div class="col-12">
+        <div class="card note-text">
+          <p>Note: Minimum Radius Curvature</p>
+          <div class="card-header">
+            <h4 class="card-title">Well Trajectory</h4>
+          </div>
+          <div class="card-body">
+            <form class="form form-horizontal" method="POST"
+              id="welltrajectoryform">
+              {% csrf_token %}
+              <input type="hidden" id="well" class="form-control" name="well"
+                value="{{well_id}}">
+
+              <div class="row">
+                <div class="col-12">
+                  <table class="table" id="welltrajectoryaddtable">
+                    <a
+                      class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-left detail-button import-button"
+                      href="{% url 'welltrajectory:importdata' well_id %}">
+                      <span class="action-create-well"><i class="feather "></i>Import</span></a>
+                    <thead>
+                      <tr>
+                        {% if request.session.welltype == 'ACTUAL' %}
+                        <th>Date</th>
+                        <!-- <th>Time</th> -->
+
+                        {%endif%}
+
+                        <th>MD({%display_depthunit request.session.unit%})</th>
+                        <th>Inclination(°)</th>
+                        <th>Azimuth(°)</th>
+                        <th>TVD({%display_depthunit request.session.unit%})</th>
+                        <th>DLS{%display_dlsunit request.session.unit%}</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr id="welltrajectorytableRow">
+                        {% if request.session.welltype == 'ACTUAL' %}
+                        <td><input type="text" id="date"
+                            class="form-control start_date"
+                            name="trajectory_date"><span
+                            class="trajectory_date_error"></span></td>
+                        <!-- <td><input  type="text" id="time" class="form-control start_time" name="trajectory_time"></td> -->
+                        {%endif%}
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="measured_depth"
+                            class="form-control measured_depth"
+                            name="measured_depth" placeholder="MD" value="0.00"><span
+                            class="measure_depth_error"></span></td>
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="inclination" class="form-control inclination"
+                            name="inclination" placeholder="Inclination"
+                            value="0.00"><span class="inclination_error"></span></td>
+                        <td>
+                          <input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69" id="azimuth"
+                            class="form-control azimuth" name="azimuth"
+                            placeholder="Azimuth" value="0.00"><span
+                            class="azimuth_error"></span>
+                          <input type="hidden" class="form-control  delta_e"
+                            name="delta_e" value="0.00">
+                          <input type="hidden" class="form-control  delta_n"
+                            name="delta_n" value="0.00">
+                          <input type="hidden" class="form-control  east"
+                            name="east" value="0.00">
+                          <input type="hidden" class="form-control  north"
+                            name="north" value="0.00">
+                          <input type="hidden" class="form-control  easting"
+                            name="easting" value="{{easting_data}}">
+                          <input type="hidden" class="form-control  northing"
+                            name="northing" value="{{northing_data}}">
+                          <input type="hidden"
+                            class="form-control  vertical_section"
+                            name="vertical_section" value="0">
+                          <input type="hidden" name="surface_easting"
+                            id="surface_easting" value="{{easting_data}}">
+                          <input type="hidden" name="surface_northing"
+                            id="surface_northing" value="{{northing_data}}">
+                        </td>
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="true_vertical_depth"
+                            class="form-control true_vertical_depth"
+                            name="true_vertical_depth" placeholder="TVD"
+                            value="0.00"><span class="tvd_error"></span></td>
+                        <td>
+                          <input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="converteddls" class="form-control converteddls"
+                            name="converteddls" placeholder="DLS" value="0.00"><span
+                            class="dls_error"></span>
+                          <input type="hidden" id="dls" class="form-control dls"
+                            name="dls" placeholder="DLS" value="0.00">
+
+                        </td>
+
+                        <td>
+                          <button type="button" name="add"
+                            class="welltrajectoryaddrows iconaction"><i
+                              class="fa fa-plus"></i></button>
+                          <button type="button" name="add"
+                            class="welltrajectoryremoverows iconaction"><i
+                              class="fa fa-trash"></i></button>
+                        </td>
+                      </tr>
+                      {%for i in max%}
+                      <tr id="welltrajectorytableRow">
+                        {% if request.session.welltype == 'ACTUAL' %}
+                        <td><input type="text" id="date"
+                            class="form-control start_date"
+                            name="trajectory_date"><span
+                            class="trajectory_date_error"></span></td>
+                        <!-- <td><input  type="text" id="time" class="form-control start_time" name="trajectory_time"></td> -->
+
+                        {%endif%}
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="measured_depth"
+                            class="form-control measured_depth"
+                            name="measured_depth" placeholder="MD"><span
+                            class="measure_depth_error"></span></td>
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="inclination" class="form-control inclination"
+                            name="inclination" placeholder="Inclination"><span
+                            class="inclination_error"></span></td>
+                        <td>
+                          <input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69" id="azimuth"
+                            class="form-control azimuth" name="azimuth"
+                            placeholder="Azimuth"><span class="azimuth_error"></span>
+                          <input type="hidden" class="form-control  delta_e"
+                            name="delta_e">
+                          <input type="hidden" class="form-control  delta_n"
+                            name="delta_n">
+                          <input type="hidden" class="form-control  east"
+                            name="east">
+                          <input type="hidden" class="form-control  north"
+                            name="north">
+                          <input type="hidden" class="form-control  easting"
+                            name="easting" value="{{easting_data}}">
+                          <input type="hidden" class="form-control  northing"
+                            name="northing" value="{{northing_data}}">
+                          <input type="hidden"
+                            class="form-control  vertical_section"
+                            name="vertical_section" value="0">
+                          <input type="hidden" name="surface_easting"
+                            id="surface_easting" value="{{easting_data}}">
+                          <input type="hidden" name="surface_northing"
+                            id="surface_northing" value="{{northing_data}}">
+                        </td>
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="true_vertical_depth"
+                            class="form-control true_vertical_depth"
+                            name="true_vertical_depth" placeholder="TVD"><span
+                            class="tvd_error"></span></td>
+                        <td>
+                          <input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="converteddls" class="form-control converteddls"
+                            name="converteddls" placeholder="DLS"><span
+                            class="dls_error"></span>
+                          <input type="hidden" id="dls" class="form-control dls"
+                            name="dls" placeholder="DLS">
+
+                        </td>
+
+                        <td>
+                          <button type="button" name="add"
+                            class="welltrajectoryaddrows iconaction"><i
+                              class="fa fa-plus"></i></button>
+                          <button type="button" name="add"
+                            class="welltrajectoryremoverows iconaction"><i
+                              class="fa fa-trash"></i></button>
+                        </td>
+                      </tr>
+                      {%endfor%}
+
+                      <tr id="welltrajectorytableRow2"
+                        class="welltrajectorytableRow2" style="display: none">
+                        {% if request.session.welltype == 'ACTUAL' %}
+                        <td><input type="text" id="date"
+                            class="form-control start_date"
+                            name="trajectory_date"><span
+                            class="trajectory_date_error"></span></td>
+                        <!-- <td><input  type="text" id="time" class="form-control start_time" name="trajectory_time"></td> -->
+                        {%endif%}
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="measured_depth"
+                            class="form-control measured_depth"
+                            name="measured_depth" placeholder="MD"
+                            value="{{datas.measured_depth}}"><span
+                            class="measure_depth_error"></span></td>
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="inclination" class="form-control inclination"
+                            name="inclination" placeholder="Inclination"
+                            value="{{datas.inclination}}"><span
+                            class="inclination_error"></span></td>
+                        <td>
+                          <input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69" id="azimuth"
+                            class="form-control azimuth" name="azimuth"
+                            placeholder="Azimuth" value="{{datas.azimuth}}"><span
+                            class="azimuth_error"></span>
+                          <input type="hidden" class="form-control  delta_e"
+                            name="delta_e">
+                          <input type="hidden" class="form-control  delta_n"
+                            name="delta_n">
+                          <input type="hidden" class="form-control  east"
+                            name="east">
+                          <input type="hidden" class="form-control  north"
+                            name="north">
+                          <input type="hidden" class="form-control  easting"
+                            name="easting">
+                          <input type="hidden" class="form-control  northing"
+                            name="northing">
+                          <input type="hidden"
+                            class="form-control  vertical_section"
+                            name="vertical_section">
+                        </td>
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="true_vertical_depth"
+                            class="form-control true_vertical_depth"
+                            name="true_vertical_depth" placeholder="TVD"
+                            value="{{datas.true_vertical_depth}}"><span
+                            class="tvd_error"></span></td>
+                        <td><input type="number" step='any'
+                            onkeydown="return event.keyCode !== 69"
+                            id="converteddls" class="form-control converteddls"
+                            name="converteddls" placeholder="DLS"
+                            value="{{datas.dls}}"><span class="dls_error"></span>
+                          <input type="hidden" id="dls" class="form-control dls"
+                            name="dls" placeholder="DLS">
+
+                        </td>
+                        <td>
+                          <button type="button" name="add"
+                            class="welltrajectoryaddrows iconaction"><i
+                              class="fa fa-plus"></i></button>
+                          <button type="button" name="add"
+                            class="welltrajectoryremoverows iconaction"><i
+                              class="fa fa-trash"></i></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="col-sm-9 offset-sm-3">
+                    <a class="btn btn-primary pull-right detail-button"
+                      href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                    <button type="submit"
+                      class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button trajectory_submit">Submit</button>
+                    <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+                  </div>
+                </div>
+                <!-- <div class="col-12">
+                    <button type="button" class="btn btn-outline-secondary pull-right addwelltrajectoryrow">Add Row</button>
+                  </div> -->
+                <!-- <div class="col-sm-9 offset-sm-3">
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>    
+                 <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                 <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button>
+                </div> -->
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="row">
+          <div class="col-sm-12 graphics-card">
+            <div class="col-sm-6 gra-img1">
+              <figure class="highcharts-figure">
+                <div id="dynamic-welltractory-tvd-vs" style="width: 100%; " ;></div>
+              </figure>
+            </div>
+            <div class="col-sm-6 gra-img1">
+              <figure class="highcharts-figure">
+                <div id="dynamic-welltractory-container" style="width: 100%; " ;></div>
+              </figure>
+            </div>
+          </div>
+        </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+           <div class="col-md-12 warning"></div>
+      </div>
+      </div>
+      
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+.note-text p{
+  text-align: right;
+    font-weight: 800;
+    font-size: 15px;
+    color: #e80c16;
+    padding: 20px 17px 0px 0px;
+}
+
+.iconaction
+{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:15px;
+  /* color:#7367F0; */
+  color:#7c0201;
+}
+
+</style>
+<link rel="stylesheet" type="text/css"
+  href="{% static 'assets/css/navigation.css' %}">
+{% endblock %}
+
+{% block scripts %}
+{{block.super}}
+<script>
+  var unit='{%display_depthunit request.session.unit%}';
+  var well_id='{{well_id}}';
+</script>
+<script src="{% static 'js/welltrajectory.js' %}"></script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+
+{%endblock%}

@@ -1,0 +1,21 @@
+.userlogactivity-table {
+    width: 100% !important;
+    border: 1px solid #dfdfdf !important;
+}
+
+.userlogactivity-table th {
+    text-align: center !important;
+}
+
+.userlogactivity-table th, td {
+    padding: 10px 10px !important;
+    border: 1px solid #dfdfdf !important;
+}
+
+.userlog-div .dataTables_wrapper.dt-bootstrap4.no-footer {
+    padding: 20px !important;
+}
+
+.userlog-div #DataTables_Table_0_filter {
+    padding-right: unset !important;
+}

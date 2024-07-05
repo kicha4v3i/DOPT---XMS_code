@@ -1,0 +1,507 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section id="data-list-view" class="data-list-view-header">
+  <div class="row align-items-start">
+    {% getcountries countries as countries %}
+    {% include 'projectsidemenu.html' %} 
+    <div class="col-12 p-0  create-pg main-section">  
+  <!-- <div class="row" id="basic-table"> -->
+    <div class="create_project_sec_well scroll-line new-cru-well">
+      {% comment %} <div class="well-name-list">{{well.name}}</div>
+      <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+      {% include "projectheader.html" %}
+    <div class="col-12">
+      {% include "welldetails_menu.html" %}  
+    </div>
+    <div class="col-12">
+      {% include "welldetailssubmenu.html" %}  
+    </div>
+    <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Well Phases</h4>
+          </div>
+          <div class="card-body">
+            <form class="form form-horizontal" name="wellphase_form" method="POST" id="wellphasesform">
+                {% csrf_token %}
+                <input type="hidden" id="well" class="form-control" name="well" value="{{well_id}}">
+
+              <div class="row">
+                <div class="col-12">
+                    <table class="table" id="wellphasesaddtable">
+
+                      <thead>
+                          <tr>
+                          {% if request.session.welltype == 'ACTUAL' %}
+                          <th>Date</th>
+                          <!-- <th>Time</th> -->
+
+                          {%endif%}
+                          <th>Phase Name</th>
+                          <th>Casing Type</th>
+                          <th>Hole Size{%display_diameterunit request.session.unit%}</th>
+                          <th>Casing Size{%display_diameterunit request.session.unit%}</th>
+                          <th>MD({%display_depthunit request.session.unit%})</th>
+                          <th>TVD({%display_depthunit request.session.unit%})</th>
+                          <th class="linertop">Liner Top({%display_depthunit request.session.unit%})</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                        <tbody>
+                        {% if welltype == 'PLAN' or welltype == 'ACTUAL' and  wellphases|length == 0 %}
+                        {%for i in max%}
+                        <tr id="wellphasetableRow">
+                          {% if request.session.welltype == 'ACTUAL' %}
+                          <td><input type="text" id="wellphase_startdate" class="form-control start_date" name="wellphase_startdate" placeholder="Start Date"><span class="start_date_error"></span></td>
+                          <!-- <td><input type="text" id="wellphase_starttme" class="form-control start_time" name="wellphase_starttime" placeholder="Start Date"></td> -->
+                          {%endif%}
+                          <td><input type="text" id="phase_name" class="form-control phase_name" name="phase_name" placeholder="Phase Name"><span id="phasename_error" class="phase_name_error"></span></td>
+                          <td>
+                            <select class="form-control casing_type" id="casing_type" name="casing_type">
+                              <option value="">-- Casing Type --</option>
+                              {% for obj in casingtypes %}
+                              <option value="{{obj.id}}">{{obj.name}}</option>
+      
+                              {% endfor %}
+      
+                            </select>
+                            <span class="casing_type_error"></span>
+                                </td>
+        
+                          <td><input type="number" step="any" id="hole_size" class="form-control  numeric hole_size" name="hole_size" placeholder="Hole Size"><span class="hole_size_error"></span></td>
+                          <td>
+                            <input type="hidden" name="nominal_od" class="nominal_od">
+                            <input type="hidden" name="weight" class="weight">
+                            <input type="hidden" name="wellphase_grade" class="wellphase_grade">
+                            <input type="hidden" name="wellphase_connection_type" class="wellphase_connection_type">
+                            <input type="hidden" name="wellphase_range" class="wellphase_range">
+                            <input type="hidden" name="driftid" class="driftid">
+                            <input type="number" step="any" id="casing_size" class="form-control numeric casing_size" name="casing_size" placeholder="Casing Size" step="any">
+                            <span class="casing_size_error"></span>
+                          </td>
+        
+                  <td><input type="number" step="any" id="measured_depth" class="form-control numeric measured_depth" name="measured_depth" placeholder="MD"><span class="md_error"></span></td>
+                  <td><input type="number" step="any" id="true_vertical_depth" class="form-control numeric true_vertical_depth" name="true_vertical_depth" placeholder="TVD"><span class="tvd_error"></span></td>
+                  <td><input type="number" step="any" id="linertop" class="form-control linertop" name="lineartop" placeholder="Liner Top "></td>
+                <td>
+                  <button type="button" name="add" class="addwellphasesrows iconaction"><i class="fa fa-plus"></i></button>
+                    <button type="button"  name="add" class="deletewellphasesrow iconaction"><i class="fa fa-trash"></i></button>
+                </td>        
+                </tr>
+                {%endfor%}
+                {% else %}
+                {%for wellphase in wellphases%}
+                  <tr id="wellphasetableRow">
+                    {% if request.session.welltype == 'ACTUAL' %}
+                    <td><input type="text" id="wellphase_startdate" class="form-control start_date" name="wellphase_startdate" placeholder="Start Date"><span class="start_date_error"></span></td>
+                    <!-- <td><input type="text" id="wellphase_starttme" class="form-control start_time" name="wellphase_starttime" placeholder="Start Date"></td> -->
+                    {%endif%}
+                      <td><input type="text" id="phase_name" class="form-control phase_name" name="phase_name" placeholder="Phase Name" value="{{wellphase.phase_name}}"><span class="phase_name_error"></span></td>
+                          <td>
+                            <select class="form-control casing_type" id="casing_type" name="casing_type">
+                              <option value="">-- Casing Type --</option>
+                              {% for obj in casingtypes %}
+                              <option value="{{obj.id}}" {%if obj.id == wellphase.casing_type_id %} selected {% endif %}>{{obj.name}}</option>
+                              {% endfor %}
+                            </select>
+                            <span class="casing_type_error"></span>
+                          </td>
+                          <td>
+                            <input type="number" step="any" id="hole_size" class="form-control  numeric hole_size" name="hole_size" placeholder="Hole Size" value={{wellphase.hole_size}}><span class="hole_size_error"></span>
+                          </td>
+                          <td>
+                            <input type="hidden" name="nominal_od" class="nominal_od" value="{{wellphase.nominal_od|default_if_none:''}}">
+                            <input type="hidden" name="weight" class="weight" value="{{wellphase.weight|default_if_none:''}}">
+                            <input type="hidden" name="wellphase_grade" class="wellphase_grade" value="{{wellphase.grade|default_if_none:''}}">
+                            <input type="hidden" name="wellphase_connection_type" class="wellphase_connection_type" value="{{wellphase.connection_type|default_if_none:''}}">
+                            <input type="hidden" name="wellphase_range" class="wellphase_range" value="{{wellphase.casing_range|default_if_none:''}}">
+                            <input type="hidden" name="driftid" class="driftid" value="{{wellphase.drift_id|default_if_none:''}}">
+                            <input type="number" step="any" id="casing_size" class="form-control numeric casing_size" name="casing_size" placeholder="Casing Size" step="any" value="{{wellphase.casing_size}}">
+                            <span class="casing_size_error"></span>
+                          </td>
+                          <td><input type="number" step="any" id="measured_depth" class="form-control numeric measured_depth" name="measured_depth" placeholder="MD" value="{{wellphase.measured_depth}}"><span class="md_error"></span></td>
+                          <td><input type="number" step="any" id="true_vertical_depth" class="form-control numeric true_vertical_depth" name="true_vertical_depth" placeholder="TVD" value="{{wellphase.true_vertical_depth}}"><span class="tvd_error"></span></td>
+                          <td><input type="number" step="any" id="linertop" class="form-control linertop" name="lineartop" placeholder="Liner Top " value="{{wellphase.lineartop}}"></td>
+                          <td>
+                            <button type="button" name="add" class="addwellphasesrows iconaction"><i class="fa fa-plus"></i></button>
+                            <button type="button"  name="add" class="deletewellphasesrow iconaction"><i class="fa fa-trash"></i></button>
+                          </td>        
+                    </tr>
+                    {%endfor%}
+                {% endif %}
+                <tr id="wellphasetableRow2" calss="wellphasetableRow2" style="display: none" >
+                  <td><input type="text" id="phase_name" class="form-control phase_name" name="phase_name" placeholder="Phase Name" value="{{wellphase.phase_name}}"><span class="phase_name_error"></span></td>
+                  <td>
+                      <select class="form-control casing_type" id="casing_type" name="casing_type" >
+                        <option value="">-- Casing Type --</option>
+                        {% for casing_type in casingtypes %}
+                        <option value="{{casing_type.id}}" {%if casing_type.id == wellphase.casing_type.id %} selected {% endif %}>{{casing_type.name}}</option>
+                        {% endfor %}
+                      </select>
+                      <span class="casing_type_error"></span>
+                  </td>
+                    <td><input type="number" step="any" id="hole_size" placeholder="Hole Size" class="form-control hole_size" name="hole_size"  value="{{wellphase.hole_size}}"><span class="hole_size_error"></span></td>
+                    <td>
+                      <input type="hidden" name="nominal_od" class="nominal_od">
+                      <input type="hidden" name="weight" class="weight">
+                      <input type="hidden" name="wellphase_grade" class="wellphase_grade">
+                      <input type="hidden" name="wellphase_connection_type" class="wellphase_connection_type">
+                      <input type="hidden" name="wellphase_range" class="wellphase_range">
+                      <input type="hidden" name="driftid" class="driftid">
+                      <input type="number" step="any" id="casing_size" placeholder="Casing Size " class="form-control casing_size" name="casing_size"  step="any" value="{{wellphase.casing_size}}">
+                      <span class="casing_size_error"></span>
+                    </td>
+  
+                  <td><input type="number" step="any" id="measured_depth"placeholder="MD" class="form-control numeric measured_depth" name="measured_depth"  value="{{wellphase.measured_depth}}"><span class="md_error"></span></td>
+                  <td><input type="number" step="any" id="true_vertical_depth" placeholder="TVD" class="form-control numeric true_vertical_depth" name="true_vertical_depth"  value="{{wellphase.true_vertical_depth}}"><span class="tvd_error"></span></td>
+                  <td><input type="number" step="any" id="linertop" class="form-control linertop"placeholder="Liner Top " name="lineartop"  value="{{wellphase.lineartop}}"></td>
+                  
+              <td>
+                <button type="button" name="add"  class="addwellphasesrows iconaction"><i class="fa fa-plus"></i></button>
+                <button type="button" name="add"  class="deletewellphasesrow iconaction"><i class="fa fa-trash"></i></button>
+              </td> 
+            </tr>
+            </tbody>
+                    </table>
+                </div>
+
+                <!-- <div class="col-12">
+                    <button type="button" class="btn btn-outline-secondary pull-right addwellphasesrow">Add Row</button>
+                    
+                  </div> -->
+                  <div class="col-sm-12">
+                  <button type="submit" id="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button wellphase_submit">Submit</button>
+                  <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+                  <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a> 
+                </div>
+
+
+              </div>
+            </form>
+          </div>
+        </div>
+   </div>
+
+   {% include "footer.html" %}
+  </div>
+  </div>
+  
+  </div>
+
+   <!-- The Modal -->
+<div class="modal fade casingmaster-popup" id="casingmaster-popup">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Casing</h4>
+        
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"> 
+
+      <!-- <div class="container">
+        <div id="accordion" class="panel-group">
+          <div class="panel">
+            <div class="panel-heading">
+            <h4 class="panel-title">
+              <a href="#panelBodyOne" class="accordion-toggle" data-toggle="collapse" data-parent="#accordion">Content One</a>
+              </h4>
+            </div>
+            <div id="panelBodyOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <p>Energistically drive standardized communities through user friendly results. Phosfluorescently initiate superior technologies vis-a-vis low-risk high-yield solutions. Objectively facilitate clicks-and-mortar partnerships vis-a-vis superior partnerships. Continually generate long-term high-impact methodologies via wireless leadership. Holisticly seize resource maximizing solutions via user friendly outsourcing.</p>
+              </div>
+            </div>
+          </div>
+          
+          
+        </div>
+      </div> -->
+      <div class="container">
+        <div id="accordion" class="accordion">
+            <div class="card mb-0">
+                <div class="card-header collapsed" data-toggle="collapse" href="#collapseOne"  aria-expanded="false" aria-controls="collapseOne">
+                    <a class="card-title">
+                        ADD
+                    </a>
+                </div>
+                <div id="collapseOne" class="card-body collapse" data-parent="#accordion" >
+                  <div class="col-12">
+ 
+                    <div class="card">
+                      
+                      <div class="card-header">
+                        <h4 class="card-title table-title">Create Casing Masters</h4>
+                      </div>
+                      <form method="post" id="casingmasterform" novalidate>
+                          {% csrf_token %}              
+                          <div class="row">
+                            <div class="col-2 label fw-bold pl-30">
+                              Units
+                            </div>
+                            <div class="col-3">
+                              <select name="unit" id="unit" class="form-control casingmaster-unit">
+                                <option value="">Select</option>
+                                <option value="API">API</option> 
+                                <option value="SI">SI</option> 
+                              </select>
+                            </div>
+                            
+                            <div class="col-2 pr-30">
+                              <!-- <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right detail-button" href="{% url 'wellphases:importdata' %}"><span class="action-create-well"><i class="feather "></i>Import</span></a> -->
+                             </div>
+                              <div class="col-12 mt-3">
+                                  <table class="table" id="casingmastertable">             
+                                      <thead><tr><th>Nominal OD</th><th>Weight</th>
+                                        <th><span>Inside Diameter</span> </th>
+                                        <th>Connection Type</th><th>Connection OD</th><th>Drift ID</th>
+                                        </tr>
+                                      <tr></thead>
+                                        <tbody>
+                                          <td><input id="nominal_od" type="text" class="form-control nominal_od" name="nominal_od" placeholder="Nominal OD" ></td>
+                                          <td><input id="weight" type="text" class="form-control weight" name="weight" placeholder="Type" ></td>
+                                          <td><input id="inside_diameter" type="text" class="form-control inside_diameter" name="inside_diameter" placeholder="Inside Diameter" ></td>
+                                          <td>
+                                            <input id="connection_type" type="text" class="form-control connection_type" name="connection_type" placeholder="Connection Type" >
+                                          </td>
+                                          <td>
+                                            <input id="connection_od" type="text" class="form-control connection_od" name="connection_od" placeholder="Connection OD" >
+                                          </td>
+                                          <td><input type="text" name="driftid" id="drift_id" class="form-control driftid"  placeholder="Drift ID"></td>
+                                          <!-- <td>
+                                            <a type="button" class="casingmaster_addrow iconaction"><i class="fa fa-plus"></i></a>
+                                            <a type="button" class="casingmaster_removerow iconaction"><i class="fa fa-trash"></i></a>
+                                          </td>         -->
+                                      </tr>
+                                      <tr id="casingmaster_addrow" style="display:none">
+                                        <td><input id="nominal_od" type="text" class="form-control nominal_od" name="nominal_od" placeholder="Nominal OD" ></td>
+                                        <td><input id="weight" type="text" class="form-control weight" name="weight" placeholder="Type" ></td>
+                                        <td><input id="inside_diameter" type="text" class="form-control inside_diameter" name="inside_diameter" placeholder="Inside Diameter" ></td>
+                                        <td>
+                                          <input id="connection_type" type="text" class="form-control connection_type" name="connection_type" placeholder="Connection Type" >
+                                        </td>
+                                        <td>
+                                          <input id="connection_od" type="text" class="form-control connection_od" name="connection_od" placeholder="Connection OD" >
+                                        </td>
+                                        <!-- <td>
+                                          <a type="button" class="casingmaster_addrow iconaction"><i class="fa fa-plus"></i></a>
+                                          <a type="button" class="casingmaster_removerow iconaction"><i class="fa fa-trash"></i></a>
+                                        </td>-->
+                                    </tr>
+                                  </tbody>  
+                                  </table>
+                                  <div class="col-sm-9 offset-sm-3">
+                                  
+                                  <button type="button" id="submit" class="btn btn-primary detail-button pull-right mr-2 ">submit</button>
+                          </div>
+                    </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table" id="casingtable">
+              <thead class="text-center">
+                  <tr>      
+                      <h4 class="modal-heading">Select Values</h4>
+                  </tr>
+              </thead>
+              <tr><th>OD{%display_diameterunit request.session.unit%}</th><th>Weight({%display_weightunit request.session.unit%})</th><th>Grade</th><th>Connection Type</th><th>Range</th></tr>
+              <tbody>
+                  <tr>
+                    <td>
+                      <select class="form-control nominal_od casing_nominal_od" id="nominal_od" name="nominal_od">
+                        <option value="">--OD--</option>
+                        {% for casing_data in casing %}
+                        <option databasevalue="{{casing_data.databasevalue}}" value="{{casing_data.nominal_od}}">{{casing_data.nominal_od}}</option>
+                        {% endfor %}
+
+                      </select>
+                    </td>
+                    <td>
+                      <select class="form-control casing_weight" id="casing_weight" name="casing_weight">
+                        <option value="">-- Weight --</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select name="grade" class="form-control grade" id="grade">
+                        <option value="">Select</option>
+                        <option value="K 55">K 55</option> 
+                        <option value="L 80">L 80</option>
+                        <option value="N 80">N 80</option>
+                        <option value="C 90">C 90</option>
+                        <option value="T 95">T 95</option>
+                        <option value="P 110">P 110</option>
+                        <option value="Q 125">Q 125</option>
+                        <option value="others">Others</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select class="form-control connection_type" id="connection_type" name="connection_type">
+                        <option value="">-- Connection Type --</option>
+                        
+                      </select>
+                    </td>
+                   <td>
+                      <select name="casing_range" class="form-control casing_range" id="casing_range">
+                        <option value="">Select</option>
+                        <option value="25">25 {%display_depthunit request.session.unit%}</option> 
+                        <option value="34">34 {%display_depthunit request.session.unit%}</option>
+                        <option value="45">45 {%display_depthunit request.session.unit%}</option>
+                        <option value="others">Others</option>
+                      </select>
+                  </td>
+                  <!-- <td>
+                    <input type="hidden" name="drift_id" class="form-control" id="drift_id">
+                  </td> -->
+                </tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger popup-close" id="modal-close">Close</button>
+      </div>
+      
+    </div>
+  </div>
+  </div>
+  
+  </div>
+ 
+ 
+  </section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+
+.iconaction
+{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:15px;
+  /* color:#7367F0; */
+  color:#7c0201;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+  var well_id=$('#well').val();
+  var type="wellphase";
+  var welltype='{{welltype}}';
+  $(document).on("blur", ".measured_depth" , function() { 
+    measured_depth = $(this).val();
+      var current_element=$(this);
+      $.ajax({
+          type: "GET",
+          url:"/wells/wellphases/getmdtvd",
+          data: {
+            data : measured_depth,
+            type :"md",
+            well_id:well_id
+    
+          },
+          success: function(data) { 
+            current_element.closest('tr').find('.true_vertical_depth').val(data.toFixed(2));
+          }
+      });
+  });
+  $(document).on("change", ".casing_type" , function() {  
+    var closesttrindex;
+    closesttrindex=$(this).closest('tr').index();
+    if ($(this).val()==11 || $(this).val()==12 || $(this).val()==7 || $(this).val()==8)
+    {
+    $('#wellphasesaddtable tbody tr:eq('+closesttrindex+')').find('#linertop').show();
+    }
+    else{
+    $('#wellphasesaddtable tbody tr:eq('+closesttrindex+')').find('#linertop').hide();
+    }     
+  });
+  $(document).on("change", ".connection_type" , function() { 
+        // alert("fgggg")
+        var od=$(".casing_nominal_od").find(':selected').attr('databasevalue');
+        var weight=$("#casing_weight").find(':selected').attr('databasevalue');
+        var well_id=$("#well").val();
+        // alert(well_id)
+        var connection_type=$(this).val();
+        $.ajax({
+          type: "GET",
+          data:{
+            od:od,
+            weight:weight,
+            connection_type:connection_type,
+            well_id:well_id
+          },
+          url:"/wells/wellphases/getcasing_driftID",
+          success: function(data) {
+            var drift_id=data.data[0].nominal_od;
+            $('#wellphasesaddtable tbody tr:eq('+closesttrindex+')').find('.driftid').val(drift_id);
+            $('#wellphasesaddtable tbody tr:eq('+closesttrindex+')').find('.wellphase_connection_type').val(connection_type);
+      
+      
+          }
+        });
+  });
+  $(document).on("click", "#submit" , function() { 
+  
+  var csrf =$('.getcsrf').val();
+  var unit=$("#unit").val();
+  var nominal_od=$("#nominal_od").val();
+  var weight=$("#weight").val();
+  var inside_diameter=$("#inside_diameter").val();
+  var connection_type=$("#connection_type").val();
+  var connection_od=$("#connection_od").val();
+  var drift_id=$("#drift_id").val();
+  $.ajax({ 
+     type: "POST",                      
+     url: "/wells/wellphases/wellphase_casing",                    
+     data: {
+      unit:unit,
+      nominal_od:nominal_od,
+      weight:weight,
+      inside_diameter:inside_diameter,
+      connection_type:connection_type,
+      connection_od:connection_od,
+      drift_id:drift_id,
+      csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+     },
+     dataType: "json",
+     success: function (data) {   
+       console.log(data);
+      var html='<option value="">Nominal OD</option>';
+        for(i=0;i<data.data.length;i++){
+        html +='<option value="'+data.data[i].nominal_od +'" databasevalue="'+data.data[i].nominal_od +'">'+ data.data[i].nominal_od+'</option>';
+        }
+        console.log(html);
+        $('.casing_nominal_od').html(html);
+        $("#collapseOne").css("display", 'none');
+    }
+   });
+});
+</script>
+<script src="{% static 'js/wellphase.js' %}"></script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+<script>
+    var mdLastData = "{{ md_last_data }}";
+    console.log('sss',mdLastData)
+</script>
+
+{%endblock%}

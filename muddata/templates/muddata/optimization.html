@@ -1,0 +1,204 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<div class="row align-items-start">
+    {% getcountries countries as countries %}
+    {% include 'projectsidemenu.html' %} 
+
+        <div class="col-md-8  create-pg main-section col-md-10">
+            <div class="create_project_sec scroll-line">
+                {% comment %} <div class="well-name-list">{{well.name}}</div>
+      <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+
+                <div id="loader" class="lds-dual-ring hidden overlay"></div>
+                {% include "projectheader.html" %}
+                <div class="col-12">
+                    {% include "welldetails_menu.html" %}   
+                </div>
+                <div class="col-12">
+                    <p id="error"></p>
+                    <div class="row">
+                         <div class="col-2">
+                            <div class="head-optli">
+                                <h5>optimization criteria</h5>
+                            </div>
+                            <ul class="opt-listpoint">
+                                <li>
+                                  <input type="radio" id="impact_force" name="optimization_code" class="optimization_code" value="Impact Force">
+                                  <label for="impact_force">Impact Force</label>
+                                </li>
+                                <li>
+                                  <input type="radio" id="hsi" name="optimization_code" class="optimization_code" value="HSI"/>
+                                  <label for="hsi">HSI</label>
+                                </li>
+                              </ul>
+                        </div> 
+                        <div class="col-2 opt-thead">
+                            <p>No of Nozzles</p>
+                            <input type="text" name="no_of_nozzle" id="no_of_nozzle" placeholder="No of Nozzlesize" class="form-control opt-nozzle" value="3">
+                            <span class="no_on_nozzle_error"></span>
+                            <p>Nozzle Sizes</p>
+                            <p id="nozzle_size" class="nz-clr"></p>
+                        </div>
+                        <div class="col-8 cir-value">
+                        <div class="opt-thead">
+                            <div class="circle-opt-vlu">
+                            <p class="opt-p">Opt Flowrate</p>
+                            <p id="opt_flowrate" class="opt-2"></p>
+                            </div>
+                        </div>
+                        <div class="opt-thead">
+                            <div class="circle-opt-vlu ">
+                            <p class="opt-tfa">TFA</p>
+                            <p id="tfa" class="opt-2"></p>
+                            </div>
+                        </div>
+                        <div class="opt-thead">
+                            <div class="circle-opt-vlu">
+                            <p class="opt-p">Pump Pressure</p>
+                            <p id="pump_pressure" class="opt-2"></p>
+                            </div>
+                        </div>
+                        <div class="opt-thead">
+                            <div class="circle-opt-vlu opt-tfa">
+                            <p class="opt-tfa" >HSI</p>
+                            <p id="bhhp" class="opt-2"></p>
+                            </div>
+                        </div>
+                        <div class="opt-thead">
+                            <div class="circle-opt-vlu">
+                            <p class="opt-p">Impact Force</p>
+                            <p id="impact_force_value" class="opt-2"></p>
+                            </div>
+                        </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="col-10 opt-sidename">TFA<span class="opt-input"><input type="text" name="original_tfa" id="original_tfa" class="form-control opt-value" placeholder="Original TFA" value="{{drillbit.tfa}}"><span class="tfa_error"></span></span></div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-10 opt-sidename">Min Flowrate(gpm)<span class="opt-input"><input type="text" name="min_flowrate" id="min_flowrate" class="form-control opt-value" placeholder="Min Flowrate"><span class="min_flowrate_error"></span></span></div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-10 opt-sidename">Max Flowrate(gpm)<span class="opt-input"> <input type="text" name="max_flowrate" id="max_flowrate" class="form-control opt-value" placeholder="Max Flowrate"><span class="max_flowrate_error"></span></span></div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-10 opt-sidename">Mechanical Efficiency<span class="opt-input"> <input type="text" name="mechanical_efficiency" id="mechanical_efficiency" class="form-control opt-value" placeholder="Mechanical Efficiency"><span class="mechanical_efficiency_error"></span></span></div>
+                               
+                            </div>
+                            <div class="row">
+                                <div class="col-10 opt-sidename">Pump Volumetric Efficiency <span class="opt-input"> <input type="text" name="pump_efficiency" id="pump_efficiency" class="form-control opt-value" placeholder="Pump Volumetric Efficiency"><span class="pump_efficiency_error"></span></span></div>
+                               
+                            </div>
+                            <div class="row">
+                                <div class="col-10 opt-sidename">Maximum Circulating Pressure at TD(psi)<span class="opt-input"> <input type="text" name="maximum_pressure" id="maximum_pressure" class="form-control opt-value" placeholder="Maximum Circulating Pressure at TD"></span><span class="maximum_pressure_error"></span></div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-10 opt-sidename">Liner Size(in)<span class="opt-input"><select id="liner_size" name="liner_size" class="form-control opt-value" >
+                                    <option>Liner Size</option>
+                                    {% for linersize in mudpump_linersize %}
+                                        <option value="{{linersize.id}}">{{linersize.linear_size}}</option>
+                                    {% endfor %}
+
+                                </select><span class="liner_size_error"></span></span></div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-10 opt-sidename">Liner Length(in)<span class="opt-input"><input type="text" name="liner_length" id="liner_length" class="form-control opt-value" value="{{liner_length}}" placeholder="Liner Length"><span class="liner_length_error"></span></span></div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-10 opt-sidename">Pump's Minimum Idle SPM(spm)<span class="opt-input"><input type="text" name="pump_spm" id="pump_spm" class="form-control opt-value" placeholder="Pump's Minimum Idle SPM"><span class="pump_spm_error"></span></span></div>
+                                
+                            </div>
+                           
+                            <div class="row">
+                                
+                                <div class="col-8 cal-mid">
+                                    <button class="btn btn-primary calcul-btn " id="calculate_optimization">Calculate</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-9">
+                            <div class="row">
+                                <div class="col-12">
+                                    <figure class="highcharts-figure charts sens-graph-opt">
+                                        <div id="flowrate_chart"  tabindex="1">
+                                        </div>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="row graph-phase-top">
+                                <div class="col-6">
+                                    <figure class="highcharts-figure charts sens-graph-opt">
+                                        <div id="hsi_chart"  tabindex="1">
+                                        </div>
+                                    </figure>
+                                </div>
+                                <div class="col-6">
+                                    <figure class="highcharts-figure charts sens-graph-opt">
+                                        <div id="impactforce_chart"  tabindex="1">
+                                        </div>
+                                    </figure>
+                                </div>
+                                
+                            </div>
+
+                        </div>
+                      
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            {% include "userheader.html" %}
+            <h4 class="model-caption">Well Phases</h4>
+            {% for wellphase in wellphases %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="press-wellmenu">
+                        <button class="pressure-phase"><label class="tree-toggle nav-header glyphicon-icon-rpad hyd-head "><span class="glyphicon glyphicon-folder-close m5"></span>{{wellphase.phase_name}}
+                        <span class="menu-collapsible-icon glyphicon glyphicon-chevron-down"></span></label></button>
+                        <ul class="myDIV nav navbar-nav custom_active_list pressure-sidemenu {% if wellphase_id == wellphase.id %}show{% endif %}">
+                            {% getsectionbywellphase_id wellphase.id as sections %}
+                            {% for section in sections %}
+                            <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="nav-item wellphase_sidemenu {% if section.section_name == section_name %}active{% endif %}">{{section.section_name}}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+
+<script>
+    var rpm_input="{{rpm_input}}"
+    var rop_input="{{rop_input}}"
+    var wellphase_id="{{wellphase_id}}"
+    var section_name="{{section_name}}"
+</script>
+<script src="{% static 'js/optimization.js' %}"></script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+
+
+{%endblock%}
+
+

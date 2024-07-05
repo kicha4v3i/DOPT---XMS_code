@@ -1,0 +1,6 @@
+.all-cnt {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding-top: 15px;
+}

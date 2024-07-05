@@ -1,0 +1,251 @@
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr"> 
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+   <title>Company Registration</title>
+   <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600" rel="stylesheet">
+   <link rel="stylesheet" type="text/css" href="{% static 'vendors/css/vendors.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-extended.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/colors.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/components.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/themes/dark-layout.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/themes/semi-dark-layout.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/core/menu/menu-types/vertical-menu.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/core/colors/palette-gradient.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/pages/authentication.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   <link rel="stylesheet" type="text/css" href="{% static 'vendors/css/forms/select/select2.min.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+ 
+</head>
+<body class="vertical-layout vertical-menu-modern 1-column  navbar-floating footer-static bg-full-screen-image  menu-collapsed blank-page blank-page" data-open="click" data-menu="vertical-menu-modern" data-col="1-column">
+   <div class="app-content content">
+       <div class="content-overlay"></div>
+       <div class="header-navbar-shadow"></div>
+       <div class="content-wrapper">
+           <div class="content-header row">
+           </div>
+           <div class="content-body">
+               <section class="row flexbox-container">
+                   <div class="col-xl-8 col-10 d-flex justify-content-center">
+                       <div class="card bg-authentication rounded-0 mb-0">
+                           <div class="row m-0">
+
+                               <div class="col-lg-12 col-12 p-0">
+                                   <div class="card rounded-0 mb-0 p-2">
+ 
+                                        <div class="card-header pt-50 pb-1">
+                                            <div class="">                            
+                                                <h4 class="mb-0 card-title pb-0">Licensing Update Form</h4>                                   
+                                            </div>
+                                        </div>
+                                        <div class="card-body pt-0 sze-by">
+                                            <form action="" method="post" name="proposal_form">
+                                                <input type="hidden" name="company_id" value="{{company.id}}">
+                                             {% csrf_token %}
+                                        
+                                           
+                                             <!-- <div class="form-group license">
+                                                <div class="controls">
+                                                    <label for="licence">Type of License </label><br>
+                                                    <select class="custom-select rd-sze" id="license_type" name="license_type">    
+                                                        <option value="">--- Select Licence ---</option>
+                                                        {% for package in packages %}
+                                                        <option value='{{package.id}}'>{{ package.name }}</option>
+                                                       {% endfor %}
+                                                    </select>
+                                               </div>
+                                            </div>    -->
+                                         
+                                            <input type="hidden" name="license_type" id="license_type" value="{{company.type_of_license}}" >
+                                                
+                                             <div class="row">
+                                                 <div class="col-sm-6">
+                                                     <div class="form-group">
+                                                         <div class="controls">
+                                                             <label for="inputEmail">Numbers of Users</label>
+                                                            <input type="number" name="no_of_users" id="no_of_users" class="form-control rd-sze" placeholder="Numbers of Users" >
+                                                        </div>
+                                                     </div>
+                                                 </div>
+                                            
+                                             </div>   
+                                      
+                                            <div class="button-cen">  
+                                             <a href="{{request.META.HTTP_REFERER}}"  class="btn btn-outline-primary  btn-inline mb-50">Back</a>
+                                             <button type="submit" class="btn btn-primary  btn-inline mb-50 detail-button">Submit</button>
+                                             </div>
+                                            </form>
+                                        </div>
+                                    
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </section>
+           </div>
+       </div>
+   </div> 
+   <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   <script src="{% static 'js/core/app-menu.js' %}"></script>
+   <script src="{% static 'js/core/app.js' %}"></script>
+   <script src="{% static 'js/custom.js' %}"></script>
+   <script src="{% static 'js/allvalidation.js' %}"></script>
+   <script src="{% static 'js/scripts/components.js' %}"></script>
+   <script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+   <script src="{% static 'vendors/js/forms/select/select2.full.min.js' %}"></script>
+   <script src="{% static 'js/scripts/forms/select/form-select2.js' %}"></script>
+   <script>
+    // $(function(){
+    //     $('#inputName').keydown(function(e) {
+    //         if ( e.ctrlKey || e.altKey) {
+    //           e.preventDefault();
+    //         } else {
+    //           var key = e.keyCode;
+    //           if (!((key == 8) || (key == 32) || (key == 46) || (key >= 35 && key <= 40) || (key >= 65 && key <= 90))) {
+    //             e.preventDefault();
+    //           }
+    //         }
+    //       });
+    //     $('#inputLastName').keydown(function(e) {
+    //         if ( e.ctrlKey || e.altKey) {
+    //           e.preventDefault();
+    //         } else {
+    //           var key = e.keyCode;
+    //           if (!((key == 8) || (key == 32) || (key == 46) || (key >= 35 && key <= 40) || (key >= 65 && key <= 90))) {
+    //             e.preventDefault();
+    //           }
+    //         }
+    //       });
+        
+    // })
+    // $(function(){
+    //     $('#inputName').keydown(function(e) {
+    //         // regex for only letters with a space and backspace and delete
+
+    //         var regex = /^[a-zA-Z ]+$/;
+    //         var key = String.fromCharCode(e.which);
+    //         if (!regex.test(key)) {
+    //             e.preventDefault();
+    //         }
+    //     });
+    //     $('#inputLastName').keydown(function(e) {
+    //         // regex for only letters with a space
+    //         var regex = /^[a-zA-Z ]+$/;
+    //         var key = String.fromCharCode(e.which);
+    //         if (!regex.test(key)) {
+    //             e.preventDefault();
+    //         }
+    //     });
+    // });
+    $( "#package" ).change(function() {
+        var csrf =$('.getcsrf').val();
+        $('.userslist').hide();
+        $('.usersinput').val('');
+        $.ajax({
+            type: "GET",
+            url:"/getconcurrentusers",
+            contentType: 'application/json',  
+            data: {'package':this.value},
+            dataType: "json",
+            beforeSend: function(xhr){
+            xhr.setRequestHeader('X-CSRFToken', csrf);
+            },
+            success: function(data) {
+                console.log(data);
+                if(JSON.parse(data).length==0)
+                {
+                    $('.concurrentuserdiv').hide();
+                    $('.userslist').show();  
+                    $('#admins').val(1);
+                    $(".usersinput").attr("readonly", false); 
+                }
+                else
+                {
+                $('.concurrentuserdiv').show();
+                $(".usersinput").attr("readonly", true); 
+
+                $('#concurrentuserselect').empty();
+                $('#concurrentuserselect')
+                .append($("<option></option>")
+                        .attr("value", '')
+                        .text("Select Concurrent Users")); 
+                $.each(JSON.parse(data), function(key, value) {   
+                    $('#concurrentuserselect')
+                        .append($("<option></option>")
+                                .attr("value", value.pk)
+                                .text(value.fields.name)); 
+            });
+            }
+            }
+        });
+  
+    });
+    $( "#concurrentuserselect" ).change(function() {
+        var csrf =$('.getcsrf').val();
+        $.ajax({
+            type: "GET",
+            url:"/getuserscount",
+            contentType: 'application/json',  
+            data: {'packageconcurrent':this.value},
+            dataType: "json",
+            beforeSend: function(xhr){
+            xhr.setRequestHeader('X-CSRFToken', csrf);
+            },
+            success: function(data) {
+                console.log(data);
+                $('.userslist').show();
+                var userscount=JSON.parse(data)[0];
+                console.log(userscount);
+                $('#concurrent_users').val(userscount.fields.concurrent_users);
+                $('#admins').val(userscount.fields.admins);
+                $('#well_managers').val(userscount.fields.well_managers);
+                $('#well_engineers').val(userscount.fields.well_engineers);
+                $('#other_users').val(userscount.fields.other_users);
+
+            }
+        });
+ 
+    });
+
+    $('#inputCountryid').change(function(){
+        var country_id=$(this).val();
+        $.ajax({
+            type:"POST",
+            url:"{% url 'custom_auth:getcountrycode' %}",
+            data:{
+                country_id:country_id,
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+            },
+            dataType:'json',
+            success:function(data){
+                $('#phonecode').val('+'+data.conuntrycode)
+                $('#inputCountryid-error').css("display", "none");
+            }
+        })
+    })
+
+   </script>
+</body>
+<style>
+ .card
+ {
+     width:100%;
+ }
+ body {
+    background-size: cover;
+    background-position: center;
+    background: #eee;
+}   
+</style> 
+</html>
+

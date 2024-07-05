@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/pages/app-user.css' %}">
+
+<section class="page-users-view">
+    {% if perms.custom_auth.change_companies %}
+    {% if data.status == 0 %}
+
+    <div class="row">
+        <div class="col-12">
+            <!-- Outline buttons -->
+            <a  href="{% url 'custom_auth:companyreject' id=data.id %}" class="btn btn-outline-danger mr-1 mb-1 waves-effect waves-light float-right">Reject</a>
+            <a  href="{% url 'custom_auth:companyapprove' id=data.id %}" class="btn btn-outline-success mr-1 mb-1 waves-effect waves-light float-right">Approve</a>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <div class="row">
+        <!-- account start -->
+        <div class="col-6">
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title table-title">Company Details</div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+ 
+                        <div class="col-12 col-sm-9 col-md-6 col-lg-5">
+                            <table>
+                                <tr>
+                                    <td class="font-weight-bold">Company Name</td>
+                                    <td>{{data.company_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">First Name</td>
+                                    <td>{{data.first_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Last Name</td>
+                                    <td>{{data.last_name}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-12 col-md-12 col-lg-5">
+                            <table class="ml-0 ml-sm-0 ml-lg-0">
+                                <tr>
+                                    <td class="font-weight-bold">Status</td>
+                                    <td>
+                                        {% if data.status == 0 %}
+                    
+                                        <div class="chip chip-warning">
+                                            <div class="chip-body">
+                                                <div class="chip-text">Pending</div>
+                                            </div>
+                                        </div>
+                                        {% elif data.status == 1 %}
+                                        
+                                        <div class="chip chip-success">
+                                            <div class="chip-body">
+                                                <div class="chip-text">Approved</div>
+                                            </div>
+                                        </div>
+                                        {% elif data.status == 2 %}
+                                        
+                                        <div class="chip chip-danger">
+                                            <div class="chip-body">
+                                                <div class="chip-text">Rejected</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                    
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Email</td>
+                                    <td>{{data.email}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Contact No</td>
+                                    <td>{{data.contact_no}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                   
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- account end -->
+        <!-- permissions start -->
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header border-bottom mx-2 px-0">
+                    <h6 class="border-bottom py-1 mb-0 font-medium-2"><i class="feather icon-lock mr-50 "></i>License Packages
+                    </h6>
+                </div>
+                <div class="card-body px-75">
+                    <div class="table-responsive users-view-permission">
+                        <table class="table table-borderless text-center">
+                            <thead>
+                                <tr>
+                                    <th>Licence Type</th>
+                                    <th>Concurrent Users</th>
+                                    <th>Admins</th>
+                                    <th>Well Managers</th>
+                                    <th>Well Engineers</th>
+                                    <th>Other Users</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for licence in licences %}
+                                <tr>
+                                    <td>
+                                        {{licence.package.name}}
+                                    </td>
+                                    <td>
+                                        {{licence.concurrent_users}}
+                                    </td>
+                                    <td>
+                                        {{licence.admins}}
+                                    </td>
+                                    <td>
+                                        {{licence.well_managers}}
+                                    </td>
+                                    <td>
+                                        {{licence.well_engineers}}
+                                    </td>
+                                    <td>
+                                        {{licence.other_users}}
+                                    </td>
+                                    
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- permissions end -->
+    </div>
+</section>
+{% endblock %}

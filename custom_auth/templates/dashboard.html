@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/owl-theme.css' %}"  referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<section>  
+  <div class="container-fluid">
+  <div class="row align-items-start common-row-space">
+    <div class="col-md-12 p-0 create-pg">
+      <div class="create_project_sec scroll-line new-cru-well">
+        {% include "header.html" %}
+        <div class="top-left-txt">
+          {% checklicense_expire request as check_expire %}
+            {% if check_expire %}
+            <h3>Your license has been expired</h3>
+            {% endif %}
+            {% if last_userlog %}
+            <h4>Last Activity :
+              <a {%if last_userlog.userlog_type != 'delete'%} href="{{last_userlog_url}}" {%endif%}>{{last_userlog_name}} {{last_userlog.message}}  </a>
+            
+              </h4>
+            {% endif %}
+          
+          </div>
+
+        <div class="page_header_com">
+          <h1 class="main-title">Project Summary</h1>
+
+          <div class="action_group proj_summary" style="display:flex;gap:20px">
+            {% if projects %}
+            <div class="custom-dropdown">
+              <div class="dropdown-header">
+                {% comment %} <span class="placeholder">All Country</span> {% endcomment %}
+                <button class="btn  dropdown-toggle placeholder1 btn-cls" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                  All Country
+                </button>
+              </div>
+              <div class="dropdown-card">
+                <ul>
+                  <from class="search-add">
+                  <input type="text" class="country-search form-control search-check-box" >
+                  <button type="submit">Search</button>
+                  </from>
+                  <div class="scroll-dashboard">
+                  <span class="checkbox-label border-btm" for="myCheckbox" style="display:flex">
+                    <input type="checkbox"class="check checkbox cls-rou select-all-icon" id="checkAll">
+                    <label for="checkbox" class="round-label select-lable"></label>
+                    <li>Select All</li>
+                </span>  
+                <div id="list-dropdown-country" >
+                {% for project_country in projects %}
+                {% getcountry_byid project_country.country as country_details %}
+
+                  <ul>
+              
+                    <span class="border-btm" style="display:flex">
+                      <input type="checkbox" class="check country-checkbox cls-rou" value="{{country_details.id}}">
+                      <label for="checkbox" class="round-label"></label>
+                      <li>{{country_details.name}}</li>
+                    </span>
+                  </ul>
+                  
+                {% endfor %}
+                </div>
+              </div>
+                <div class="apply-txt">
+                  <button class="apply_dropdown">Apply</button><button class="cancel_dropdown">Cancel</button>
+                </div>
+
+              </div>
+            </div>
+            {% endif %}
+              {% comment %} <select name="country" class="project_country_dashboard"  multiple="multiple">
+                  <option value="">------</option>
+                  {% for project_country in projects %}
+                  {% getcountry_byid project_country.country as country_details %}
+                    <option value="{{country_details.id}}">{{country_details.name}}</option>
+                  {% endfor %}
+          
+                </select> {% endcomment %}
+            <a href="/projects/create"><button class="btn addnew_btn btn_primary"><i class="ficon feather icon-plus-circle"></i> Create New
+            </button></a>
+          </div>
+
+        </div>
+
+        <div class="project-summary" id="dashboard_card">
+          <div class="project-country owl-carousel owl-theme">
+            {% for project_country in projects %} 
+        
+              {% getcountry_byid project_country.country as country_details %}
+              <div class="item">
+                <div class="card summary_card cards_list_dashboard dash-card" data-id="{{project_country.country}}" data-name="{{country_details.name}}">
+                  <div class="location"><i class="ficon feather icon-map-pin"></i> {{country_details.name}} 
+                  </div>
+                  <div class="row">
+                    <div class="col-4">
+                      <div class="count">{% get_totalprojects request country_details.id%}</div>
+                      <div class="title">Projects</div>
+                    </div>
+                    <div class="col-4">
+                      <div class="count">{% get_totalblocks request country_details.id %}</div>
+                      <div class="title">Blocks</div>
+                    </div>
+                    <div class="col-4">
+                      <div class="count">{% get_totalwells request country_details.id %}</div>
+                      <div class="title">Wells</div>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+            {%endfor%}
+        
+          </div>
+        </div>
+
+
+        <div class="project-well">
+          {% if projects %}
+          <div class='proj-name-show'><h2 class='proj-well-name'>All Projects</h2></div> 
+
+        <div class="icon-select">
+            <select name="select_filter" class="select_filter select-cls dropdown-toggle11">
+            <option value="projects">All Projects</option>
+            <option value="wells">All Wells</option>
+        </select>  
+        </div>
+        {% endif %}
+
+        {% comment %} <div class="dropdown">
+          <button class="btn select-cls dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            All Projects
+          </button>
+          <ul class="dropdown-menu" name="select_filter">
+            <li class="dropdown-item " value="projects" >All Projects</li>
+            <li class="dropdown-item " value="wells" >All Wells</li>
+          
+          </ul>
+        </div>  {% endcomment %}
+
+          
+        </div>
+
+        <div class="project-1">
+          <div>
+            <form class="search-add">
+            {% comment %} <div><i class="feather icon-search"></i></div>  {% endcomment %}
+            <input type="search" aria-label="Search" placeholder="Search" id="form-focus" value="" class="form-control search-dashboard-table">
+            <button type="submit">Search</button>
+            </form>
+          </div>
+          {% if projects %}
+          <div>
+            <a class="download-link cls-down" href="{% url 'custom_auth:download_template' %}" data-selected-values="" data-filter="" data-search=""> <img src="static\admin\img\Vector1.png"> </a>
+          </div>
+          {% endif %}
+        </div>
+
+        <table class="table  well_dashboardtable dashboardactivity-table m-0 table-width">             
+            <thead>
+                <tr class="table-bor">
+                    <th>Well Name</th>
+                    <th>Well Type</th>
+                    <th>Project Name</th>
+                    <th>Block Name</th>
+                    <th>Field Name</th>
+                    <th>Environment</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>  
+            
+            </tbody>
+        </table>
+
+
+        <table class="table project_dashboardtable dashboardactivity-table m-0 table-width">             
+          <thead>
+              <tr class="table-bor">
+                  <th>Project Name</th>
+                  <th>Default Units</th>
+                  <th>Country</th>
+                  <th>Total Actual Wells</th>
+                  <th>Total Plan Wells</th>
+                  <th>Total Offset Wells</th>
+              
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>  
+          
+          </tbody>
+        </table> 
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+
+
+
+{%endblock%} 
+{% block scripts %}
+{{block.super}}
+<script>
+  var csrf_token = '{{csrf_token}}'
+</script>
+
+<script src="{% static 'js/dashboard.js' %}"></script>
+
+
+{%endblock%}

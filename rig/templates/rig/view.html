@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+
+  
+  <div class="row align-items-start">
+    <!-- <div class="row" id="basic-table"> -->
+      {% getcountries countries as countries %}
+      {% include 'projectsidemenu.html' %} 
+      <div class="col-md-8 p-0  create-pg main-section col-md-10">  
+        <div class="create_project_sec_well scroll-line new-cru-well">
+          {% comment %} <div class="well-name-list">{{well.name}}</div>
+    <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+
+          {% include "projectheader.html" %}
+      <div class="col-md-12">
+        {% include "welldetails_menu.html" %} 
+      </div>
+      <div class="col-12">
+        {% include "welldetailssubmenu.html" %}  
+      </div>
+        <div class="rig-det">
+        <div class="row">
+          <div class="col-2">
+
+            {% include "rig_menu.html" %}  
+    
+    </div>
+        <div class="col-10">
+ 
+          <div class="card ">
+            
+            <div class="card-header">
+              <h4 class="card-title">Rig Details</h4>
+            </div>
+            <div class="table-responsive card-body">
+              <table class="table">
+                <tbody>
+                {%for rig in rig_data%}
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Rig Name</span>
+                    </th>
+                    <td>{{rig.rig_name}}</td>
+                  </tr>
+                
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Rig Contractor</span>
+                    </th>
+                    <td>{{rig.rig_contractor}}</td>
+                  </tr>
+                 
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Rig Type</span>
+                    </th>
+                    <td>{{rig.rig_type}}</td>
+                  </tr>
+                 
+                   {%endfor%}
+                </tbody>
+              </table>
+
+              <div class="row" id="basic-table">
+  
+                <div class="col-sm-9 offset-sm-3 bottom-button">
+                  
+                    <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect detail-button" href="{% url 'rig:delete' well_id %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+        
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'rig:edit' well_id %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+                </div>
+
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+        {% include "footer.html" %}
+      </div>
+      </div>
+
+      <!-- <div class="row" id="basic-table">
+  
+        <div class="col-sm-9 offset-sm-3">
+          
+            <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect detail-button" href="{% url 'rig:delete' well_id %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+
+            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'rig:edit' well_id %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+            <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+        </div>
+        </div> -->
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+          <div class="col-md-12 warning"></div>
+      </div>
+    </div>
+      
+    <script>
+      var storedArray = JSON.parse(sessionStorage.getItem("items"));
+      var well_id='{{well_id}}'
+      if(well_id == storedArray[1]){
+      $('.warning').show();
+      }else{
+      $('.warning').hide();
+      }
+    </script>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+  <script src="{% static 'js/menuactive.js' %}"></script>
+
+{%endblock%}

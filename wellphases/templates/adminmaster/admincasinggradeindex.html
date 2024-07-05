@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+    <div class="row" id="basic-table">
+
+      <div class="col-3">
+
+        {% include "casing_menu.html" %}  
+
+</div>
+        <div class="col-9">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Casing Grade</h4>
+            </div>
+            <div class="table-responsive">
+              <table class="table master-data-list-view">
+      
+                  <thead class="text-center">
+                      <tr>      
+                          <th>Name</th>
+                          <th>Actions</th>
+                          </tr>
+                  </thead>
+                  
+                  <tbody>
+                      {% for obj in casinggradevalue %}
+     
+                      <tr>
+                          <td>{{obj.grade_name}}</td>
+                          <td  class="text-center">
+                          <a href="{% url 'wellphases:admincasinggradeedit' pk=obj.id %}">
+                              <span class="action-edit"><i class="feather icon-edit"></i></span>
+                          </a>
+                          <a onclick="confirmation(event)" href="{% url 'wellphases:admincasinggradedelete' pk=obj.id %}">
+                            <span class="action-edit"><i class="feather icon-trash-2"></i></span>
+                          </a>
+                          </td>
+                        </tr>
+                        {% endfor %}
+      
+                  </tbody>
+              </table>
+          </div>
+                </div>
+        </div>
+      </div>
+
+    
+      
+    </section>
+
+{% endblock %}

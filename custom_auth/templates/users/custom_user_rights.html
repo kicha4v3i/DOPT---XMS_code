@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/user-rights/user_rights.css' %}">
+<section id="data-list-view" class="data-list-view-header user_rights_pg">
+    {% include "header.html" %}
+        <form action="" method="POST" name="userrights_form">
+            {% csrf_token %}
+            <div class="table-responsive table-hover table-striped user-table-lists">
+                <div class="table-title" style="caption-side: top"><h1 class="table-common text-center">User Rights</h1></div>
+                <div class="users-list">
+                    <table class="table userrights-table">
+                        <tbody>
+                            <tr>
+                                <td>Select All</td>
+                                <td>
+                                    <span class="round">
+                                        <input type="checkbox" class="user_rights poaselect_all">
+                                        <label for="checkbox" class="rou-label"></label>
+                                    </span>
+                                </td>
+                            </tr> 
+                            {% for value in user_modules %}
+                            <tr>
+                                <td>{{value.name}}</td>
+                                <td>
+                                    {% getuserrights groupid value.id company_id as user_check %}
+
+                                    <span class="round">
+                                        <input type="checkbox" class="user_rights" name="rights{{value.id}}" value="{{value.id}}" {% if user_check %} checked {% endif %}>
+                                        <label for="checkbox" class="rou-label"></label>
+                                    </span>
+                                </td>
+                         
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="user-rights-btn">
+                    <button type="submit" class="btn btn-primary  btn-inline detail-button mt-3">Submit</button>
+                </div>
+
+            </div>
+        </form>
+</section>
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/auth/poauserrights.js' %}"></script>
+{%endblock%}
+
+
+
+
+

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html class="loading" lang="en" data-textdirection="ltr">
+<!-- BEGIN: Head-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>Sign In -hydraulics</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600" rel="stylesheet">
+
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendors/css/vendors.min.css' %}">
+    <!-- END: Vendor CSS-->
+
+    <!-- BEGIN: Theme CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-extended.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/colors.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/themes/dark-layout.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/themes/semi-dark-layout.css' %}">
+
+    <!-- BEGIN: Page CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/core/menu/menu-types/vertical-menu.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/core/colors/palette-gradient.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pages/authentication.css' %}">
+    <!-- END: Page CSS-->
+
+    <!-- BEGIN: Custom CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <!-- END: Custom CSS-->
+
+</head>
+<!-- END: Head-->
+
+<!-- BEGIN: Body-->
+
+<body class="vertical-layout vertical-menu-modern 1-column  navbar-floating footer-static bg-full-screen-image  menu-collapsed blank-page blank-page" data-open="click" data-menu="vertical-menu-modern" data-col="1-column">
+    <!-- BEGIN: Content-->
+    <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+            </div>
+
+            
+
+            <div class="content-body">
+                <section class="row flexbox-container">
+                    <div class="col-xl-8 col-11 d-flex justify-content-center">
+                        <div class="card login-cart bg-authentication rounded-0 mb-0">
+                            <div class="login-logo header-logo">
+                                <img class="log-img-login" src="{% static 'images/logo.png' %}">
+                                </div> 
+                            <div class="row m-0">
+                             
+                                <div class="col-lg-12 col-12 p-0">
+                                    <div class="card rounded-0 mb-0 px-2">
+                                        
+                                        <!-- <div class="card-header pb-1">
+                                            <div class="card-title">
+                                                <h4 class="mb-0 card-title sign-title pb-0">Sign In</h4>
+                                            </div>
+                                        </div> -->
+                                        <p class="px-2 text-center">Welcome, Please Enter Licence Key.</p>
+                                        {% if messages %}
+                                        <ul class="messages">
+                                            {% for message in messages %}
+                                            <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                                            {% endfor %}
+                                        </ul>
+                                      {% endif %}
+                                        <div class="card-content">
+                                            <div class="card-body pt-1">
+                                                <form action="" method="POST" class="login_form">
+                                                  {% csrf_token %}
+
+                                                  <fieldset class="form-label-group form-group position-relative has-icon-left">
+                                                    <input type="text" class="form-control" name="licensekey" id="id_licensekey" placeholder="License key"  required>
+                                                    <i class="feather icon-shield"></i>
+                                                    </fieldset>
+                                                    <button type="submit" class="btn btn-primary float-right btn-inline detail-button">Submit</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="login-footer hidden" style="visibility: hidden;">
+                                            <div class="divider">
+                                                <div class="divider-text">OR</div>
+                                            </div>
+                                            <div class="footer-btn d-inline">
+                                                <a href="#" class="btn btn-facebook"><span class="fa fa-facebook"></span></a>
+                                                <a href="#" class="btn btn-twitter white"><span class="fa fa-twitter"></span></a>
+                                                <a href="#" class="btn btn-google"><span class="fa fa-google"></span></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+
+
+    <!-- BEGIN: Vendor JS-->
+    <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+    <!-- BEGIN Vendor JS-->
+
+    <!-- BEGIN: Page Vendor JS-->
+    <!-- END: Page Vendor JS-->
+
+    <!-- BEGIN: Theme JS-->
+    <script src="{% static 'js/core/app-menu.js' %}"></script>
+    <script src="{% static 'js/core/app.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+
+    <script src="{% static 'js/scripts/components.js' %}"></script>
+    <!-- END: Theme JS-->
+
+    <!-- BEGIN: Page JS-->
+    <!-- END: Page JS-->
+
+</body>
+<!-- END: Body-->
+<style>
+     body {
+    /* background-image: url("{% static 'images/iwells-map.jpg' %}"); */
+    background-size: cover;
+    background-position: center;
+    background: #eee;
+}   
+.card {     background: #fff;}
+.logo {
+    max-width: 300px;
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    height: 100%;
+}
+    </style>
+</html>

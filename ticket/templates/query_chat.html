@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load ticket_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/ticket.css' %}">
+</head>
+<body>
+    <section id="data-list-view" class="data-list-view-header query_pg">
+        <div class="container-fluid">
+        <div class="row align-items-start common-row-space">
+            <div class="col-md-12 p-0 create-pg">
+                <div class="create_project_sec scroll-line new-cru-well">
+                    {% include "header.html" %}
+                    <div class="overlay-bg">
+                        <div class="card p-0 chat_back_clr">
+                            <div class="chat-header">
+                                    <div class="inner-hed">
+                                        <div>
+                                            <img class="user-imggg" src="/media/profile_images/01_1.png">
+                                        </div>
+                                        <div>
+                                            <h5>Felecia Rower</h5>
+                                            <p class="mb-0">Developer</p>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div id="chat-messages">
+                                {% for allmessage in allmessages%}
+                                    {% getticketattachments_byticket allmessage as attachments %}
+                                    <div class="{% if request.user.id == allmessage.sender %} right_message {%else%} left_message {%endif%}">
+                                        <p>{{allmessage.message|striptags}}</p>
+                                        {% for attachment in attachments%}
+                                        <a href="{% url 'ticket:download_attachment' attachment.id %}" download>
+                                            {{attachment.name}}
+                                        </a>
+                                        {% endfor %}
+                                        <p class="msg-date">{{allmessage.timestamp|date:"Y-m-d H:i A"}}</p>
+
+                                    </div>
+                                   
+                                {% endfor %}
+                            </div>
+                            <div id="file_attachments">
+                                   
+                            </div>
+                            <div class="row form-group back-input-clr common-row-space">
+                                <div class="col-sm-10 pr-0">
+                                    <textarea id="ticket_input" name="ticket_input" class="form-control" placeholder="Enter Message"></textarea>
+                                </div>
+                                <div class="col-sm-2 pr-0 dis-chat">
+                                    <form method="POST" id="query_attachment_form" enctype="multipart/form-data" method="POST">
+                                        {% csrf_token %}
+                                        <input type="file" name="query_attachment_file" id="query_attachments" multiple style="display:none">
+                                        <input type="hidden" id="attachments_hidden">
+                                        <label for="query_attachments">
+                                            <i class="fa-solid fa-paperclip" ></i></label>
+                                    </form>
+                                    <span><button type="button" class="btn btn-primary custom-input2 send-btn" id="ticketsend-btn"><i class="fa-regular fa-paper-plane"></i>Send</button></span>
+                                </div>
+                            </div>
+                            
+
+                        </div>
+
+                    </div>
+                    {% include "footer.html" %}
+                </div>
+
+            </div>
+           
+        </div>
+    </div>
+    </section>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+</script>
+{% block scripts %}
+{{block.super}}
+<script>
+    var roomName = '{{ticket_id}}';
+    var sender='{{request.user.id}}'
+    var company_id='{{ticket_details.company_id}}'
+    var user_id='{{ticket_details.user_id}}'
+    var licence_type='{{ticket_details.licence_type}}'
+    var assigne='{{ticket_details.assigne}}'
+    var download_url = "{% url 'ticket:download_attachment' 0 %}"
+    var csrf_token = '{{csrf_token}}'
+    $('#uploadIcon').on('click', function() {
+        $('#query_attachments').trigger("click");
+    });
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/auth/user.js' %}"></script>
+<script src="{% static 'js/query_chat.js' %}"></script>
+
+{%endblock%}
+</html>
+{%endblock%}
+

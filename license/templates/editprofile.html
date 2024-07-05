@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/User/list_view.css' %}">
+
+<section id="data-list-view" class="data-list-view-header">
+
+    <div class="row align-items-start">
+       
+        <div class="col-md-12 p-0 create-pg">
+        <div class="create_project_sec scroll-line new-cru-well">
+           
+            {% include "header.html" %}
+            <form method="post" id="edituser_profile_form" name="edituser_profile_form" enctype="multipart/form-data">
+                {% csrf_token %}
+<div class="card card-create-user">
+            <div class="div mt-2 px-2 d-flex new-data-title justify-content-center">
+                <div>
+                    <h3 class="form-title table-title create_hed" >Edit Client Admin Details</h3>
+                </div>
+   
+            </div>
+            <input type="hidden" name="type_of_service" value="{{type_of_service}}">
+            <div class="data-items pb-3">
+                <div class="data-fields px-2 mt-2">
+                    <div class="row">
+                        <div class="col-sm-4 data-field-col">
+                            <label class="project-edit-name pb-1" for="data-name">Title</label>
+                            <select name="title" class="form-control" id="gender">
+                                <option value="">Select</option>
+                                <option value="Mr" {% if request.user.title == 'Mr'%} selected {%endif%}>Mr</option>
+                                <option value="Miss" {% if request.user.title == 'Miss'%} selected {%endif%}>Miss</option>
+                                <option value="Mrs" {% if request.user.title == 'Mrs'%} selected {%endif%}>Mrs</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 data-field-col">
+                            <label class="project-edit-name pb-1" for="data-name">First Name</label>
+                            <input type="text" class="form-control" onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)" id="name" name="name" value="{{request.user.name}}">
+                        </div>
+                        <div class="col-sm-4 data-field-col">
+                            <label class="project-edit-name pb-1" for="data-name">Last Name</label>
+                            <input type="text" class="form-control" onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)" id="last_name" name="lastname" value="{{request.user.lastname}}">
+                        </div>
+                    </div>
+                    <div class='row' style='margin-top:20px'>
+                        <div class="col-sm-4 data-field-col ">
+                            <label class="project-edit-name pb-1" for="data-name">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" autocomplete="off" value="{{request.user.email}}">
+                        </div>
+                        {% if request.user.licence_type != 'Individual' %}
+                        <div class="col-sm-4 data-field-col ">
+                            <label class="project-edit-name pb-1" for="data-name">Designation</label>
+                            <input type="text" class="form-control" id="designation" name="designation" autocomplete="off" value="{{request.user.designation}}">
+                        </div> 
+                        {%endif%}
+                        <div class="col-sm-4 data-field-col ">
+                            <label class="project-edit-name pb-1" for="data-name">Profile Image</label>
+                            <input type="file" class="" id="profile_image" name="profile_image">
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <div class="add-data-footer d-flex justify-content-around px-3">
+                <div class="add-data-btn adduserform_btn" >
+                    <button class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Create</button>
+                </div>
+
+            </div>
+            <div>
+        </form>
+
+    
+
+    
+    </div>
+    
+    </div>
+    <!-- <div class="col-md-2">
+        {% include "userheader.html" %}
+    </div> -->
+    </div>
+    {% include "footer.html" %}
+    <!-- add new sidebar ends -->
+</section>
+<style>
+.iconaction
+{
+    border:0;
+    background:transparent;
+    box-shadow:none;
+    font-size:15px;
+    color:#7c0201;
+}
+</style>
+{% endblock %}

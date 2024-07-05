@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/project/view_project.css' %}">
+     
+<div class="container-fluid">
+<div class="row">
+      <div class="col-12  create-pg"> 
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+          <div class="card pb-2">
+        <div class="col-12">
+            <div class="row justify-content-between">
+            <div>
+              <div class="card-header p-0">
+                <h4 class="card-title project-title p-2">Project Details</h4>
+              </div>
+            </div>
+              <div class="p-2">
+                <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table ">
+                <tbody>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Project Name</span>
+                    </th>
+                    <td>{{project.project_name}}</td>
+                  </tr>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Country Name</span>
+                    </th>
+                    <td>{{project.country.name}}</td>
+                  </tr>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Unit</span>
+                    </th>
+                    <td>{{project.unit}}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="font-weight-bold">Block Name</span> <br>
+                    </td>
+                    <td>
+                      <span class="font-weight-bold">Field Name</span> <br>
+                    </td>
+                  </tr>
+                  {% for block in projectblock %}
+                  <tr>
+                    <td>
+                      <p>{{block.block_name}}</p>
+                    </td>
+                    <td>                          
+                      {% for field in block.id|getprojectfield:project_details.id %}
+                        <p>{{field.field_name}}</p>
+                      {% endfor %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  {% if request.user.licence_type != 'Individual' %}
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Project Users</span>
+                    </th>
+                    <td>
+
+                        <div class="demo-inline-spacing">
+                            {% for user_id,name,lastname in projectusers%}
+
+                            <div class="badge badge-primary">
+                              <i data-feather="trash" class="mr-25"></i>
+                              <span>{{name}} {{lastname}}
+                            </span>
+                            </div>
+                            {% endfor %}
+
+                            </div>
+                    </td>
+                  </tr>
+                  {%endif%}
+
+                  
+                </tbody>
+              </table>
+              <div class="row pt-2 btom_but" id="basic-table button-types">
+              <div class="col-sm-12">
+                <a onclick="confirmation(event)" class="btn btn-outline-danger waves-effect detail-button  " href="{% url 'projects:delete' project.pk %}"> <span class="action-delete-project"><i class="feather icon-trash"></i> Delete</span></a>
+                <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button " href="{% url 'projects:edit' project.pk %}">  <span class="action-edit-project"><i class="feather icon-edit"></i> Edit</span></a>
+                {% if request.user.licence_type != 'Individual' %}
+                <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button add-project-user">  <span class="action-edit-project"><i class="feather icon-edit"></i> Add Users</span></a>
+                <input type="hidden" id="adduser_url" value="{% url 'projects:createprojectusers' 0 %}">
+                {% endif  %}
+                {% user_rights_permission user_rights_privilege request as value %}
+                {% check_useraccess 'project' project.id request as access %}
+                {% if value or access %}
+            
+                <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button add_well" id="createwell" href="{% url 'wells:createwithproject' project.pk %}">  <span class="action-edit-project"><i class="feather icon-plus-circle"></i> Add Well</span></a>
+        
+                {% endif %}
+    
+               
+              </div>
+          </div> 
+
+            </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+       
+      </div>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+    </div>
+<script>
+  var usercount='{{usercount}}'
+  var project_id='{{project.pk}}'
+</script>
+<script src="{% static 'js/projects/projectview.js' %}"></script>
+
+{%endblock%}
+

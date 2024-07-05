@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<section id="data-list-view" class="data-list-view-header">
+  <div class="container-fluid">
+  <div class="row align-items-start common-row-space">
+    <div class="col-md-12  create-pg">
+      <div class="create_project_sec">
+        {% include "header.html" %}
+        <div class="card import-box card-create-user">
+          <div class="card-header">
+            <h4 class="card-title">Import Data</h4>
+          </div>
+          <div class="card-body import">
+            <!-- <form class="form form-horizontal" method="post">
+               {% csrf_token %}
+               {{ form.as_p }}
+               <input type="submit" value="Submit" />
+           </form>-->
+
+            <button type="submit" class="btn btn-primary detail-button"> <a
+                href="{% url 'pressure:download_xls_data' well_id %}"> <span
+                  class="action-create-well"><i class="feather "></i>Download
+                  format</span></a></button>
+
+          </div>
+
+          <div class="card-body">
+            <!-- <form class="form form-horizontal" method="post">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <input type="submit" value="Submit" />
+          </form>-->
+
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="well_phase">Pressure Unit</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <select name="pressure_unit" class="form-control"
+                      id="pressureunit">
+                      {% if request.session.unit == "SI" %}
+                      <option value="g/cc">g/cc</option>
+                      <option value="kPa">kPa</option>
+                      <option value="kPa/m">kPa/m</option>
+
+                      {% elif request.session.unit == "API" %}
+                      <option value="ppg">ppg</option>
+                      <option value="psi">psi</option>
+                      <option value="psi/ft">psi/ft</option>
+
+                      {% else %}
+                      <option value="g/cc">g/cc</option>
+                      <option value="kPa">kPa</option>
+                      <option value="kPa/m">kPa/m</option>
+                      <option value="ppg">ppg</option>
+                      <option value="psi">psi</option>
+                      <option value="psi/ft">psi/ft</option>
+
+                      {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <input type="file" name="myfile">
+                <button type="submit" class="detail-button import_upload">Upload</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+</section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+</style>
+
+{% endblock %}

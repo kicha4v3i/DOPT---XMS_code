@@ -1,0 +1,38 @@
+label#longtitudeGroup-error {
+position: absolute;
+bottom: -10px;
+ left: 15px;
+}
+label#latitudeGroup-error {
+ position: absolute;
+ bottom: -10px;
+ left: 15px;
+ }
+
+ label#well_type-error {
+ position: absolute;
+ bottom: -15px;
+ border: none;
+left: 10px;
+box-shadow: none !important;
+width:100%;
+text-align:left;
+}
+
+label#well_type-error:hover {
+background: none;
+border: none !important;
+  }
+
+label#environment-error:hover {
+ background: none;
+box-shadow: none;
+ }
+ label#environment-error {
+ position: absolute;
+ bottom: -40px;
+ left: -19px;
+ border: none;
+ width: 100% !important;
+ text-align: left;
+}

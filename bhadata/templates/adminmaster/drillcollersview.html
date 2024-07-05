@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+
+  
+<section>
+  <div class="container-fluid">
+    <div class="row common-row-space" id="">
+      <div class="col-md-10  create-pg p-0">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Drill Collars Details</h4>
+            </div>
+            <div class="card-body">
+            <div class="table-responsive"> 
+              
+              <table class="table dataTable no-footer" id="collar-master">
+                <thead>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Nominal OD(in)</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Nominal ID(in)</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Weight(ppf)</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Type</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Connection Type</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Tool OD(in)</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Tool ID(in)</span>
+                    </th>
+                    
+                  </tr>            
+                </thead>
+                <tbody>
+                  {% for drill in drillcollers %}
+                  <tr>
+                    <td>
+                      {%if drill.normal_od%}{{ drill.normal_od }} in{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.normal_id%}{{ drill.normal_id}} in{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.weight%}{{ drill.weight}} ppf{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.pipe_type%}{{ drill.pipe_type }}{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.connection_type%} {{ drill.connection_type}}{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.tool_od%}{{ drill.tool_od}} in{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.tool_id%}{{ drill.tool_id }} in{%endif%}
+                    </td>
+                  </tr>  
+                  {% endfor %}
+          
+                </tbody>
+              </table>
+
+              <div class="row" id="basic-table">
+  
+                <div class="col-sm-12 p-0">
+                    <!-- <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect pull-right" href="{% url 'bhadata:admindrillcollersdelete'  %}" > <span class="action-delete-well delete"><i class="feather icon-trash delete"></i> Delete</span></a> -->
+        
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'bhadata:admindrillcollersedit'  %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                    <a class="btn btn-primary  pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+                
+                </div>
+              </div>
+            
+
+            </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+      </div>
+      </div>
+      <div class="col-md-2">
+        {% include "userheader.html" %}
+    </div>
+      </div>
+    </div>
+      
+      
+    </section>
+    <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+    <script>
+    $(function() {
+      $('#collar-master').DataTable({
+        "ordering": false
+      });
+    });
+</script>
+
+{% endblock %}

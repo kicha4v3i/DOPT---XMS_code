@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+    <div class="row" id="">
+      <div class="col-md-12  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+        <div class="col-9.5">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">HWDP Edit</h4>
+            </div>
+            <form method="post" id="drillpipeform" novalidate>
+                {% csrf_token %}              
+                <div class="row">
+                    <div class="col-12">
+                      <div class="form-group row">
+                        <div class="col-sm-3 col-form-label">
+                          <label for="well_phase">Unit</label>
+                        </div>
+                        <div class="col-sm-4">
+                          <select class="form-control" id="inputUnit" name="unit">
+                            <option value="">-- unit --</option>
+                            <option value="API" {% if "API" == unit %} selected {% endif %}>API</option>  
+                            <option value="SI" {% if "SI" == unit %} selected {% endif %}>SI</option>  
+
+                        </select>
+                        </div>
+                        <table class="table" id="drillpipetable">             
+                            {% comment %} <tr><th>Nominal OD{% display_diameterunit request.session.unit %}</th><th>Class</th><th>Pipe OD{%display_diameterunit request.session.unit%}</th><th>Weight</th><th>Pipe ID{%display_diameterunit request.session.unit%}</th><th>Connection type</th><th>Tool OD{%display_diameterunit request.session.unit%}</th><th>Tool ID{%display_diameterunit request.session.unit%}</th><th>Box Length{%display_lengthunit request.session.unit%}</th><th>Pin Length{%display_lengthunit request.session.unit%}</th><th>ACTIONS</th></tr> {% endcomment %}
+                            {%for drill in drillhwdp%}
+                            <tr id="drillpiperow">
+                                <td><input id="nominal_od" type="text" class="form-control" name="nominal_od" value="{{drill.nominal_od}}" ></td>
+                                <td><input id="class_type" type="text" class="form-control" name="class_type"value="{{drill.class_type}}"></td>
+                                <td><input id="pipebody_od" type="text" class="form-control" name="pipebody_od" value="{{drill.pipebody_od}}"></td>
+                                <td><input id="weight" type="text" class="form-control" name="weight" value="{{drill.weight}}" ></td>
+                                <td><input id="pipebody_id" type="text" class="form-control" name="pipebody_id" value="{{drill.pipebody_id}}" ></td>
+                                <td><input id="connection_type" type="text" class="form-control" name="connection_type" value="{{drill.connection_type}}" ></td>
+                                <td><input id="tool_od" type="text" class="form-control" name="tool_od" value="{{drill.tool_od}}" ></td>
+                                <td><input id="tool_id" type="text" class="form-control" name="tool_id" value="{{drill.tool_id}}" ></td>
+                                <td><input id="box_length" type="text" class="form-control" name="box_length" value="{{drill.box_length}}" ></td>
+                                <td><input id="pin_length" type="text" class="form-control" name="pin_length" value="{{drill.pin_length}}" ></td>
+                                <td>
+                                    <a type="button" name="add" id="iconaction" class="drillpipeaddrow iconaction"><i class="fa fa-plus"></i></a>
+                                    <a type="button" name="removerow" id="iconaction"  class="drillpiperemoverows iconaction"><i class="fa fa-trash"></i></a>
+                                </td>        
+                            </tr>
+                         {%endfor%}  
+                         <tr id="drillpiperow2" style="display:none">
+                          <td><input id="nominal_od" type="text" class="form-control" name="nominal_od" placeholder="Nominal OD" ></td>
+                          <td><input id="class_type" type="text" class="form-control" name="class_type" placeholder="Type" ></td>
+                          <td><input id="pipebody_od" type="text" class="form-control" name="pipebody_od" placeholder="Pipe OD" ></td>
+                          <td><input id="weight" type="text" class="form-control" name="weight" placeholder="Weight" ></td>
+                          <td><input id="pipebody_id" type="text" class="form-control" name="pipebody_id" placeholder="Pipe ID" ></td>
+                          <td><input id="connection_type" type="text" class="form-control" name="connection_type" placeholder="Connection type" ></td>
+                          <td><input id="tool_od" type="text" class="form-control" name="tool_od" placeholder="Tool OD" ></td>
+                          <td><input id="tool_id" type="text" class="form-control" name="tool_id" placeholder="Tool ID" ></td>
+                          <td><input id="box_length" type="text" class="form-control" name="box_length" placeholder="Box Length" ></td>
+                          <td><input id="pin_length" type="text" class="form-control" name="pin_length" placeholder="Pin Length" ></td>
+                          <td>
+                              <a type="button" name="add"  id="iconaction" class="drillpipeaddrow iconaction"><i class="fa fa-plus"></i></a>
+                              <a type="button" name="removerow" id="iconaction" class="drillpiperemoverows iconaction"><i class="fa fa-trash"></i></a>
+                          </td>        
+                      </tr> 
+                        </table>
+                        <div class="col-sm-12">
+                        <button type="submit" class="btn btn-primary detail-button">submit</button>
+                        <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+          </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <!-- <div class="col-md-2">
+          {% include "userheader.html" %}
+      </div> -->
+      </div>
+
+</section>
+<style>
+    #iconaction
+  {
+    border:0;
+    background:transparent;
+    box-shadow:none;
+    font-size:15px;
+    color:#7e0302;
+  }
+  </style>
+
+  
+{% endblock %}

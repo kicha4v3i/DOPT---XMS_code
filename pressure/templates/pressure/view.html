@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<div class="row align-items-start">
+  {% getcountries countries as countries %}
+  {% include 'projectsidemenu.html' %} 
+  
+  
+    <!-- <div class="row" id="basic-table"> -->
+      
+          <div class="col-12 p-0  create-pg main-section "> 
+          <div class="create_project_sec_well scroll-line new-cru-well">
+            {% comment %} <div class="well-name-list">{{well.name}}</div>
+            <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+            {% include "projectheader.html" %}
+      <input type="hidden" id="pressureunit" class="form-control" name="pressureunit" value="{{og_unit}}"}>
+      <input type="hidden" id="tvdunit" class="form-control" name="tvdunit" value="{%display_depthunit request.session.unit%}"}>
+      <input type="hidden" id="well_id" class="form-control" name="well_id" value="{{well_id}}"}>
+      {% csrf_token %}
+      <div class="col-12">
+        {% include "welldetails_menu.html" %}  
+      </div>
+      <div class="col-12">
+        {% include "welldetailssubmenu.html" %}  
+      </div>
+        <div class="col-12">
+ 
+          <div class="card bx-shadow">
+            
+            <div class="card-header">
+              <h4 class="card-title table-title">Pore Pressure and Frac Pressure</h4>
+            </div>
+            <div class="card-body">
+            <div class="table-responsive table-hover table-striped">
+              <div class="pressure_tab">
+               
+                {% if request.session.unit == "SI" %}
+
+                <a href="?unit=g/cc" class="{% if og_unit == 'g/cc' %}active{% endif %}">g/cc</a>
+                <a href="?unit=kPa" class="{% if og_unit == 'kPa' %}active{% endif %}">kPa</a>
+                <a href="?unit=kPa/m" class="{% if og_unit == 'kPa/m' %}active{% endif %}">kPa/m</a>
+
+                {% elif request.session.unit == "API" %}
+              
+                <a href="?unit=ppg" class="{% if og_unit == 'ppg' %}active{% endif %}">ppg</a>
+                <a href="?unit=psi" class="{% if og_unit == 'psi' %}active{% endif %}">psi</a>
+                <a href="?unit=psi/ft" id="psift" class="{%if og_unit == 'psi/ft' %}active{% endif %}">psi/ft</a>
+
+                {% else %}
+                <a href="?unit=g/cc">g/cc</a>
+                <a href="?unit=kPa">kPa</a>
+                <a href="?unit=kPa/m">kPa/m</a>
+                <a href="?unit=ppg">ppg</a>
+                <a href="?unit=psi">psi</a>
+                <a href="?unit=psi/ft">psi/ft</a>
+
+                {% endif %}
+               
+
+                <!-- <center><a id="ppg" class="units">ppg</a> | <a id="psi" class="units">psi</a> | <a class="units" id="psift">psi/ft</a></center> -->
+              </div>
+              <!-- <div>
+                <center><a id="gcc" class="units">g/cc</a> | <a id="MPa" class="units">MPa</a> | <a class="units" id="MPa_m">MPa/m</a></center>
+              </div> -->
+              <table class="table text-center table-striped table-hover table_css dataTable no-footer table_css" id="pressuretable">
+                <thead>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">MD({%display_depthunit request.session.unit%})</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">TVD({%display_depthunit request.session.unit%})</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Pore Pressure ({{og_unit}})</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Fracture Pressure ({{og_unit}})</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Comments</span>
+                    </th>
+                   
+                  </tr>            
+                </thead>
+                <tbody>
+
+                  {% for data in pressure %}
+
+                  <tr>
+                    <td class="text-center">
+                      {%if data.measured_depth and data.measured_depth > 0  %} {{ data.measured_depth|floatformat:2}}{% else %}0{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if data.true_vertical_depth and data.true_vertical_depth > 0 %}{{ data.true_vertical_depth }}{% else %}0{%endif%}
+                    <input type="hidden" class="tvd" value="{%if data.true_vertical_depth%}{{ data.true_vertical_depth }}{%endif%}">
+                    </td>
+                    <td class="pore_pressures text-center">
+                      {%if data.pore_pressure and data.pore_pressure > 0 %}{{data|changeporepressureunit:og_unit}} {% else %}0 {%endif%}
+
+                      <input type="hidden" class="pore_pressure" value="{%if data.pore_pressure%}{{data|changeporepressureunit:og_unit}}{%endif%}">
+                    </td>
+                    <td class="fracture_pressures text-center">
+                      {%if data.fracture_pressure and data.fracture_pressure > 0 %}{{data|changefracpressureunit:og_unit}} {% else %}0{%endif%}
+                      <input type="hidden" class="fracture_pressure" value="{%if data.fracture_pressure%}{{data|changefracpressureunit:og_unit}}{%endif%}">
+                    </td>
+                    <td>
+                      {%if data.comments%}{{ data.comments }}{%endif%}
+                    </td>
+                  </tr>  
+                  {% endfor %}
+
+                </tbody>
+              </table>
+
+              <div class="row" id="basic-table">
+  
+                <div class="col-sm-9 offset-sm-3">
+                    <a onclick="confirmation(event)" class="btn btn-outline-primary ml-1 waves-effect detail-button-reset" href="{% url 'pressure:delete' well_id %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light  detail-button" href="{% url 'pressure:edit' well_id %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'pressure:create' well_id %}">  <span class="action-create-well"><i class="feather "></i> Add new</span></a> 
+                   <!-- <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right" href="{% url 'pressure:importpressure' well_id %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>-->
+                    <!-- <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right" href="{% url 'pressure:create' well_id %}">  <span class="action-create-well"><i class="feather "></i> Add new</span></a> -->
+                   <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'pressure:importpressure' well_id %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>
+                   <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div> 
+                </div>   
+                {%if og_unit != 'psi/ft' %}
+                <figure class="highcharts-figure charts" id="charts" >
+                  <div id="pore_pressurecontainer" class="gra-pore" ></div>
+                 
+                </figure>
+                {%endif%}
+
+              <!-- <div class="card">
+              <div class="card-header">
+              <div class="card-title" >
+              {% if pressure.has_other_pages %}
+              <ul class="pagination">
+                {% if pressure.has_previous %}
+                  <li><a href="?page={{ pressure.previous_page_number }}&unit={{og_unit}}">&laquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in pressure.paginator.page_range %}
+                  {% if pressure.number == i %}&nbsp;&nbsp;
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                  {% else %}&nbsp;&nbsp;
+                    <li><a href="?page={{ i }}&unit={{og_unit}}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}&nbsp;&nbsp;
+                {% if pressure.has_next %}
+                  <li><a href="?page={{ pressure.next_page_number }}&unit={{og_unit}}">&raquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+              </ul>
+            {% endif %}
+          </div>
+            </div>
+            </div> -->
+           
+            </div>
+          </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+          </div>
+        </div>
+      
+      </div>
+      
+      
+       
+
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/pressureview.js' %}"></script>
+
+{%endblock%}

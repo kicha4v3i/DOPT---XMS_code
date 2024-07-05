@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/User/list_view.css' %}">
+
+<section id="data-list-view" class="data-list-view-header">
+    <div class="container-fluid">
+    <div class="action-btns d-none">
+
+    </div>
+    <div class="row align-items-start common-row-space">
+       
+        <div class="col-md-12 p-0 create-pg">
+        <div class="create_project_sec scroll-line new-cru-well">
+            <!-- <button class="hide-show fa fa-long-arrow-left"></button> -->
+            {% include "header.html" %}
+    <!-- DataTable starts -->
+
+    <div class="table-responsive user-table-lists">
+
+        <div class="">
+
+        {% comment %} <table class="table data-list-view">
+            <caption class="table-title" style="caption-side: top"><h1>Users List</h1></caption> {% endcomment %}
+           
+            {% comment %} {% if currentuser.licence_type != 'Individual' %} 
+            {% user_rights_permission 'Manage Users' request as manageuser %}
+
+            
+                {% if manageuser %}
+
+                <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button " href="{% url 'custom_auth:user_create' %}" >  <span class="action-edit-project"><i class="feather icon-plus-circle"></i> Add user</span></a> 
+                {% endif %}
+            
+                {% endif %}
+  {% endcomment %}
+            
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="card">
+        <div class="card-header ">
+            <h4 class="card-title">Users List</h4>
+          </div>
+          {% if currentuser.licence_type != 'Individual' %} 
+            {% user_rights_permission 'Manage Users' request as manageuser %}
+
+            
+                {% if manageuser %}
+
+                <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button " href="{% url 'custom_auth:user_create' %}" >  <span class="action-edit-project"><i class="feather icon-plus-circle"></i> Add user</span></a> 
+                {% endif %}
+            
+                {% endif %}
+    <table class="table data-list-view table-border-user">
+        {% comment %} <caption class="table-title" style="caption-side: top"><h1>Users List</h1></caption> {% endcomment %}
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Designation</th>
+                    <th>Role</th>
+                    {% if manageuser %}
+                    <th class="text-center">Actions</th>
+                    {%endif%}
+                </tr>
+            </thead>
+            <tbody>
+              
+                {% for obj in data %}
+                {% getusergroup obj.id as role %}
+                <tr class="user-lists">
+                    <td class="name" data-id="{{obj.id}}" data-value="{{obj.name}}" data-role="{{role}}">{{forloop.counter}} </td>
+
+                    <td class="name" data-id="{{obj.id}}" data-value="{{obj.name}}" data-role="{{role}}">{{obj.name}} {{obj.lastname}}</td>
+                    <input type="hidden" id="title" value="{{obj.title}}" class="title" data-value="{{obj.title}}">
+                    <td class="email" data-value="{{obj.email}}">{{obj.email}}</td>
+                    <!-- <td class="id" data-value="{{obj.id}}">
+                        <div class="chip chip-warning">
+                            <div class="chip-body">
+                                <div class="chip-text">{{ obj.is_active|yesno:'Active,Inactive' }}
+                                    </div>
+                            </div>
+                        </div>
+                    
+                    </td> -->
+                    <!-- <td class="group" data-value="{{obj.groups.all.0.id}}"> -->
+
+
+                      
+
+                        
+                  
+
+                    <td class="designation" data-value="{{obj.designation}}">{{obj.designation}}</td>
+                    <td class="role" data-value="{{obj.id|get_user_roles}}">
+                        {{obj.id|get_user_roles}}
+                       
+                    </td>
+
+                    <td class="product-action common-txt-center ali-cls">
+                        {% if manageuser %} 
+                        <a href="{% url 'custom_auth:userdetail' obj.id %}" class="user-reset user-icons" data-id="{{obj.id}}" title="View User">
+                            <span class="user-icons">
+                                <i class="fa-solid fa-eye"></i>
+                            </span>
+                        </a>
+                       
+                        <form class="edit-form" method="POST">
+                            {% csrf_token %}
+                            <span class="action-edit user-action-edit user-icons">
+                                <input type="hidden" name="user_id" class="user_id_value" value="{{ obj.id }}">
+                                <i class="fa-solid fa-pen-to-square" class="edit-icon"></i>
+                            </span>
+                        </form>
+                    
+                       
+                        <a href="{% url 'custom_auth:reset_password' obj.id %}" class="user-reset user-icons" data-id="{{obj.id}}" title="Reset Password">
+                            <span class="user-icons">
+                                <i class="fa-solid fa-key"></i>
+                            </span>
+                        </a>
+                        {%endif%}
+                        {% user_rights_permission 'Transfer User' request as transfer_user %}
+                        {% if transfer_user or manageuser %}
+                            <!-- <span class="user-delete user-icons" data-id="{{obj.id}}"> -->
+                            <span class="user-delete user-icons" data-id="{{obj.id}}">
+                                <i class="fa-solid fa-trash"></i>
+                            </span>
+                        {%endif%}
+
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+        </div>
+    </div>
+    <!-- DataTable ends -->
+
+    <!-- add new sidebar starts -->
+    
+    <div class="add-new-data-sidebar" >
+        <div class="overlay-bg"></div>
+        <div class="add-new-data" style="overflow-y:scroll">
+            <form action="{% url 'custom_auth:usercreate' %}" method="post" id="adduserform" name="adduserform">
+                {% csrf_token %}
+
+            <div class="div mt-2 px-2 d-flex new-data-title justify-content-between">
+                <div>
+                    <h4 class="text-uppercase form-title table-title"> User</h4>
+                </div>
+                <div class="hide-data-sidebar">
+                    <i class="feather icon-x"></i>
+                </div>
+            </div>
+            <div class="data-items pb-3">
+                <div class="data-fields px-2 mt-3">
+                    <div class="row">
+                        <div class="col-sm-12 data-field-col">
+                            <label class="project-edit-name" for="data-name">Title</label>
+                            <select name="title" class="form-control" id="gender">
+                                <option value="">Select</option>
+                                <option value="Miss">Miss</option>
+                                <option value="Mrs">Mrs</option>
+                                <option value="Mr">Mr</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-12 data-field-col">
+                            <label class="project-edit-name" for="data-name">First Name</label>
+                            <input type="text" class="form-control" onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)" id="name" name="name">
+                        </div>
+                        <div class="col-sm-12 data-field-col">
+                            <label class="project-edit-name" for="data-name">Last Name</label>
+                            <input type="hidden" class="form-control" id="id" name="id" autocomplete="off">
+                            <input type="text" class="form-control" onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)" id="last_name" name="lastname">
+                        </div>
+                        <div class="col-sm-12 data-field-col ">
+                            <label class="project-edit-name" for="data-name">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" autocomplete="off">
+                        </div>
+                       
+                        <!-- this is old now change create user form so its commented -->
+                        <!-- <div class="col-sm-12 data-field-col password">
+                            <label class="project-edit-name"   for="data-name">Password</label>
+                            <fieldset>
+                                <div class="controls">
+                                    <div>
+                                        <input type="password" class="form-control passwordfield" id="password" name="password">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text pwd-ieyes" id="eye"><i class="feather icon-eye-off"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-sm-12 data-field-col confirmpassword">
+                            <label class="project-edit-name" for="data-name">Confirm Password</label>
+                            <fieldset>
+                                <div class="controls">
+                                    <div >
+                                        <input type="password" class="form-control conformpasswordfield" id="confirmpassword" name="confirmpassword">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text i-eyes" id="eyes"><i class="feather icon-eye-off"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div> -->
+                        <div class="col-sm-12 data-field-col ">
+                            <label class="project-edit-name" for="data-name">Designation</label>
+                            <input type="text" class="form-control" id="designation" name="designation" autocomplete="off" >
+                        </div> 
+                        
+                        {% if request.user.licence_type != 'Individual' %}
+                        {% user_rights_permission 'Change User Type' request as checkpermission %}
+
+
+                        <div class="col-sm-12 data-field-col">
+                            <label class="project-edit-name" for="data-name">Role{{checkpermission}}  {{manageuser}}</label>
+                            <select class="custom-select" id="group" name="group" {% if not checkpermission and not manageuser %}disabled style="background-color: #f5f0f0;color: black;"{% endif %}>
+                                <option value="">---Select Role---</option>
+                                {% for val in groups %}
+                                    <option value="{{ val.id }}">{{ val.name }}</option>
+                                {% endfor %}
+                                <option value="new">Custom</option>
+
+                            </select>
+                        </div>
+
+                        <div class="col-sm-12 data-field-col custom_role_div">
+                            <label class="project-edit-name" for="data-name">Custom Role</label>
+                            <input type="text" class="form-control" id="custom_role" name="custom_role" autocomplete="off" >
+                        </div> 
+                        {% endif %}
+
+
+                    
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="add-data-footer d-flex justify-content-around px-3 mt-2">
+                <div class="add-data-btn">
+                    <button class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                </div>
+                <div class="cancel-data-btn">
+                    <button class="btn btn-outline-secondary waves-effect detail-button-reset">Cancel</button>
+                </div>
+                <div id="migrateuser-url" data-base-url="{% url 'projects:migrateuser' 0 %}"></div>
+
+            </div>
+        </form>
+
+        </div>
+      
+    </div>
+    {% include "footer.html" %}
+    </div>
+    
+    </div>
+    <!-- <div class="col-md-2">
+        {% include "userheader.html" %}
+    </div> -->
+    </div>
+    <!-- add new sidebar ends -->
+</div>
+</section>
+<style>
+.iconaction
+{
+    border:0;
+    background:transparent;
+    box-shadow:none;
+    font-size:15px;
+    color:#7c0201;
+}
+</style>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+    var csrf = '{{ csrf_token }}';
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/auth/user.js' %}"></script>
+{%endblock%}

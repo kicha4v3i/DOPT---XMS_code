@@ -1,0 +1,196 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<div class="row align-items-start">
+  {% getcountries countries as countries %}
+  {% include 'projectsidemenu.html' %} 
+
+    <div class="col-md-8 p-0  create-pg main-section col-md-10">
+      <div class="create_project_sec scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+      <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+
+        {% include "projectheader.html" %}
+    <div class="col-12">
+        {% include "welldetails_menu.html" %} 
+    </div>
+    <div class="col-12">
+        <div class="sample-sub-menu">
+          <div class="container">
+          <div class="row menu-button menu-types">
+            <!-- <div class="col-md-2"></div> -->
+            <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+                    <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+                </div>
+            </div>
+            <!-- <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'rheogram' %}active{% endif %}">
+                    <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+                </div>
+            </div> -->
+            <div class="col-md-3 data-drill">
+                <div class="sub-list drill-data {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+                    <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                    <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                </div>
+            </div>
+            <div class="col-md-3 data-drill">
+              <div class="sub-list drill-data2  {% if request.session.submenu == 'hydraulics' %}active{% endif %}">
+              <a href="{% url 'muddata:calculateallpressureloss' wellphase_id %}" id="bhadata"> Hydraulics</a>
+            </div>
+          </div>
+            <!-- <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                     <a href="{% url 'muddata:pressurelawcalculation' wellphase_id %}" id="bhadata">Bore Pressure Loss</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+              <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                  <a href="{% url 'muddata:annuluspressureloss' wellphase_id %}" id="bhadata">Annulus Pressure Loss</a>
+              </div>
+          </div> -->
+          </div>
+          </div>
+        </div>
+    </div>
+    
+
+    
+        <!-- <div class="col-2">
+            {% for wellphase in wellphases %}
+              <div class="row">
+                <div class="col-12">
+                  <a href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                </div>
+              </div>
+                           
+            {% endfor %}
+          </div> -->
+          
+        <div class="col-12">
+            <!-- <div class="sample-sub-menu">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="sub-list active">
+                        <a href="{% url 'muddata:list' wellphase_id %}" id="mud"> Mud Data </a>
+                        </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="sub-list">
+                        <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+                        </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="sub-list">
+                        <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                        </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="sub-list">
+                        <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                        </div>
+                </div>
+            </div>
+            </div> -->
+            <div class="bhd-side-marg">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">BHA Data List</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive table-striped table-hover">
+                            <table class="table bhadata-data-list-view table_css dataTable no-footer">
+                            <thead>
+                                <tr>
+                                    <th>WellPhase Name</th>
+                                    {%if welltype == 'ACTUAL' %}
+                                    <th>Date</th>
+                                    {%endif%}
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bhadata in data %}
+                                <tr>
+                                    <td>{{bhadata.well_phases.phase_name}}</td>
+                                    {%if welltype == 'ACTUAL' %}
+                                    <td class="text-center">{{bhadata.date}}</td>
+                                    {%endif%}
+                                    <td class="product-action text-center">
+                                        <a href="{% url 'bhadata:detail' bhadata.id %}?wellphase={{wellphase_id}}"><span class="action-list-well"><i class="feather icon-eye"></i></span></a>
+                                        {% user_rights_permission 'Edit Data' request as checkpermission %}
+                                        {% if checkpermission %}
+                                        <a href="{% url 'bhadata:edit' bhadata.id %}?wellphase={{wellphase_id}}"> <span class="action-edit-well"><i class="feather icon-edit"></i></span></a>
+                                        {%endif%}
+                                        <a onclick="confirmation(event)" href="{% url 'bhadata:delete' bhadata.id %}?wellphase={{wellphase_id}}"> <span class="action-delete-well"><i class="feather icon-trash"></i></span></a>
+                                        <!-- <a class="btn btn-primary " href="{{request.META.HTTP_REFERER}}">Go Back</a> -->
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include "footer.html" %}
+    </div>
+   
+    </div>
+    <div class="col-2">
+      {% include "userheader.html" %}
+      <h4 class="model-caption">Well Phases</h4>
+      {% for wellphase in wellphases %}
+          <div class="row">
+            <div class="col-12">
+              <nav class="navbar bg-white phase-sidemenu">
+                <ul class="nav navbar-nav">
+                  <li class="nav-item phs-list {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                    <ul class="myDIV nav navbar-nav custom_active_list pressure-sidemenu  {% if wellphase_id == wellphase.id %}show{% endif %}">
+                      {% getsectionbywellphase_id wellphase.id as sections %}
+                      {% for section in sections %}
+                      <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="wellphase_sidemenu remove-line">{{section.section_name | depthunit:request.session.unit}}</li>
+                      {% endfor %}
+                  </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        {% endfor %}
+      <div class="col-md-12 warning"></div>
+    </div>
+  
+</div>
+<script>
+  var storedArray = JSON.parse(sessionStorage.getItem("items"));
+var well_id='{{well_id}}'
+if(well_id == storedArray[1]){
+    $('.warning').show();
+}else{
+    $('.warning').hide();
+}
+
+</script>
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+  
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/optimization.js' %}"></script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+{%endblock%}
+
+      
+

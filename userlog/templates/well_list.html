@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+<div class="row align-items-start">
+  <div class="col-md-10  create-pg">
+    <div class="create_project_sec scroll-line">
+      {% include "header.html" %}
+      <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">User Log</h4>
+      </div>
+      <table class="table data-list-view table_css">
+     
+        <thead>
+            <tr>
+                <th>S.NO</th>
+                <th>Well Name</th>
+                <th>Actions</th>
+       
+            </tr>
+        </thead>
+        <tbody>
+          {% for well in wells %}
+          <tr>
+            <td>
+              {{forloop.counter}}
+            </td>
+            <td>
+              {{well.name}}
+            </td>
+         
+            <td class="text-center p-0 se-td">
+              <a href="{% url 'userlog:well_list_users' well.id %}" class="se-nd">Well Users</a>
+           
+          </td>
+      
+          </tr>
+           {% endfor %}
+
+
+        </tbody>
+    </table>
+
+    
+    </div>
+      {% include "footer.html" %}
+    </div>
+  </div>
+  <div class="col-md-2">
+    {% include "userheader.html" %}
+  </div>
+</div>
+
+{%endblock%}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/auth/userlog.js' %}"></script>
+
+
+
+{%endblock%}

@@ -1,0 +1,223 @@
+{% load static %}
+{% load app_filters %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/user_log/user_list.css' %}">
+<section id="data-list-view" class="data-list-view-header">
+<div class="row align-items-start">
+  <div class="col-md-12  create-pg">
+    <div class="create_project_sec scroll-line">
+      {% include "header.html" %}
+      <div class="card user-log-space card-create-user">
+      <div class="card-header">
+        <h4 class="card-title">User Log</h4>
+      </div>
+      <div class='search-bar'><input type='text' id="search-input" placeholder='Search...' /></div>
+
+
+    <table class="table data-list-view accordion-table">
+      <thead>
+          <tr>
+              <th><h5 class="sno-head">S.No</h5></th>
+              <th class="proj-rel"><h5 class="proj-name-img">Project Name</h5></th>
+          </tr>
+      </thead>
+    </table>
+
+
+    {% for project in page_obj %}
+    <div class="accordion accordion-style" id="accordionProject{{project.id}}">
+      <div class="accordion-item accord-box">
+
+        <div class="accordion-header" id="headingProject{{project.id}}">
+          <button class="accordion-button acc-butt" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProject{{project.id}}" aria-expanded="true" aria-controls="collapseOne">
+            <div class="col-6 text-center">
+              <h5 class="count-sno">{{forloop.counter}}</h5>
+            </div>
+            <div class="col-6 text-center">
+              <h5 class="pro-name-desi" >{{project.project_name}}</h5>
+            </div>
+          </button>
+        </div>
+
+        <div id="collapseProject{{project.id}}" class="accordion-collapse collapse " aria-labelledby="headingProject{{project.id}}" data-bs-parent="#accordionProject{{project.id}}">
+          <div class="accordion-body sub-accordion-style">
+          
+            <div>
+              {% getprojectusers project.id as proj_users %}
+              {% for user in proj_users %}
+    
+                {% getprojusername user.user_id as user_details %}
+
+                <div class="accordion" id="accordionProjectUsers{{user.id}}">
+                  <div class="accordion-item accord-box">
+                    <h2 class="accordion-header" id="headingProjectUsers{{user.id}}">
+                      
+                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProjectUsers{{user.id}}" aria-expanded="true" aria-controls="collapseOne">
+                        <h5 class="proj-dynamic-name">{{user_details.user_name}} - {{user_details.user_desig}}</h5>
+                      </button>
+                    </h2>
+                    <div id="collapseProjectUsers{{user.id}}" class="accordion-collapse collapse " aria-labelledby="headingProjectUsers{{user.id}}" data-bs-parent="#accordionProjectUsers{{user.id}}">
+                      <div class="accordion-body" style="padding-left:5%;padding-right:5%">
+
+                        <h4>
+                          <!-- <input type="hidden" data-userid="{{user.user_id}}" data-wellid="{{well.id}}" class="activity_input"> -->
+                         {% if user.user_id %}
+                           <a class="acti-vity" href="{% url 'custom_auth:userlog' activity='project' well_id=project.id user_id=user.user_id %}">
+                            Activity
+                          </a> 
+                          {% endif %}
+
+                          
+                          
+                        </h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+         
+              {% endfor %}
+            </div>
+            <table class="table data-list-view accordion-table">
+              <div class="wells-name">
+                <h4 class="well-head">Wells</h4>
+              </div>
+              <thead>
+                <tr>
+                  <th><h5 class="sno-head">S.No</h5></th>
+                  <th class="wells-rel"><h5 class="wells-name-img">Wells</h5></th>
+                  
+                </tr>
+              </thead>
+            </table>
+
+            {% getwelllist request project.id as well_list %}
+            {% for well in well_list %}
+            <div class="accordion accordion-substyle" id="accordionWell{{well.id}}">
+              <div class="accordion-item accord-box">
+                <h2 class="accordion-header" id="headingWell{{well.id}}">
+                  <button class="accordion-button acc-butt" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWell{{well.id}}" aria-expanded="true" aria-controls="collapseOne">
+                    <div class="col-6 text-center">
+                     <h5 class="count-sno-well">{{forloop.counter}}</h5>
+                    </div>
+                    <div class="col-6 text-center">
+                      <h5 >{{well.name}}</h5>
+                    </div>
+                  </button>
+                </h2> 
+                <div id="collapseWell{{well.id}}" class="accordion-collapse collapse " aria-labelledby="headingWell{{well.id}}" data-bs-parent="#accordionWell{{well.id}}">
+                  <div class="accordion-body">
+                    
+                    <div>
+                      {% getwellusers well.id as well_users %}
+                      {% for user in well_users %}
+                        {% getprojusername user.user_id as user_details %}
+                          {% if user_details %}
+                            <div class="accordion" id="accordionWellUsers{{user.id}}">
+
+                              <div class="accordion-item accord-box">
+                                <h2 class="accordion-header" id="headingWellUsers{{user.id}}">
+                                  
+                                  <button class="accordion-button accordion-color" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWellUsers{{user.id}}" aria-expanded="true" aria-controls="collapseOne">
+                                    <h4 class="proj-dynamic-name">{{user_details.user_name}} - {{user_details.user_desig}}</h4>
+                                  </button>
+                                </h2>
+                                <div id="collapseWellUsers{{user.id}}" class="accordion-collapse collapse" aria-labelledby="headingWellUsers{{user.id}}" data-bs-parent="#accordionWellUsers{{user.id}}">
+                                  <div class="accordion-body">
+                                    <h4 class="">
+                                      <!-- <input type="hidden" data-userid="{{user.user_id}}" data-wellid="{{well.id}}" class="activity_input"> -->
+                                      {% if user.user_id %}
+                                      <a class="acti-vity" href="{% url 'custom_auth:userlog' activity='well' well_id=well.id user_id=user.user_id %}">
+                                        Activity
+                                      </a>
+                                      {% endif %}
+                                      
+                                      
+                                    </h4>
+       
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  
+    <div class="pagination">
+      <span class="step-links">
+          
+        {% if page_obj.has_previous %}
+              <a class="pink" href="?page={{ page_obj.previous_page_number }}">previous</a>
+          {% endif %}
+
+          <span class="other-pages">
+            {% for num in page_obj.paginator.page_range %}
+              {% if num == page_obj.number %}
+              <h5 class="count-sno-white">
+                <span class="page-number current-page">{{ num }}</span>
+              </h5>
+              {% else %}
+                <h5 class="count-sno-pag">
+                  <a class="count-clr" class="page-number" href="?page={{ num }}" data-val="{{search_value}}">{{ num }}</a>
+                </h5>
+              {% endif %}
+            {% endfor %}
+          </span>
+  
+          {% if page_obj.has_next %}
+              <a class="pink" href="?page={{ page_obj.next_page_number }}">next</a>
+          {% endif %}
+      </span>
+  </div>
+    </div>
+      {% include "footer.html" %}
+    </div>
+  </div>
+</div>
+</section>
+<script src="{% static 'js/auth/userlog.js' %}"></script>
+<script>
+  $(document).ready(function() {
+   
+    $('.count-clr').click(function(event) {
+      var pageNum = $(this).text();
+      var searchValue = $(this).data('val');
+      
+      query_search(searchValue,pageNum)
+    });
+  
+    $("#search-input").blur(function() {
+      var search_value = $(this).val();  
+      query_search(search_value,1)
+  });
+
+  
+  function query_search(search_value,pageNum){
+ 
+      $.ajax({
+        url: 'search/',  
+        data: { 
+          'search_value': search_value,
+          'pageNum': pageNum
+        }, 
+        dataType: 'html',
+        success: function(data) {
+          var data_array=JSON.parse(data)
+          $('section').replaceWith(data_array.html)
+  
+        }
+      });
+    }
+  
+  });
+  </script>

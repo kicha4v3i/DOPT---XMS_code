@@ -1,0 +1,410 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/project/hydraulics/mud_data.css' %}">
+<section>
+  <div class="row align-items-start">
+    {% getcountries countries as countries %}
+    {% include 'projectsidemenu.html' %} 
+  <div class="col-md-8 p-0  create-pg main-section col-md-10">
+      <div class="create_project_sec scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+        <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+        {% include "projectheader.html" %}
+    <div class="col-12">
+        {% include "welldetails_menu.html" %} 
+    </div>
+    <div class="col-12">
+        <div class="sample-sub-menu">
+          <div class="container">
+          <div class="row menu-button menu-types">
+            <!-- <div class="col-md-2"></div> -->
+            <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+                    <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+                </div>
+            </div>
+            <!-- <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'rheogram' %}active{% endif %}">
+                    <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+                </div>
+            </div> -->
+            <div class="col-md-3 data-drill">
+                <div class="sub-list drill-data {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+                    <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                    <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                </div>
+            </div>
+            <div class="col-md-3 data-drill">
+              <div class="sub-list drill-data2  {% if request.session.submenu == 'hydraulics' %}active{% endif %}">
+              <a href="{% url 'muddata:calculateallpressureloss' wellphase_id %}" id="bhadata"> Hydraulics</a>
+            </div>
+          </div>
+            <!-- <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                     <a href="{% url 'muddata:pressurelawcalculation' wellphase_id %}" id="bhadata">Bore Pressure Loss</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+              <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                  <a href="{% url 'muddata:annuluspressureloss' wellphase_id %}" id="bhadata">Annulus Pressure Loss</a>
+              </div>
+          </div> -->
+          </div>
+          </div>
+        </div>
+    </div>
+    
+
+  <div class="col-12">
+    <div class="sample-sub-menu">
+      <div class="container">
+        <div class="row menu-button">
+    <div class="col-3"></div>
+  <div class="col-6">
+    <ul class="nav nav-tabs mid-center" role="tablist">
+        <li class="nav-item sub-list">
+            <a class="nav-link active" data-toggle="tab" href="#muddata" role="tab">Mud Properties</a>
+        </li>
+        <li class="nav-item sub-list">
+            <a class="nav-link" data-toggle="tab" href="#rheology" role="tab">Rheology</a>
+        </li>
+    </ul>
+    </div>
+    <div class="col-3"></div>
+    </div>
+    </div>
+    </div>
+    </div>
+    
+
+    
+      <div class="col-12">
+       
+        <div class="tab-content">
+          <div class="tab-pane active" id="muddata" role="tabpanel">
+            <form class="form form-horizontal" method="POST" id="muddataform">
+              {% csrf_token %}
+              <input type="hidden" id="well" class="form-control" name="well" value={{well_id}}>
+              <input type="hidden" name="well_phase" id="well_phases">
+              <input type="hidden" class="page_type" value="edit">
+              <div class="row">
+                {%if welltype == 'ACTUAL' %}
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="date">Date</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="basicDate" class="form-control flatpickr-basic flatpickr-input active muddata_date" name="date" placeholder="Date">
+                      </div>
+                    </div>
+                  </div>
+                {%endif%}
+              </div>
+              <div class="col-12">
+                <div class="table-scroll-width">
+                <table class="table border-rem mud-edit" id="muddata-table">
+
+                  <thead>
+                        
+                    <tr>
+                        <th></th>
+                        <th colspan="2" class="txt-col down-line text-center">Depth</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th colspan="3" class="txt-col down-line text-center">Gel Strength</th>
+                        <th></th>
+                        <th class="txt-col"></th>
+                        <!-- <th>Date Recorded </th> -->
+                        <th></th>
+                        <th></th>
+                        
+                        </tr>
+                        </thead>
+
+
+                  <thead>
+                    <tr>
+                      <th class="txt-col">Section</th>
+                      <th class="txt-col">From({%display_depthunit request.session.unit%})</th>
+                      <th class="txt-col">To({%display_depthunit request.session.unit%})</th>
+                      <th class="txt-col">MW{%display_densityunit request.session.unit%}</th>
+                      <th class="txt-col">Mud Type</th>
+                      <th class="txt-col">PV{%display_plastic_viscosity request.session.unit%}</th>
+                      <th class="txt-col">YP{%display_gelstrengthunit request.session.unit%}</th>
+                      <th class="txt-col">LSRYP{%display_gelstrengthunit request.session.unit%}</th>
+                      <th class="txt-col"> 0sec{%display_gelstrengthunit request.session.unit%}</th>
+                      <th class="txt-col"> 10min{%display_gelstrengthunit request.session.unit%} </th>
+                      <th class="txt-col"> 30min {%display_gelstrengthunit request.session.unit%}</th>
+                      <th class="txt-col">Action</th>
+                    </tr>
+                  </thead>
+                    <tbody class="mud-detail-edit">
+                    {% for section in sections %}                       
+                    <tr>
+                      <input type="hidden" name="selected_model" value="{{section.selected_model}}">
+                      <input type="hidden" name="section_id" value="{{section.id}}">
+                      <input type="hidden" name="muddata_id" value="{{section|getmuddata:'id'}}">
+                      <td>
+                        <input type="text" class="form-control section" name="section" placeholder="Section" value="{{section.section_name}}"><span class="section_error"></span>                      </td>
+                      <td style="width:8%;">
+                        <input type="number" step="any" class="form-control from_depth" name="from_depth" placeholder="From" value="{{section.from_depth}}"><span class="from_depth_error"></span>
+                        <input type="hidden" class="fromdepth" value="{{fromdepth}}">
+                      </td>
+                      <td style="width:8%;">
+                        <input type="number" step="any" class="form-control to_depth" name="to_depth" placeholder="To" value="{{section.todepth}}"><span class="todepth_error"></span>
+                        <input type="hidden" class="todepth" value="{{todepth}}">
+                      </td>
+                      <td style="width:8%;">
+                        <input type="number" step="any" class="form-control mud_weight" name="mud_weight" placeholder="MW" value="{{section|getmuddata:'mud_weight'}}"><span class="mud_weight_error"></span>
+                      </td>
+                      <td class="new-one1">
+                        <select name="mudtype" class="form-control mudtype">
+                          <option value="">Select</option>
+                          {% for type in mudtype %}
+                          <option value="{{type.id}}" {% if type.id == section|getmuddata:'mudtype_id' %} selected {% endif %}>{{type.mud_name}}</option>
+                          {% endfor %}
+                        </select>
+                        <span class="mudtype_error"></span>
+                      </td>
+                      <td class="new-one1">
+                        <input type="number" step="any" class="form-control plastic_viscosity" name="plastic_viscosity" placeholder="PV" value="{{section|getmuddata:'plastic_viscosity'}}"><span class="pv_error"></span>
+                      </td>
+                      <td class="new-one1">
+                        <input type="number" step="any" class="form-control yield_point" name="yield_point" placeholder="YP" value="{{section|getmuddata:'yield_point'}}"><span class="yp_error"></span>
+                      </td>
+                      <td class="new-one1">
+                        <input type="number" step="any" class="form-control low_shear_rate" name="low_shear_rate" placeholder="LSRYP" value="{{section|getmuddata:'low_shear_rate'}}"> 
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control gel_strength_0sec" name="gel_strength_0sec" placeholder="0sec" value="{{section|getmuddata:'gel_strength_0sec'}}">
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control gel_strength_10min" name="gel_strength_10min" placeholder="10min" value="{{section|getmuddata:'gel_strength_10min'}}">
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control gel_strength_30min" name="gel_strength_30min" placeholder="30min" value="{{section|getmuddata:'gel_strength_30min'}}">
+                      </td>
+                      <td>
+                        <button type="button" name="add" class="addmuddatarow iconaction re-button" wellphase-id="{{wellphase_id}}"><i class="fa fa-plus"></i></button>
+                        <button type="button" name="remove" class="deletemuddatarow iconaction re-button"><i class="fa fa-trash"></i></button>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    <tr id="muddatatobeadd" style="display:none">
+                      <input type="hidden" name="muddata_id" value="">
+                      <input type="hidden" name="section_id" value="">
+                      <td>
+                        <input type="text" class="form-control section" name="section" placeholder="Section" value="{{fromdepth}}-{{todepth}}" readonly><span class="section_error"></span>
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control from_depth" name="from_depth" placeholder="From Depth"><span class="from_depth_error"></span>
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control to_depth" name="to_depth" placeholder="To depth"><span class="todepth_error"></span>
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control mud_weight" name="mud_weight" placeholder="Mud Weight"><span class="mud_weight_error"></span>
+                      </td>
+                      <td>
+                        <select name="mudtype" class="form-control mudtype">
+                          <option value="">Select</option>
+                          {% for type in mudtype %}
+                          <option value="{{type.id}}">{{type.mud_name}}</option>
+                          {% endfor %}
+                        </select>
+                        <span class="mudtype_error"></span>
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control plastic_viscosity" name="plastic_viscosity" placeholder="Plastic Viscosity"><span class="pv_error"></span>
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control yield_point" name="yield_point" placeholder="Yield Point"><span class="yp_error"></span>
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control low_shear_rate" name="low_shear_rate" placeholder="Low Shear Rate Yield Point">
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control gel_strength_0sec" name="gel_strength_0sec" placeholder="Gel Strength 0sec">
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control gel_strength_10min" name="gel_strength_10min" placeholder="Gel Strength 10min">
+                      </td>
+                      <td>
+                        <input type="number" step="any" class="form-control gel_strength_30min" name="gel_strength_30min" placeholder="Gel Strength 30min">
+                      </td>
+                      <td>
+                        <button type="button" name="add" class="addmuddatarow iconaction" wellphase-id="{{wellphase_id}}"><i class="fa fa-plus"></i></button>
+                        <button type="button" name="remove" class="deletemuddatarow iconaction"><i class="fa fa-trash"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>  
+                </table>
+              </div>
+              </div>
+              <div class="col-sm-9 offset-sm-3">
+                <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button muddata_submit">Submit</button>
+                <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>  
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="rheology" role="tabpanel">
+            <table class="table table_css table-hover table-striped table-bordered">
+            <!-- <table class="table rheogram-data-list-view table_css dataTable no-footer"> -->
+              <thead>
+                  <tr>
+                      <th>WellPhases Name</th>
+                      {%if welltype == 'ACTUAL'%}
+                      <th>Date</th>
+                      {%endif%}
+                      <th class="text-center">Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for rheogram in rheogram_date %}
+                  <tr>
+                      <td>{{rheogram.well_phase.phase_name}}</td>
+                      {%if welltype == 'ACTUAL'%}
+                      <td class="text-center">{{rheogram.date}}</td>
+                      {%endif%}
+                      <td class="product-action text-center">
+                          <a href="{% url 'muddata:rheogramdetails' rheogram.id %}?wellphase={{wellphase_id}}"><span class="action-list-well"><i class="feather icon-eye"></i></span></a>
+                          <a href="{% url 'muddata:rheogramedit' rheogram.id %}?wellphase={{wellphase_id}}"> <span class="action-edit-well"><i class="feather icon-edit"></i></span></a>
+                          <a onclick="confirmation(event)" href="{% url 'muddata:rheogramdelete' rheogram.id %}"> <span class="action-delete-well"><i class="feather icon-trash"></i></span></a>
+                      </td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% include "footer.html" %}
+      </div>
+      
+      </div>
+      <div class="col-2">
+        {% include "userheader.html" %}
+        <div class="left-sidebar">
+          <h4 class="model-caption">Well Phases</h4>
+          {% for wellphase in wellphases %}
+            <div class="row">
+              <div class="col-12">
+                <nav class="navbar bg-white phase-sidemenu">
+                  <ul class="nav navbar-nav">
+                    <li class="nav-item phs-list {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                      <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                      <ul class="myDIV nav navbar-nav custom_active_list pressure-sidemenu  {% if wellphase_id == wellphase.id %}show{% endif %}">
+                        {% getsectionbywellphase_id wellphase.id as sections %}
+                        {% for section in sections %}
+      
+                        <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="wellphase_sidemenu remove-line">{{section.section_name | depthunit:request.session.unit}}</li>
+                        {% endfor %}
+                    </ul>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          {% endfor %}
+          <h4 class="model-caption">Phase Depth</h4>
+          <table>
+            <tr>
+              <td>
+                <span class="font-weight-bold sta-col">From</span>
+              </td>
+              <td>
+                {{fromdepth}}{%display_lengthunit request.session.unit%}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span class="font-weight-bold sta-col">To</span>
+              </td>
+              <td>
+                {{todepth}}{%display_lengthunit request.session.unit%}
+              </td>
+            </tr>
+          </table>
+          <div class="col-md-12 warning"></div>
+          <div class="col-md-12 alert_message">From depth is not greater than To depth</div>
+        </div>
+      </div>
+    </div>
+    </div>
+</section>
+<style>
+  a.nav-link.active {
+    color: #3f8aca !important;
+    border-bottom: 2px solid #428ccb !important;
+    border-radius: 0px !important;
+  }
+
+  .nav-tabs .nav-item .nav-link {
+    border-radius: 0px !important;
+}
+
+
+  .environment-fields,.sub-environment-fields
+  {
+    display: none;
+  }
+  </style>
+  
+  <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+  <script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+       $("#basicDate").flatpickr({
+      enableTime: true,
+      dateFormat: "Y-m-d"
+  });
+  var storedArray = JSON.parse(sessionStorage.getItem("items"));
+    var well_id='{{well_id}}'
+    if(well_id == storedArray[1]){
+      $('.warning').show();
+    }else{
+      $('.warning').hide();
+    }
+  // $("#muddataeditform").validate({
+  //   rules: {
+  //     gel_strength_0sec:"required",
+  //     gel_strength_10min:"required",
+  //     gel_strength_30min:"required",
+  //     mud_weight:"required",
+  //     date:"required",
+  //   },
+  //   messages: {
+  //     gel_strength_0sec:"Please enter Gel Strength 0sec",
+  //     gel_strength_10min:"please enter gel_strength_0sec",
+  //     gel_strength_30min:"Please enter gel_strength_30min",
+  //     mud_weight:"Please enter mud_weight",
+  //     date:"Please enter date",
+  //   }
+  // });
+    
+    </script>
+  
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+    var imgsrc="{% static 'images/loading-81.gif' %}"
+</script>
+<script src="{% static 'js/sensitivity.js' %}"></script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+{%endblock%}
+      
+

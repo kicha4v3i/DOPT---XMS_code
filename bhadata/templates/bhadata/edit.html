@@ -1,0 +1,1539 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+  <div class="row align-items-start">
+    {% getcountries countries as countries %}
+    {% include 'projectsidemenu.html' %} 
+    <div class="col-md-8 p-0  create-pg main-section col-md-10">
+    <div class="create_project_sec scroll-line new-cru-well">
+      {% comment %} <div class="well-name-list">{{well.name}}</div>
+      <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+      {% include "projectheader.html" %}
+    <div class="col-12">
+        {% include "welldetails_menu.html" %} 
+    </div>
+    <div class="col-12">
+        <div class="sample-sub-menu">
+          <div class="container">
+          <div class="row menu-button menu-types">
+            <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+                    <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+                </div>
+            </div>
+            <div class="col-md-3 data-drill">
+                <div class="sub-list drill-data {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+                    <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                    <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                </div>
+            </div>
+            <div class="col-md-3 data-drill">
+              <div class="sub-list drill-data2  {% if request.session.submenu == 'hydraulics' %}active{% endif %}">
+              <a href="{% url 'muddata:calculateallpressureloss' wellphase_id %}" id="bhadata"> Hydraulics</a>
+            </div>
+          </div>
+
+          </div>
+          </div>
+        </div>
+    </div>
+        <div class="col-12">
+   
+            <div class="bhd-side-marg">
+              <div class="card">
+                  <div class="card-header">
+                      <h4 class="card-title">Edit BHA Data </h4>
+                  </div>
+                  <div class="card-body">
+                      <form class="form form-horizontal" method="POST" id="bhadataform">
+                          {% csrf_token %}
+                          <input type="hidden" id="well" class="form-control" name="well" value={{well_id}}>
+                          <input type="hidden" id="well_phases" name="well_phases">
+                          <input type="hidden" class="unit" name="unit" value="{{request.session.unit}}">
+                          <input type="hidden" id="currentpage" name="unit" value="editbha">
+
+                        <div class="row">
+                        
+                          {%if welltype == 'ACTUAL' %}
+                          <div class="col-12">
+                              <div class="form-group row">
+                                <div class="col-sm-3 col-form-label">
+                                  <label for="date">Data</label>
+                                </div>
+                                <div class="col-sm-9">
+                                  <input type="text" id="basicDate" class="form-control flatpickr-basic flatpickr-input active" name="date"  placeholder="Date" value="{{form.date.value|date:'Y-m-d'}}">
+                              </div>
+                              </div>
+                            </div>
+                            {%endif%}
+                          <div class="col-12">
+                          <table class="table" id="bhadatatable">
+                            <tbody>
+                                  <caption class="card-title" style="caption-side: top;">BHA Data</caption>
+                                  <tr><th>Type</th><th>BHA Element</th><th>OD{%display_diameterunit request.session.unit%}</th><th>ID{%display_diameterunit request.session.unit%}</th><th>Length({%display_lengthunit request.session.unit%})</th><th>Cumulative Length({%display_lengthunit request.session.unit%})</th><th>Actions</th></tr>
+                                  {% for element in bhaelement %}
+                                  <tr id="bhadatarow" >
+                                    <td class="new-one">
+                                     <select class="form-control type_name_edit" id="type_name_edit" name="type_name_edit">
+                                      <option value="">-- Type --</option>
+                                      <option value="Bit" {% if "Bit" == element.type_name %} selected {% endif %}>Bit</option>
+                                      <option value="MWD" {% if "MWD" == element.type_name %} selected {% endif %}>MWD</option>
+                                      <option value="LWD" {% if "LWD" == element.type_name %} selected {% endif %}>LWD</option> 
+                                      <option value="Jar" {% if "Jar" == element.type_name %} selected {% endif %}>Jar</option> 
+                                      <option value="RSS" {% if "RSS" == element.type_name %} selected {% endif %}>RSS</option> 
+                                      <option value="Mud Motor" {% if "Mud Motor" == element.type_name %} selected {% endif %}>Mud Motor</option>     
+                                      <option value="Stabilizer" {% if "Stabilizer" == element.type_name %} selected {% endif %}>Stabilizer</option> 
+                                      <option value="Drill Collar" {% if "Drill Collar" == element.type_name %} selected {% endif %}>Drill Collar</option> 
+                                      <option value="NMDC" {% if "NMDC" == element.type_name %} selected {% endif %}>NMDC</option>
+                                      <option value="Heavy Weight Drill Pipe" {% if "Heavy Weight Drill Pipe" == element.type_name %} selected {% endif %}>Heavy Weight Drill Pipe</option>
+                                      <option value="Drill Pipe" {% if "Drill Pipe" == element.type_name %} selected {% endif %}>Drill Pipe</option>
+                                      <option value="Others" {% if "Others" == element.type_name %} selected {% endif %}>Others</option>
+                                    </select>
+                                    <span class="type_error"></span>
+                                    {% if element.type_name == "RSS" or element.type_name == "MWD" or element.type_name == "LWD" or element.type_name == "Others" %}
+                                    <input type="button" class="empirical_popup_button" value="+" data-id="{{element.id}}">
+                                    {% endif %}
+                                    {% if element.type_name == "Mud Motor"%}
+                                    <input type="button" class="mudmotor_popup_button" value="+" data-id="{{element.id}}">
+                                    {% endif %}
+                                    </td> 
+                                      <td class="new-one"><input type="text" id="element" class="form-control" name="element"  value="{{element.element}}"><span class="element_error"></span></td>
+                                      <td>
+                                        <input type="hidden" name="bhaelement_id" class="bhaelement_id" value="{{element.id}}">
+                                        <input type="hidden" name="calculation_type" class="calculation_type" value="{{element.calculation_type}}">
+                                        <input type="hidden" name="calculation_name" class="calculation_name" value="">
+                                        <input type="number" step="any" id="od_edit" class="form-control od_edit" name="od_edit"  value="{{element.od}}" ><span class="od_error"></span></td>
+                                      <!-- <td><input type="hidden" step="any" id="weight" class="form-control coll_weight" name="weight" value="{{element.weight}}"  ></td>
+                                      <td><input type="hidden" step="any" id="pipe_type" class="form-control pipe_type" name="pipe_type" value="{{element.pipe_type}}" ></td>
+                                      <td><input type="hidden" step="any" id="connection_type" class="form-control connection_type" name="connection_type" value="{{element.connection_type}}" ></td>
+                                      <td><input type="hidden" step="any" id="tool_od" class="form-control tool_od" name="tool_od" value="{{element.tool_od}}"  ></td> -->
+                                      <td>
+                                        <input type="hidden" id="database_od_edit" class="form-control database_od_edit" name="database_od_edit" value="">
+                                        <input type="hidden" id="weight" class="form-control coll_weight" name="weight" placeholder="Weight" value="{{element.weight|default_if_none:''}}" >
+                                        <input type="hidden" id="database_weight" class="form-control database_weight_edit" name="database_weight" value="">
+                                        <input type="hidden"  id="pipe_type" class="form-control pipe_type" name="pipe_type" placeholder="Pipe Type" value="{{element.pipe_type|default_if_none:''}}">
+                                        <input type="hidden"  id="connection_type" class="form-control connection_type" name="connection_type" value="{{element.connection_type|default_if_none:''}}">
+                                        <input type="hidden"  id="tool_od" class="form-control tool_od" name="tool_od" value="{{element.tool_od|default_if_none:''}}">
+                                        <input type="hidden"  id="tool_id" class="form-control tool_id" name="tool_id" value="{{element.tool_id|default_if_none:''}}">
+                                        <input type="hidden"  id="classtype" class="form-control classtype" name="classtype" value="{{element.class_element|default_if_none:''}}">
+                                        <input type="hidden"  id="grade" class="form-control grade" name="grade" value="{{element.grade|default_if_none:''}}">
+                                        <input type="hidden"  id="onejoint_length" class="form-control onejoint_length" name="onejoint_length" value="{{element.onejoint_length|default_if_none:''}}">
+                                        <input type="hidden"  id="box_tj_length" class="form-control box_tj_length" name="box_tj_length" value="{{element.box_tj_length|default_if_none:''}}">
+                                        <input type="hidden"  id="pin_tj_length" class="form-control pin_tj_length" name="pin_tj_length" value="{{element.pin_tj_length|default_if_none:''}}">
+                                        {% if element.identity == '' %}
+                                        <input type="hidden" step="any" id="identity_edit" class="form-control identity_edit first_id" name="identity_edit"  value="{{element.identity}}">
+                                        {% else %}
+                                        <input type="number" step="any" id="identity_edit" class="form-control identity_edit" name="identity_edit"  value="{{element.identity}}"><span class="identity_error"></span>
+                                      {%endif%}
+                                      </td>
+                                      <td><input type="number" step="any" id="length" class="form-control length_edit" name="length"  value="{{element.length}}"><span class="length_error"></span></td>
+                                      <td>
+                                        <input type="hidden" class="form-control measured_depth" value="{{todepth}}">
+                                        <input type="number" step="any" id="length_onejoint" class="form-control cumulative-length" name="length_onejoint" value="{{element.length_onejoint|floatformat:2}}"></td>
+                                        <span class="length_onejoint_error"></span>
+                                      <td>
+                                        <button type="button" name="add" class="addbhadatarows iconaction"><i class="fa fa-plus"></i></button>
+                                        <button type="button" name="remove"  class="deletebhadatarow iconaction"><i class="fa fa-trash"></i></button>
+                                      </td>
+                                  </tr>
+                                  {%endfor%}
+                                  <tr id="bhadatarow1" style="display: none">
+                                    <td>
+                                      <select class="form-control type_name_edit" id="type_name_edit" name="type_name_edit" placeholder="Type">
+                                        <option value="">-- Type --</option>
+                                        <option value="Bit" >Bit</option>
+                                        <option value="MWD" >MWD</option>
+                                        <option value="LWD" >LWD</option>
+                                        <option value="jar" >jar</option>
+                                        <option value="RSS" >RSS</option>
+                                        <option value="Mud Motor" >Mud Motor</option>
+                                        <option value="Stabilizer" >Stabilizer</option>
+                                        <option value="Drill Collar" >Drill Collar</option>
+                                        <option value="NMDC" >NMDC</option>
+                                        <option value="Heavy Weight Drill Pipe" >Heavy Weight Drill Pipe</option>
+                                        <option value="Drill Pipe" >Drill Pipe</option>
+                                        <option value="Others" >Others</option>
+                                      </select>
+                                      <input type="button" class="rss_button_edit" value="+"/>
+                                      <input type="button" class="mudmotor_button_edit" value="+"/>
+                                    </td>   
+                                    <td><input type="text" id="element" class="form-control" name="element" placeholder="Element" value="{{element.element}}"></td>
+                                    <td>
+                                      <input type="hidden" name="bhaelement_id" class="bhaelement_id" value="">
+                                      <input type="number" step="any" id="od_edit" class="form-control od_edit" name="od_edit" placeholder="OD" value="{{element.od}}" ></td>
+                                    <!-- <td><input type="hidden" step="any" id="weight" class="form-control coll_weight" name="weight" placeholder="Weight" ></td>
+                                    <td><input type="hidden" step="any" id="pipe_type" class="form-control pipe_type" name="pipe_type" placeholder="Pipe Type" ></td>
+                                    <td><input type="hidden" step="any" id="connection_type" class="form-control connection_type" name="connection_type" ></td>
+                                    <td><input type="hidden" step="any" id="tool_od" class="form-control tool_od" name="tool_od"  ></td> -->
+                                    <td>
+                                      <input type="hidden" id="database_od_edit" class="form-control database_od_edit" name="database_od_edit" value="">
+                                      <input type="hidden" id="weight" class="form-control coll_weight" name="weight" placeholder="Weight">
+                                      <input type="hidden" id="database_weight" class="form-control database_weight_edit" name="database_weight">
+                                      <input type="hidden"  id="pipe_type" class="form-control pipe_type" name="pipe_type" placeholder="Pipe Type" >
+                                      <input type="hidden"  id="connection_type" class="form-control connection_type" name="connection_type" >
+                                      <input type="hidden"  id="tool_od" class="form-control tool_od" name="tool_od"  >
+                                      <input type="hidden"  id="tool_id" class="form-control tool_id" name="tool_id"  >
+                                      <input type="hidden"  id="classtype" class="form-control classtype" name="classtype"  >
+                                      <input type="hidden"  id="grade" class="form-control grade" name="grade">
+                                      <input type="hidden"  id="onejoint_length" class="form-control onejoint_length" name="onejoint_length">
+                                      <input type="hidden"  id="box_tj_length" class="form-control box_tj_length" name="box_tj_length">
+                                      <input type="hidden"  id="pin_tj_length" class="form-control pin_tj_length" name="pin_tj_length">
+                                      <input type="number" step="any" id="identity_edit" class="form-control identity_edit" name="identity_edit" placeholder="Identity" value="{{element.identity}}"></td>
+                                    <td><input type="number" step="any" id="length" class="form-control length_edit" name="length" placeholder="Length" value="{{element.length}}"></td>
+                                    <td><input type="number" step="any" id="length_onejoint" class="form-control cumulative-length" name="length_onejoint" placeholder="Cumulative Length" value="{{element.length_onejoint|floatformat:2}}"></td>
+                                    <td>
+                                      <button type="button" name="add" class="addbhadatarows iconaction"><i class="fa fa-plus"></i></button>
+                                      <button type="button" name="remove"  class="deletebhadatarow iconaction"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                          </div>
+                          <div id="flowrateempiricalmodal">
+                          </div>
+                          <div id="mud_motor_edit">
+                          </div>
+                   
+                            <div class="col-sm-9 offset-sm-3">
+                            <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                            <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  </div>
+                  <div class="modal fade drillcollar-modal" id="drillcollar-modal">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                      
+                        <div class="modal-header">
+                          <h4 class="modal-title">Drill Collars</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        
+                        <div class="modal-body">
+                          <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-center">
+                                    <tr>      
+                                        <center><h2>Select Values</h2></center>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                  <th>OD</th>
+                                  <th id="coller_weight_head" style="display: none;">weight</th>
+                                  <th id="coller_type_head" style="display: none;">Pipe Type</th>
+                                  <th id="coller_ctype_head" style="display: none;">Connection Type</th>
+                                  <th id="coller_od_head" style="display: none;">Tool Joint OD</th>
+                                  <th id="coller_joint_head" style="display: none;">One Joint Length</th>
+                                </tr>
+                                <tbody>
+                                  
+                                    
+                                    <tr>
+                                      <td>
+                                        <ul class="nod_edit pop-up-hand">
+                                          {% for drillcollar in drillcollars %}
+                                            <li databasevalue="{{drillcollar.databasevalue}}" drillcoll="{{drillcollar.normal_od}}">{{drillcollar.normal_od}}</li>
+                                          {% endfor %}
+                  
+                                        </ul>
+                                      </td>
+                                      <td>
+                                        <ul class="weight1_edit pop-up-hand">
+                                        </ul>
+                                      </td>
+                                      <td>
+                                        <ul class="pipe_type1_edit pop-up-hand">
+                                        </ul>
+                                      </td>
+                                      <td>
+                                        <ul class="connection_type1_edit pop-up-hand">
+                                        </ul>
+                                      </td>
+                                      <td>
+                                        <ul class="tool_od1_edit pop-up-hand">
+                                          
+                                        </ul>
+                                      </td>
+                                      <td>
+                                        <input type="text" class="form-control one_joint_length  edit-drillinput" id="one_joint_length" name="one_joint_length" style="display: none;" placeholder="One Joint length"> 
+                                    </td>
+                                      
+                                  </tr>
+                                </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-danger" id="modal-close">Close</button>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+<!-- drill coller end -->
+<!-- drillpipe start -->
+                  <div class="modal fade drillpipebha_edit" id="drillpipebha_edit">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                      
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                          <h4 class="modal-title">DrillPipe</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                          <div class="table-responsive">
+                            <table class="table">
+                              <!-- <thead class="text-center"> -->
+                                  <tr>      
+                                      <center><h2>Select Values</h2></center>
+                                  </tr>
+                              <!-- </thead> -->
+                              <thead class="pipeedit-popup">
+
+                              
+                              <tr>
+                                <th>Nominal OD</th>
+                                <th id="pipe_weight_head" class="drillpipe-edit-h1" style="display: none;">Nominal Weight</th>
+                                <th id="pipe_grade_head" class="drillpipe-edit-h2" style="display: none;">Grade</th>
+                                <th id="pipe_joint_head" class="drillpipe-edit-h3" style="display: none;">Tool Joint Type</th>
+                                <th id="pipe_od_head" class="drillpipe-edit-h4" style="display: none;">Tool Joint OD</th>
+                                <th id="pipe_class_head" class="drillpipe-edit-h5" style="display: none;">Class</th>
+                                <th id="pipe_one_joint_head" class="drillpipe-edit-h6" style="display: none;">One Length Joint</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                    <td>
+                                      <ul class="drillpipe_nod_edit pop-up-hand" id="drillpipe_nod_edit" name="drillpipe_nod_edit">
+                                        {% for drillpipe in drillpipes %}
+                                        <li databasevalue="{{drillpipe.databasevalue}}" normal_od="{{drillpipe.normal_od}}">{{drillpipe.normal_od}}</li>
+                                        {% endfor %}
+                      
+                                      </ul>
+                                    </td>
+                                    <td>
+                                      <ul class="drillpipe_weight_edit pop-up-hand">
+                                      </ul>
+                                    </td>
+                                    <td>
+                                      <ul class="drillpipe_grade_edit pop-up-hand">
+                                      </ul>
+                                    </td>
+                                    <td>
+                                      <ul class="drillpipe_jointtype_edit pop-up-hand">
+                                      </ul>
+                                    </td>
+                                    <td>
+                                      <ul class="drillpipe_jointod_edit pop-up-hand">
+                                      </ul>
+                                    </td>
+                                    <td>
+                                      <ul class="drillpipe_class_edit pop-up-hand">
+                                        <li classtype="Class1">Class1</li>
+                                        <li classtype="Premium">Premium</li>
+                                        <li classtype="Class2">Class2</li>
+                                      </ul>
+                                    </td>
+                                    <td>
+                                      <input type="text" class="form-control drillpipe_onejoint_length_edit" id="drillpipe_onejoint_length" name="drillpipe_onejoint_length" style="display: none;" placeholder="One Joint length">
+                                    </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-danger" id="modal-close" >Close</button>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+<!-- drillpipe end -->
+<!-- HWDP start -->
+<div class="modal fade drillpipehwdp_edit" id="drillpipehwdp_edit">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <div class="modal-header">
+        <h4 class="modal-title">DrillPipeHWDP</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead class="text-center">
+                <tr>      
+                    <center><h2>Select Values</h2></center>
+                </tr>
+            </thead>
+            <tr>
+              <th>Nominal OD</th>
+              <th id="hwdp_weight_head" style="display: none;">Nominal Weight</th>
+              <th id="hwdp_type_head" style="display: none;">Tool Joint Type</th>
+              <th id="hwdp_od_head" style="display: none;">Tool Joint OD</th>
+              <th id="hwdp_class_head" style="display: none;">Class</th>
+              <th id="hwdp_onelength_head" style="display: none;">One Length Joint</th>
+            </tr>
+            <tbody>
+                <tr>
+                  <td>
+                    <ul class="hwdp_nod_edit pop-up-hand" >
+                      {% for drillpipeshwdps in drillpipeshwdp %}
+                      <li databasevalue="{{drillpipeshwdps.databasevalue}}" hwdp_normal="{{drillpipeshwdps.nominal_od}}">{{drillpipeshwdps.nominal_od}}</li>
+                      {% endfor %}
+                    </ul>
+                  </td>
+                  <td>
+                    <ul class="hwdp_weight_edit pop-up-hand">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul class="hwdp_jointtype_edit pop-up-hand">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul class="hwdp_jointod_edit pop-up-hand">
+                    </ul>
+                  </td>
+                  <td>
+                    <ul class="hwdp_class_edit pop-up-hand">
+                      <li classtype="Class1">Class1</li>
+                     
+                    </ul>
+                  </td>
+                  <td>
+                    <input type="text" name="hwdp_one_joint_length" class="form-control hwdp_one_joint_length" id="hwdp_one_joint_length" style="display: none;" placeholder="One Length Joint">
+                  </td>
+              </tr>
+            </tbody>
+          </table>
+      </div>
+      </div>
+<!-- HWDP end -->
+                  <!-- <div class="modal fade drillcollar-modal" id="drillcollar-modal">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                      
+                        <div class="modal-header">
+                          <h4 class="modal-title">Drill Collars</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        
+                        <div class="modal-body">
+                          <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-center">
+                                    <tr>      
+                                        <center><h2>Select Values</h2></center>
+                                    </tr>
+                                </thead>
+                                <tr><th>OD</th><th>weight</th><th>Pipe Type</th><th>Connection Type</th><th>Tool Joint OD</th><th>One Joint Length</th></tr>
+                                <tbody>
+                                  
+                                    
+                                    <tr>
+                                      <td>
+                                        <select class="form-control nod_edit select2" id="nod_edit" name="nod_edit">
+                                          <option value="">--OD--</option>
+                                          {% for drillcollar in drillcollars %}
+                                            <option value="{{drillcollar.normal_od}}">{{drillcollar.normal_od}}</option>
+                                          {% endfor %}
+                  
+                                        </select>
+                                      </td>
+                                      <td>
+                                        <select class="form-control weight1_edit select2" id="weight1_edit" name="weight1_edit">
+                                          <option value="">-- Weight --</option>
+
+                  
+                                        </select>
+                                      </td>
+                                      <td>
+                                        <select class="form-control pipe_type1_edit select2" id="pipe_type1_edit" name="pipe_type">
+                                          <option value="">-- Pipe Type --</option>
+     
+                  
+                                        </select>
+                                      </td>
+                                      <td>
+                                        <select class="form-control connection_type1_edit select2" id="connection_type1_edit" name="connection_type">
+                                          <option value="">-- Connection Type --</option>
+                
+                  
+                                        </select>
+                                      </td>
+                                      <td>
+                                        <select class="form-control tool_od1_edit select2" id="tool_od1_edit" name="tool_od">
+                                          <option value="">-- Tool Joint OD --</option>
+              
+                  
+                                        </select>
+                                      </td>
+                                      <td>
+                                        <input type="text" class="form-control one_joint_length" id="one_joint_length" name="one_joint_length" placeholder="One Joint length"> 
+                                    </td>
+
+                                  </tr>
+                                </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-danger" id="modal-close">Close</button>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div> -->
+          
+                  <!-- <div class="modal fade drillpipebha_edit" id="drillpipebha_edit">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                      
+                        <div class="modal-header">
+                          <h4 class="modal-title">DrillPipe</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        
+                        <div class="modal-body">
+                          <div class="table-responsive">
+                            <table class="table">
+                              <thead class="text-center">
+                                  <tr>      
+                                      <center><h2>Select Values</h2></center>
+                                  </tr>
+                              </thead>
+                              <tr><th>Nominal OD</th><th>Nominal Weight</th><th>Grade</th><th>Tool Joint Type</th><th>Tool Joint OD</th><th>Class</th><th>One Length Joint</th></tr>
+                              <tbody>
+                                  <tr>
+                                    <td>
+                                      <select class="form-control drillpipe_nod_edit select2" id="drillpipe_nod_edit" name="drillpipe_nod_edit">
+                                        <option value="">--OD--</option>
+                                        {% for drillpipe in drillpipes %}
+                                        <option value="{{drillpipe.normal_od}}">{{drillpipe.normal_od}}</option>
+                                        {% endfor %}
+                      
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <select class="form-control drillpipe_weight_edit select2" id="drillpipe_weight_edit" name="drillpipe_weight_edit">
+                                        <option value="">-- Weight --</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <select class="form-control drillpipe_grade_edit select2" id="drillpipe_grade_edit" name="drillpipe_grade_edit">
+                                        <option value="">-- Grade --</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <select class="form-control drillpipe_jointtype_edit select2" id="drillpipe_jointtype_edit" name="drillpipe_jointtype_edit">
+                                        <option value="">-- Type --</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <select class="form-control drillpipe_jointod_edit select2" id="drillpipe_jointod_edit" name="drillpipe_jointod_edit">
+                                        <option value="">-- Type --</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <select class="form-control drillpipe_class_edit select2" id="drillpipe_class_edit" name="drillpipe_class_edit">
+                                        <option value="">-- Type --</option>
+                                        <option value="Class1">Class1</option>
+                                        <option value="Premium">Premium</option>
+                                        <option value="Class2">Class2</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <input type="text" class="form-control drillpipe_onejoint_length" id="drillpipe_onejoint_length" name="drillpipe_onejoint_length" placeholder="One Joint length">
+                                    </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-danger" id="modal-close" >Close</button>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div> -->
+          
+                  <!--Drill pipehwdb-->
+          <!-- <div class="modal fade drillpipehwdp_edit" id="drillpipehwdp_edit">
+            <div class="modal-dialog">
+              <div class="modal-content">
+              
+                <div class="modal-header">
+                  <h4 class="modal-title">DrillPipeHWDP</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead class="text-center">
+                          <tr>      
+                              <center><h2>Select Values</h2></center>
+                          </tr>
+                      </thead>
+                      <tr><th>Nominal OD</th><th>Nominal Weight</th><th>Tool Joint Type</th><th>Tool Joint OD</th><th>Class</th><th>One Length Joint</th></tr>
+                      <tbody>
+                          <tr>
+                            <td>
+                              <select class="form-control hwdp_nod_edit select2" id="hwdp_nod_edit" name="hwdp_nod_edit">
+                                <option value="">--OD--</option>
+                                {% for drillpipeshwdps in drillpipeshwdp %}
+                                <option databasevalue="{{drillpipeshwdps.databasevalue}}" value="{{drillpipeshwdps.nominal_od}}">{{drillpipeshwdps.nominal_od}}</option>
+                                {% endfor %}
+                              </select>
+                            </td>
+                            <td>
+                              <select class="form-control hwdp_weight_edit select2" id="hwdp_weight_edit" name="hwdp_weight_edit">
+                                <option value="">-- Weight --</option>
+                              </select>
+                            </td>
+                            <td>
+                              <select class="form-control hwdp_jointtype_edit select2" id="hwdp_jointtype_edit" name="hwdp_jointtype_edit">
+                                <option value="">-- Type --</option>
+                              </select>
+                            </td>
+                            <td>
+                              <select class="form-control hwdp_jointod_edit select2" id="hwdp_jointod_edit" name="hwdp_jointod_edit">
+                                <option value="">-- Type --</option>
+                              </select>
+                            </td>
+                            <td>
+                              <select class="form-control hwdp_class_edit select2" id="hwdp_class_edit" name="hwdp_class_edit">
+                                <option value="">-- Type --</option>
+                                <option value="Class1">Class1</option>
+                               
+                              </select>
+                            </td>
+                            <td>
+                              <input type="text" name="hwdp_one_joint_length" class="form-control hwdp_one_joint_length" id="hwdp_one_joint_length" placeholder="One Length Joint">
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
+                </div> -->
+                
+                
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" id="modal-close">Close</button>
+                </div>
+                
+              </div>
+            </div>
+        </div>
+        
+    </div>
+    {% include "footer.html" %}
+    </div>
+    
+    </div>
+    <div class="col-2">
+      {% include "userheader.html" %}
+      <h4 class="model-caption">Well Phases</h4>
+      {% for wellphase in wellphases %}
+      <div class="row">
+        <div class="col-12">
+          <nav class="navbar bg-white phase-sidemenu">
+            <ul class="nav navbar-nav">
+              <li class="nav-item phs-list {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                <ul class="myDIV nav navbar-nav custom_active_list pressure-sidemenu  {% if wellphase_id == wellphase.id %}show{% endif %}">
+                  {% getsectionbywellphase_id wellphase.id as sections %}
+                  {% for section in sections %}
+
+                  <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="wellphase_sidemenu remove-line">{{section.section_name | depthunit:request.session.unit}}</li>
+                  {% endfor %}
+              </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    {% endfor %}
+      <div class="col-md-12 warning"></div>
+    </div>
+    
+</div>
+<style>
+  ul{
+  list-style-type: none;
+}
+ul li.active{
+  color: red;
+}
+.iconaction{
+   border:0;
+   background:transparent;
+   box-shadow:none;
+   font-size:15px;
+   color:#7367F0;
+ }
+ .select2-container--default .select2-search--dropdown .select2-search__field {
+    border: 1px solid #aaa;
+    display: none;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 26px;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 20px;
+    display: none;
+}
+</style>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script> 
+$('#bhadatatable tbody tr:eq(1)').find('.od_edit').prop("readonly", true); //value must not edit
+$(document).ready(function() {
+   var closesttrindex;
+
+   $(document).on("click","#modal-close",function(){
+       $('.nod_edit').val('');
+       $('.weight1_edit').val('');
+       $('.pipe_type1_edit').val('');
+       $('.connection_type1_edit').val('');
+       $('.tool_od1_edit').val('');
+       $('.one_joint_length_edit').val('');
+       $('.drillcollar-modal').modal('hide');
+
+       $('.drillpipe_nod_edit').val('');
+       $('.drillpipe_weight_edit').val('');
+       $('.drillpipe_grade_edit').val('');
+       $('.drillpipe_jointtype_edit').val('');
+       $('.drillpipe_jointod_edit').val('');
+       $('.drillpipe_class_edit').val('');
+       $('.drillpipe_onejoint_length_edit').val('');
+       $('.drillpipebha_edit').modal('hide');
+       
+       $('.hwdp_class_edit').val('');
+       $('.hwdp_jointod_edit').val('');
+       $('.hwdp_jointtype_edit').val('');
+       $('.hwdp_weight_edit').val('');
+       $('.hwdp_nod_edit').val('');
+       $('.hwdp_one_joint_length').val();
+       $('.drillpipehwdp_edit').modal('hide');
+     });
+  //  $("#weight1_edit").change(function () { 
+  //    var collar_weight = $(this).val();  
+  //    $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.coll_weight').val(collar_weight);
+  //    $.ajax({ 
+  //      type: "GET",                      
+  //      url: "/wells/bhadata/bha_pipe_calc",                    
+  //      data: {
+  //        collar_weight:collar_weight
+  //      },
+  //      dataType: "json",
+  //      success: function (data) {   
+  //        for(i=0;i<data.data.length;i++){
+  //          $('.pipe_type1_edit').append('<option value="'+data.data[i].pipe_type +'">'+ data.data[i].pipe_type+'</option>');
+  //        }
+  //        $('.pipe_type1_edit').select2('open');
+  //    }
+  //    });
+  //  });
+
+  // Drill coller edit start
+
+
+
+
+
+
+
+//  Drill coller edit end
+//Drill pipe edit start
+$(".drillpipe_class_edit li").hide();
+$(document.body).on("click",".drillpipe_nod_edit > li",function () { 
+$(this).addClass('active').siblings().removeClass('active');
+   var normal_od=$(this).attr('databasevalue');
+   var well_id=$('#well').val();
+     $.ajax({ 
+       type: "GET",                      
+       url: "/wells/bhadata/getweight_drillpipe",                    
+       data: {
+         normal_od:normal_od,
+         well_id:well_id
+       },
+       dataType: "json",
+       success: function (data) { 
+         $(".drillpipe_weight_edit li").remove();
+         $('#pipe_weight_head').show();
+         for(i=0;i<data.data.length;i++){
+           $('.drillpipe_weight_edit').append('<li databasevalue="'+data.data[i].databasevalue+'" drillpipe_weight="'+data.data[i].weight +'">'+ data.data[i].weight+'</li>');
+         }
+         $(".drillpipe_grade_edit li").hide(); 
+         $(".drillpipe_jointtype_edit li").hide(); 
+         $(".drillpipe_jointod_edit li").hide(); 
+         $(".drillpipe_class_edit li").hide(); 
+         $(".drillpipe_onejoint_length_edit").hide(); 
+         $('#pipe_grade_head').hide();
+         $('#pipe_joint_head').hide();
+         $('#pipe_od_head').hide();
+         $('#pipe_class_head').hide();
+         $('#pipe_one_joint_head').hide();
+       }
+
+     });
+ });
+
+ $(document.body).on("click",".drillpipe_grade_edit > li",function () { 
+$(this).addClass('active').siblings().removeClass('active');
+   var drillpipe_grade = $(this).attr('drillpipe_grade');  
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.grade').val(drillpipe_grade);
+   var normal_od=$('ul.drillpipe_nod_edit').find('li.active').attr('databasevalue');
+   var drillpipe_weight=$('ul.drillpipe_weight_edit').find('li.active').attr('databasevalue');
+
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getjointtype_drillpipe",                    
+     data: {
+       drillpipe_weight:drillpipe_weight,
+       normal_od:normal_od,
+       drillpipe_grade:drillpipe_grade
+     },
+     dataType: "json",
+     success: function (data) { 
+       $(".drillpipe_jointtype_edit li").remove(); 
+       $('#pipe_joint_head').show();
+       for(i=0;i<data.data.length;i++){
+         $('.drillpipe_jointtype_edit').append('<li drillpipe_jointtype="'+data.data[i].connection_type +'">'+ data.data[i].connection_type+'</option>');
+     }
+         $(".drillpipe_jointod_edit li").hide(); 
+         $(".drillpipe_class_edit li").hide(); 
+         $(".drillpipe_onejoint_length_edit").hide();
+         $('#pipe_od_head').hide();
+         $('#pipe_class_head').hide();
+         $('#pipe_one_joint_head').hide();
+     }
+   });
+ });
+
+
+
+//Drill pipe edit ends
+//HWDP edit start
+$(".hwdp_class_edit li").hide();
+$(document.body).on("click",".hwdp_nod_edit > li",function () { 
+  $(this).addClass('active').siblings().removeClass('active');
+   var normal_od=$(this).attr('databasevalue');
+   var well_id=$('#well').val();
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getweight_hwdpnod",                    
+     data: {
+       normal_od:normal_od,
+       well_id:well_id
+     },
+     dataType: "json",
+     success: function (data) { 
+       $(".hwdp_weight_edit li").remove();
+       $('#hwdp_weight_head').show();
+       for(i=0;i<data.data.length;i++){
+         $('.hwdp_weight_edit').append('<li databasevalue="'+data.data[i].databasevalue+'" hwdp_weight="'+data.data[i].weight +'">'+ data.data[i].weight+'</li>');
+       }
+       $('.hwdp_jointtype_edit li').hide();
+       $('.hwdp_jointod_edit li').hide();
+       $('.hwdp_class_edit li').hide();
+       $('.hwdp_one_joint_length').hide();
+      $('#hwdp_type_head').hide();
+      $('#hwdp_od_head').hide();
+      $('#hwdp_class_head').hide();
+      $('#hwdp_onelength_head').hide();
+     }
+ 
+   });
+ });
+ $(document.body).on("click",".hwdp_weight_edit > li",function () { 
+  $(this).addClass('active').siblings().removeClass('active');
+   var hwdp_weight = $(this).attr('databasevalue');  
+   var weight_val = $(this).attr('hwdp_weight');  
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.coll_weight').val(weight_val);
+   var normal_od=$('ul.hwdp_nod_edit').find('li.active').attr('databasevalue');
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getjointtype_hwdp",                    
+     data: {
+       hwdp_weight:hwdp_weight,
+       normal_od:normal_od
+     },
+     dataType: "json",
+     success: function (data) { 
+       $(".hwdp_jointtype_edit li").remove(); 
+       $('#hwdp_type_head').show();
+       for(i=0;i<data.data.length;i++){
+         $('.hwdp_jointtype_edit').append('<li hwdp_jointtype="'+data.data[i].connection_type +'">'+ data.data[i].connection_type+'</li>');
+     }
+      $('.hwdp_jointod_edit li').hide();
+       $('.hwdp_class_edit li').hide();
+       $('.hwdp_one_joint_length').hide();
+      $('#hwdp_od_head').hide();
+      $('#hwdp_class_head').hide();
+      $('#hwdp_onelength_head').hide();
+      }
+   });
+ });
+ $(document.body).on("click",".hwdp_jointtype_edit > li",function () { 
+  $(this).addClass('active').siblings().removeClass('active');
+   var hwdp_jointtype = $(this).attr('hwdp_jointtype');  
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.connection_type').val(hwdp_jointtype);
+   var normal_od=$('ul.hwdp_nod_edit').find('li.active').attr('databasevalue');
+   var nod=$('ul.hwdp_nod_edit').find('li.active').attr('hwdp_normal');
+   var hwdp_weight=$('ul.hwdp_weight_edit').find('li.active').attr('databasevalue');
+   var well_id=$('#well').val();
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getjointod_hwdp",                    
+     data: {
+       hwdp_jointtype:hwdp_jointtype,
+       normal_od:normal_od,
+       hwdp_weight:hwdp_weight,
+       well_id:well_id,
+       nod:nod
+     },
+     dataType: "json",
+     success: function (data) { 
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.identity_edit').val(data.tool_id.data);
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.od_edit').val(data.nod);
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.database_od_edit').val(normal_od);
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.database_weight_edit').val(hwdp_weight);
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.tool_id').val(data.tool_id.data);
+       $(".hwdp_jointod_edit li").remove(); 
+       $('#hwdp_od_head').show();
+       for(i=0;i<data.data.length;i++){
+       $('.hwdp_jointod_edit').append('<li hwdp_jointod="'+data.data[i][0].data+'">'+data.data[i][0].data+'</li>');
+     }
+       $('.hwdp_class_edit li').hide();
+       $('.hwdp_one_joint_length').hide();
+      $('#hwdp_class_head').hide();
+      $('#hwdp_onelength_head').hide();
+    }
+   });
+ });
+ $(document.body).on("click",".hwdp_jointod_edit > li",function () { 
+  $(this).addClass('active').siblings().removeClass('active');
+   var hwdp_jointod = $(this).attr('hwdp_jointod'); 
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.tool_od').val(hwdp_jointod);
+   var hwdp_jointtype = $('ul.hwdp_jointtype_edit').find('li.active').attr('hwdp_jointtype'); 
+   var normal_od=$('ul.hwdp_nod_edit').find('li.active').attr('hwdp_normal');
+   var hwdp_weight=$('ul.hwdp_weight_edit').find('li.active').attr('hwdp_weight');
+   $(".hwdp_class_edit li").removeClass('active');
+   $(".hwdp_class_edit li").show();
+   $('#hwdp_class_head').show();
+  $('.hwdp_one_joint_length').hide();
+  $('#hwdp_onelength_head').hide();
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getclass_hwdp",                    
+     data: {
+       hwdp_jointod:hwdp_jointod,
+       normal_od:normal_od,
+       hwdp_jointtype:hwdp_jointtype,
+       hwdp_weight:hwdp_weight
+     },
+     dataType: "json",
+     success: function (data) { 
+       for(i=0;i<data.data.length;i++){
+         $('.hwdp_class_edit').append('<li classtype="'+data.data[i].class_type +'">'+ data.data[i].class_type+'</li>');
+       }
+       
+     }
+   });
+ });
+ $(document.body).on("click",".hwdp_class_edit > li",function () { 
+  $(this).addClass('active').siblings().removeClass('active');
+  $('.hwdp_one_joint_length').show();
+  $('#hwdp_onelength_head').show();
+   var classtype=$(this).attr('classtype');
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.classtype').val(classtype);
+ });
+
+  //  $("#nod_edit").change(function () { 
+  //    var ind = $(this).val();
+  //    $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.od_edit').val(ind);
+  //    var cloesttr_index=$(this).closest('tr').index(); 
+  //      var drillcoll = $(this).val();  
+  //      var current_element=$(this);
+  //      $.ajax({ 
+  //        type: "GET",                      
+  //        url: "/wells/bhadata/bhacaluculation",                    
+  //        data: {
+  //          drillcoll:drillcoll
+  //        },
+  //        dataType: "json",
+  //        success: function (data) {   
+  //          for(i=0;i<data.data.length;i++){
+  //          $('.weight1_edit').append('<option value="'+data.data[i].weight +'">'+ data.data[i].weight+'</option>');
+  //          }
+  //          $('.weight1_edit').select2('open');
+  //      }
+
+  //      });
+  //  });
+//    $("#pipe_type1_edit").change(function () { 
+//      var pipe_type = $(this).val(); 
+//      var w_pipe=$(this).closest('tr').find('.weight1_edit').val();
+//      $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.pipe_type').val(pipe_type);
+//      $.ajax({ 
+//        type: "GET",                      
+//        url: "/wells/bhadata/bha_Connectpipe_calc",                    
+//        data: {
+//          pipe_type:pipe_type,
+//          w_pipe:w_pipe
+//        },
+//        dataType: "json",
+//        success: function (data) {   
+//          for(i=0;i<data.data.length;i++){
+//          $('.connection_type1_edit').append('<option value="'+data.data[i].connection_type +'">'+ data.data[i].connection_type+'</option>');
+//          }
+//          $('.connection_type1_edit').select2('open');
+//      }
+
+//      });
+//  });
+//  $("#connection_type1_edit").change(function () { 
+//    var conn_type = $(this).val(); 
+//    $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.connection_type').val(conn_type);
+//    var w_pipe=$(this).closest('tr').find('.weight1_edit').val();
+//    var pipe_type=$(this).closest('tr').find('.pipe_type1_edit').val();
+//    var well_id=$('#well').val();
+//    $.ajax({ 
+//      type: "GET",                      
+//      url: "/wells/bhadata/bha_tooljoint_calc",                    
+//      data: {
+//        conn_type:conn_type,
+//        w_pipe:w_pipe,
+//        pipe_type:pipe_type,
+//        well_id:well_id
+//      },
+//      dataType: "json",
+//      success: function (data) {   
+//        $(".tool_od1_edit option").remove(); 
+//       $('.tool_od1_edit').append('<option value="">Tool OD</option>');
+//        for(i=0;i<data.data.length;i++){
+//        $('.tool_od1_edit').append('<option value="'+data.data[i].data +'">'+ data.data[i].data+'</option>');
+//        }
+//        $('.tool_od1_edit').select2('open');
+//      }
+
+//    });
+//  });
+//  $("#tool_od1_edit").change(function () { 
+//    var tool_od = $(this).val(); 
+//    $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.tool_od_edit').val(tool_od);
+//    var w_pipe=$(this).closest('tr').find('.weight1_edit').val();
+//    var pipe_type=$(this).closest('tr').find('.pipe_type1_edit').val();
+//    var c_type=$(this).closest('tr').find('.connection_type1_edit').val();
+//    var well_id=$('#well').val();
+//    $.ajax({ 
+//      type: "GET",                      
+//      url: "/wells/bhadata/bha_tooljoint_id_calc",                    
+//      data: {
+//        tool_od:tool_od,
+//        w_pipe:w_pipe,
+//        pipe_type:pipe_type,
+//        c_type:c_type,
+//        well_id:well_id
+//      },
+//      dataType: "json",
+//      success: function (data) {  
+//        for(i=0;i<data.data.length;i++){
+//      // $('.identity').val(data.data[i].tool_id);
+//      $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.identity_edit').val(data.tool_id);
+
+//          }
+//    }
+//    });
+//  });
+
+ $("#drillpipe_weight_edit").change(function () { 
+   var drillpipe_weight = $(this).val();  
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.coll_weight').val(drillpipe_weight);
+   var normal_od=$(this).closest('tr').find('.drillpipe_nod_edit').val();
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getgrade_drillpipe",                    
+     data: {
+       drillpipe_weight:drillpipe_weight,
+       normal_od:normal_od
+     },
+     dataType: "json",
+     success: function (data) { 
+       $(".drillpipe_grade_edit option").remove(); 
+       $('.drillpipe_grade_edit').append('<option value="">Grade</option>');
+       for(i=0;i<data.data.length;i++){
+         $('.drillpipe_grade_edit').append('<option value="'+data.data[i].steel_grade +'">'+ data.data[i].steel_grade+'</option>');
+     }
+     $('.drillpipe_grade_edit').select2('open');
+     }
+   });
+ });
+
+ $("#drillpipe_jointtype_edit").change(function () { 
+   var drillpipe_jointtype = $(this).val();  
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.connection_type').val(drillpipe_jointtype);
+   var normal_od=$(this).closest('tr').find('.drillpipe_nod_edit').val();
+   var nod=$(this).closest('tr').find('.drillpipe_nod_edit').val();
+   var drillpipe_weight=$(this).closest('tr').find('.drillpipe_weight_edit').val();
+   var drillpipe_grade=$(this).closest('tr').find('.drillpipe_grade_edit').val();
+   var well_id='{{well_id}}'
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getjointod_drillpipe",                    
+     data: {
+       drillpipe_weight:drillpipe_weight,
+       normal_od:normal_od,
+       drillpipe_grade:drillpipe_grade,
+       drillpipe_jointtype:drillpipe_jointtype,
+       well_id:well_id,
+       nod:nod
+     },
+     dataType: "json",
+     success: function (data) { 
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.identity_edit').val(data.data[0][0].pipebody_id);
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.od_edit').val(data.nod);
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.tool_id').val(data.tool_id);
+       $(".drillpipe_jointod_edit option").remove(); 
+       $('.drillpipe_jointod_edit').append('<option value="">OD</option>');
+       for(i=0;i<data.data.length;i++){
+       $('.drillpipe_jointod_edit').append('<option value="'+data.data[i][1].data+'">'+ data.data[i][1].data+'</option>');
+     }
+     $('.drillpipe_jointod_edit').select2('open');
+    }
+   });
+ });
+ $("#drillpipe_jointod_edit").change(function () { 
+   var drillpipe_jointod = $(this).val();  
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.tool_od').val(drillpipe_jointod);
+   var normal_od=$(this).closest('tr').find('.drillpipe_nod_edit').val();
+   var drillpipe_weight=$(this).closest('tr').find('.drillpipe_weight_edit').val();
+   var drillpipe_grade=$(this).closest('tr').find('.drillpipe_grade_edit').val();
+   var drillpipe_jointtype=$(this).closest('tr').find('.drillpipe_jointtype_edit').val();
+   $('.drillpipe_class_edit').select2('open');
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getclass_drillpipe",                    
+     data: {
+       drillpipe_weight:drillpipe_weight,
+       normal_od:normal_od,
+       drillpipe_grade:drillpipe_grade,
+       drillpipe_jointtype:drillpipe_jointtype,
+       drillpipe_jointod:drillpipe_jointod
+     },
+     dataType: "json",
+     success: function (data) { 
+       $(".drillpipe_class_edit option").remove(); 
+       $('.drillpipe_class_edit').append('<option value="">Class</option>');
+       for(i=0;i<data.data.length;i++){
+         $('.drillpipe_class_edit').append('<option value="'+data.data[i].class_type +'">'+ data.data[i].class_type+'</option>');
+       }
+     }
+   });
+ });
+ $("#drillpipe_class").change(function () { 
+   var classtype=$(this).val();
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.classtype').val(classtype);
+ });
+ $("#hwdp_nod_edit").change(function () { 
+   var normal_od=$(this).val();
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getweight_hwdpnod",                    
+     data: {
+       normal_od:normal_od
+     },
+     dataType: "json",
+     success: function (data) { 
+       $(".hwdp_weight_edit option").remove();
+       $('.hwdp_weight_edit').append('<option value="">Weight</option>');
+       for(i=0;i<data.data.length;i++){
+         $('.hwdp_weight_edit').append('<option value="'+data.data[i].weight +'">'+ data.data[i].weight+'</option>');
+       }
+       $('.hwdp_weight_edit').select2('open');
+     }
+ 
+   });
+ });
+ $("#hwdp_weight_edit").change(function () { 
+   var hwdp_weight = $(this).val();  
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.coll_weight').val(hwdp_weight);
+   var normal_od=$(this).closest('tr').find('.hwdp_nod_edit').val();
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getjointtype_hwdp",                    
+     data: {
+       hwdp_weight:hwdp_weight,
+       normal_od:normal_od
+     },
+     dataType: "json",
+     success: function (data) { 
+       $(".hwdp_jointtype_edit option").remove(); 
+       $('.hwdp_jointtype_edit').append('<option value="">Type</option>');
+       for(i=0;i<data.data.length;i++){
+         $('.hwdp_jointtype_edit').append('<option value="'+data.data[i].connection_type +'">'+ data.data[i].connection_type+'</option>');
+     }
+     $('.hwdp_jointtype_edit').select2('open');
+     }
+   });
+ });
+ $("#hwdp_jointtype_edit").change(function () { 
+   var hwdp_jointtype = $(this).val();  
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.connection_type').val(hwdp_jointtype);
+   var normal_od=$(this).closest('tr').find('.hwdp_nod_edit').val();
+   var nod=$(this).closest('tr').find('.hwdp_nod_edit').val();
+   var hwdp_weight=$(this).closest('tr').find('.hwdp_weight_edit').val();
+   var well_id=$('#well').val();
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getjointod_hwdp",                    
+     data: {
+       hwdp_jointtype:hwdp_jointtype,
+       normal_od:normal_od,
+       hwdp_weight:hwdp_weight,
+       well_id:well_id,
+       nod:nod
+     },
+     dataType: "json",
+     success: function (data) { 
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.identity_edit').val(data.data[0][1].tool_id);
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.od_edit').val(data.nod);
+       $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.tool_id').val(data.tool_id);
+       $(".hwdp_jointod_edit option").remove(); 
+       $('.hwdp_jointod_edit').append('<option value="">OD</option>');
+       for(i=0;i<data.data.length;i++){
+       $('.hwdp_jointod_edit').append('<option value="'+data.data[i][0].data+'">'+data.data[i][0].data+'</option>');
+     }
+     $('.hwdp_jointod_edit').select2('open');
+    }
+   });
+ });
+ $("#hwdp_jointod_edit").change(function () { 
+   var hwdp_jointod = $(this).val(); 
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.tool_od').val(hwdp_jointod);
+   var hwdp_jointtype = $(this).closest('tr').find('.hwdp_jointtype_edit').val(); 
+   var normal_od=$(this).closest('tr').find('.hwdp_nod_edit').val();
+   var hwdp_weight=$(this).closest('tr').find('.hwdp_weight_edit').val();
+   $('.hwdp_class_edit').select2('open');
+   $.ajax({ 
+     type: "GET",                      
+     url: "/wells/bhadata/getclass_hwdp",                    
+     data: {
+       hwdp_jointod:hwdp_jointod,
+       normal_od:normal_od,
+       hwdp_jointtype:hwdp_jointtype,
+       hwdp_weight:hwdp_weight
+     },
+     dataType: "json",
+     success: function (data) { 
+       $(".hwdp_class_edit option").remove(); 
+       $('.hwdp_class_edit').append('<option value="">Class</option>');
+       for(i=0;i<data.data.length;i++){
+         $('.hwdp_class_edit').append('<option value="'+data.data[i].class_type +'">'+ data.data[i].class_type+'</option>');
+       }
+     }
+   });
+ });
+ $("#hwdp_class_edit").change(function () { 
+   var classtype=$(this).val();
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.classtype').val(classtype);
+ });
+ $("#one_joint_length").keyup(function () { 
+   var onejointlength=$(this).val();
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.onejoint_length').val(onejointlength);
+ });
+
+ $("#hwdp_one_joint_length").keyup(function () { 
+   var onejointlength=$(this).val();
+   $('#bhadatatable tbody tr:eq('+closesttrindex+')').find('.onejoint_length').val(onejointlength);
+ });
+ 
+ $(document).on("change", ".type_name_edit" , function() {
+   var closestindex;
+   closestindex=$(this).closest('tr').index();
+   if(($(this).val()=='RSS')||($(this).val()=='LWD')||($(this).val()=='MWD')||($(this).val()=='Others')){
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".empirical_popup_button").show();
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".mudmotor_popup_button").hide();
+  }
+  else if($(this).val()=='Mud Motor'){
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".mudmotor_popup_button").show();
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".empirical_popup_button").hide();
+  }
+  else{
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".empirical_popup_button").hide();
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".mudmotor_popup_button").hide();
+  }
+  });
+ var closestindex
+
+
+
+
+
+$(document).on("click", ".deletepressurerows_edit" , function(){   
+  var rowCounts = $('#diff_pressure_table >tbody >tr').length;
+  if(rowCounts<2)
+  {
+    $('#diff_pressure_table > tbody > tr:gt(0)').find(".deletepressurerows_edit").hide();
+  }   
+var whichtr =$(this).closest("tr");
+whichtr.remove();
+});
+
+});
+$(".rss_button_edit").hide();
+$(".mudmotor_button_edit").hide();
+$(document).on("change", ".type_name_edit" , function() {
+  var closestindex;
+  closestindex=$(this).closest('tr').index();
+  if(($(this).val()=='RSS')||($(this).val()=='LWD')||($(this).val()=='MWD')||($(this).val()=='Others')){
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".rss_button_edit").show();
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".mudmotor_button_edit").hide();
+  }
+  else if($(this).val()=='Mud Motor'){
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".mudmotor_button_edit").show();
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".rss_button_edit").hide();
+  }
+  else{
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".rss_button_edit").hide();
+    $('#bhadatatable tbody tr:eq('+closestindex+')').find(".mudmotor_button_edit").hide();
+  }
+  });
+
+  $(document).on("click",".rss_button_edit",function(){
+  var type_name=$(this).closest('tr').find('#type_name_edit').val();
+  var index=$(this).closest('tr').index();
+  var od=$(this).closest('tr').find('.od_edit').val();
+  var id=$(this).closest('tr').find('.identity_edit').val();
+  var length=$(this).closest('tr').find('.length_edit').val();
+  var unit =$('.unit').val();
+  modalid=type_name+index
+  var checkmodalexist=$('#'+modalid).length
+  closestindex=index-1;
+  if(checkmodalexist==0){
+  $(".modal-backdrop").show();
+  var html = '';
+    html +='<div class="modal" id='+modalid+'>'
+    html +='<div class="modal-dialog">'
+    html +='<div class="modal-content">'
+    html +='<div class="modal-header">'
+    html +='<h4 class="modal-title">Configure Downhole Tool Specifications and Limitations3</h4>'
+    html +='</div>'
+    html += '<h2 style="text-align: center;">'+type_name+'</h2>'
+    html +='<div class="modal-body">'
+    html +='<div class="table-responsive formgroup_b0">'
+    html +='<div class="row">'
+    html +='<div class="col-6">'
+    html +='<h3 style="text-align: center;">Specifications</h3>'
+    html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Name</label></div><div class="col"><input type="text" id="name" class="form-control" name="name'+closestindex+'" placeholder="Name" value='+type_name+'></div></div></div>';
+    if (unit == 'API'){
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">OD(in)</label></div><div class="col"><input type="text" id="specification_od'+closestindex+'" class="form-control" name="specification_od'+closestindex+'" placeholder="OD" value='+od+'></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">ID(in)</label></div><div class="col"><input type="text" id="specification_id'+closestindex+'" class="form-control" name="specification_id'+closestindex+'" placeholder="ID" value='+id+'></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Length(ft)</label></div><div class="col"><input type="text" id="specification_length'+closestindex+'" class="form-control" name="specification_length'+closestindex+'" placeholder="Length" value='+length+'></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Minimum Flowrate(GPM)</label></div><div class="col"><input type="text" id="minimum_flowrate" class="form-control" name="minimum_flowrate'+closestindex+'" placeholder="Minimum Flowrate"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Maximum Flowrate(GPM)</label></div><div class="col"><input type="text" id="maximum_flowrate" class="form-control" name="maximum_flowrate'+closestindex+'" placeholder="Maximum Flowrate"></div></div></div>';
+    }else{
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">OD(mm)</label></div><div class="col"><input type="text" id="specification_od'+closestindex+'" class="form-control" name="specification_od'+closestindex+'" placeholder="OD" value='+od+'></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">ID(mm)</label></div><div class="col"><input type="text" id="specification_id'+closestindex+'" class="form-control" name="specification_id'+closestindex+'" placeholder="ID" value='+id+'></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Length(m)</label></div><div class="col"><input type="text" id="specification_length'+closestindex+'" class="form-control" name="specification_length'+closestindex+'" placeholder="Length" value='+length+'></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Minimum Flowrate(LPM)</label></div><div class="col"><input type="text" id="minimum_flowrate" class="form-control" name="minimum_flowrate'+closestindex+'" placeholder="Minimum Flowrate"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Maximum Flowrate(LPM)</label></div><div class="col"><input type="text" id="maximum_flowrate" class="form-control" name="maximum_flowrate'+closestindex+'" placeholder="Maximum Flowrate"></div></div></div>';
+    }
+    html += '</div>'
+    html += '<div  class="col-6">'
+    html += '<h3 style="text-align: center;">Pressure Drop across Tool</h3>'
+    html += '<ul class="nav nav-tabs" role="tablist">'
+    html += '<li class="nav-item">'
+    html += '<a class="nav-link " onclick="test(1)" data-toggle="tab" href="#flowrate_tab'+closestindex+'" role="tab" aria-selected="true">Flow Test</a>'
+    html += '</li>'
+    html += '<li class="nav-item">'
+    html += '<a class="nav-link" onclick="test(2)" data-toggle="tab" href="#empirical_tab'+closestindex+'" role="tab">Empirical</a>'
+    html += '</li>'
+    html += '</ul>'
+    html += '<div class="tab-content">'
+    html += '<div class="tab-pane flowrate_tab fade show active" id=flowrate_tab'+closestindex+' role="tabpanel" aria-labelledby="home-tab">'
+    html += '<table class="table flowratetable" id="flowratetable">'
+    if (unit == 'API'){
+      html += '<thead><tr><th>Flowrate(GPM)</th><th>Pressure Drop(psi)</th><th>Action</th></tr></thead>'
+    }else{
+      html += '<thead><tr><th>Flowrate(LPM)</th><th>Pressure Drop(kPa)</th><th>Action</th></tr></thead>'
+    }
+    html += '<tbody><tr id="flowraterow">'
+    html += '<td><input type="text" id=" flowrate" class="form-control flowrate" name="flowrate'+closestindex+'" placeholder="Flowrate"></td>'
+    html += '<td><input type="text" id="pressure_drop" class="form-control pressure_drop" name="pressure_drop'+closestindex+'" placeholder="Pressure Drop"></td>'
+    html += '<td><button type="button" name="add" class="addflowtestrows iconaction"><i class="fa fa-plus"></i></button><button type="button" name="add" class="deleteflowtestrow iconaction"><i class="fa fa-trash"></i></button></td>'
+    html += '</tr>'
+    html += '<tr id="flowraterow2" style="display:none">'
+    html += '<td><input type="text" id=" flowrate" class="form-control flowrate" name="flowrate'+closestindex+'" placeholder="Flowrate"></td>'
+    html += '<td><input type="text" id="pressure_drop" class="form-control pressure_drop" name="pressure_drop'+closestindex+'" placeholder="Pressure Drop"></td>'
+    html += '<td><button type="button" name="add" class="addflowtestrows iconaction"><i class="fa fa-plus"></i></button><button type="button" name="add" class="deleteflowtestrow iconaction"><i class="fa fa-trash"></i></button></td>'
+    html += '</tr></tbody>'
+    html +='</table>'
+    html += '</div>'
+    html += '<div class="tab-pane empirical_tab fade show" id=empirical_tab'+closestindex+' role="tabpanel" aria-labelledby="home-tab">'
+    html += '<h4>Variables</h4>'
+    html += '<ul class="parameters_list">'
+    html +='<li class="parameters">Mud Weight</li>'
+    html +='<li class="parameters">Flowrate</li>'
+    html +='<li class="parameters">Inner Diameter</li>'
+    html +='<li class="parameters">Constant</li>'
+    html +='</ul>'
+
+    html += '<h4>Operators</h4>'
+    html += '<ul class="parameters_list">'
+    html +='<li class="parameters">+</li>'
+    html +='<li class="parameters">-</li>'
+    html +='<li class="parameters">*</li>'
+    html +='<li class="parameters">/</li>'
+    html +='<li class="parameters">Power</li>'
+    html +='<li class="parameters">Square</li>'
+    html +='<li class="parameters">Cube</li>'
+    html +='<li class="parameters">Square Root</li>'
+    html +='<li class="parameters">Cube Root</li>'
+    html +='</ul>'
+    // html +='<div id=formula'+closestindex+' contenteditable="true" style="width: 400px;height: 100px;background-color: #0302020f;"><input type="hidden" name=formulatext'+closestindex+' id=formulatext'+closestindex+'><input type="hidden" id=formula_python_text'+closestindex+' name=formula_python_text'+closestindex+'></div>'
+    html +='<input type="hidden" name=formulatests id=formulatexts>'
+    html +='<input type="hidden" name=formulatext'+closestindex+' id=formulatext'+closestindex+'><input type="hidden" id=formula_python_text'+closestindex+' name=formula_python_text'+closestindex+'>'
+    html +='<textarea id="text_formula_edit" class="form-control" value="" data-role="tagsinput" ></textarea>'
+    html += '</div>'
+    html += '</div>'
+
+    html += '</div>'
+    html += '</div>'
+    html += '</div>'
+    html += '</div>'
+    
+    html += '<div class="modal-footer"><button type="button" class="btn btn-danger" data-id='+closestindex+' data-modal='+modalid+' data-dismiss="rss_inputs" id="modal-close" >Close</button></div> '
+    html += '</div>'
+    html += '</div>'
+    html +='</div>'
+    $('#flowrateempiricalmodal').append(html);
+    $('#flowrateempiricalmodal').show();
+
+    $('#'+modalid).modal('show');
+  }else{
+    $(".modal-backdrop").show();
+    $('#flowrateempiricalmodal').show();
+    $('#'+modalid).modal('show');
+  }
+
+
+  })
+
+  $(document).on("click",".mudmotor_button_edit",function(){
+  var type_name=$(this).closest('tr').find('#type_name_edit').val();
+  var index=$(this).closest('tr').index();
+  modalid='mud_motor'+index
+  var checkmodalexist=$('#'+modalid).length
+  var unit = $('.unit').val();
+  closestindex=index-1;
+    var html = '';
+    html +='<div class="modal" id='+modalid+'>'
+    html +='<div class="modal-dialog">'
+    html +='<div class="modal-content">'
+    html +='<div class="modal-header">'
+    html +='<h4 class="modal-title">Configure Downhole Tool Specifications and Limitations4</h4>'
+    html +='</div>'
+    html += '<h2 style="text-align: center;">'+type_name+'</h2>'
+    html +='<div class="modal-body">'
+    html +='<div class="row">'
+    html +='<div class="col-6">'
+    html +='<h3 style="text-align: center;">Specifications</h3>'
+    html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Name</label></div><div class="col"><input type="text" id="name" class="form-control" name="name'+closestindex+'" placeholder="Name" value="'+type_name+'"></div></div></div>';
+    if(unit=='API'){
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Maximum Flowrate(GPM)</label></div><div class="col"><input type="text" id="maximum_flowrate" class="form-control" name="maximum_flowrate'+closestindex+'" placeholder="Maximum Flowrate"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Minimum Flowrate(GPM)</label></div><div class="col"><input type="text" id="minimum_flowrate" class="form-control" name="minimum_flowrate'+closestindex+'" placeholder="Minimum Flowrate"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Maximum RPM(rpm)</label></div><div class="col"><input type="text" id="maximum_rpm" class="form-control" name="maximum_rpm'+closestindex+'" placeholder="Maximum RPM"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Minimum RPM(rpm)</label></div><div class="col"><input type="text" id="minimum_rpm" class="form-control" name="minimum_rpm'+closestindex+'" placeholder="Minimum RPM"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">No Load Differential Pressure(psi) </label></div><div class="col"><input type="text" id="no_load_diff_pressure" class="form-control" name="no_load_diff_pressure'+closestindex+'" placeholder="No load diff_pressure"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Maximum DP(psi)</label></div><div class="col"><input type="text" id="max_dp" class="form-control" name="max_dp'+closestindex+'" placeholder="maximun DP"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Recom DP(psi)</label></div><div class="col"><input type="text" id="recom_dp" class="form-control" name="recom_dp'+closestindex+'" placeholder="Recom DP"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Max WOB(lbf)</label></div><div class="col"><input type="text" id="max_wob" class="form-control" name="max_wob'+closestindex+'" placeholder="Max WOB"></div></div></div>';
+    }else{
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Maximum Flowrate(LPM)</label></div><div class="col"><input type="text" id="maximum_flowrate" class="form-control" name="maximum_flowrate'+closestindex+'" placeholder="Maximum Flowrate"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Minimum Flowrate(LPM)</label></div><div class="col"><input type="text" id="minimum_flowrate" class="form-control" name="minimum_flowrate'+closestindex+'" placeholder="Minimum Flowrate"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Maximum RPM(rpm)</label></div><div class="col"><input type="text" id="maximum_rpm" class="form-control" name="maximum_rpm'+closestindex+'" placeholder="Maximum RPM"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Minimum RPM(rpm)</label></div><div class="col"><input type="text" id="minimum_rpm" class="form-control" name="minimum_rpm'+closestindex+'" placeholder="Minimum RPM"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">No Load Differential Pressure(kPa) </label></div><div class="col"><input type="text" id="no_load_diff_pressure" class="form-control" name="no_load_diff_pressure'+closestindex+'" placeholder="No load diff_pressure"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Maximum DP(kPa)</label></div><div class="col"><input type="text" id="max_dp" class="form-control" name="max_dp'+closestindex+'" placeholder="maximun DP"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Recom DP(kPa)</label></div><div class="col"><input type="text" id="recom_dp" class="form-control" name="recom_dp'+closestindex+'" placeholder="Recom DP"></div></div></div>';
+      html += '<div class="col-12"><div class="form-group row"><div class="col col-form-label"><label class="project-edit-name" for="well-name">Max WOB</label></div><div class="col"><input type="text" id="max_wob" class="form-control" name="max_wob'+closestindex+'" placeholder="Max WOB"></div></div></div>';
+    }
+    html += '</div>'
+    html += '<div class="tab-content">'
+    html += '<div class="tab-pane flowrate_tab fade show active" id=flowrate_tab'+closestindex+' role="tabpanel" aria-labelledby="home-tab">'
+    html +='<h3 style="text-align: center;">Differential Pressure Table</h3>'
+    html += '<table class="table diff_pressure_table" id="diff_pressure_table">'
+    html += '<thead><tr><th>Torque</th><th>Differential Pressure</th><th>Action</th></tr></thead>'
+    html += '<tbody><tr id="pressure_row">'
+    html += '<td><input type="text" id=" torque" class="form-control torque" name="torque'+closestindex+'" placeholder="Torque"></td>'
+    html += '<td><input type="text" id="diff_pressure" class="form-control diff_pressure" name="diff_pressure'+closestindex+'" placeholder="Differential Pressure"></td>'
+    html += '<td><button type="button" name="add" class="addpressurerows iconaction"><i class="fa fa-plus"></i></button><button type="button" name="add" class="deletepressurerows iconaction"><i class="fa fa-trash"></i></button></td>'
+    html += '</tr>'
+    html += '<tr id="pressure_row2" style="display:none">'
+    html += '<td><input type="text" id=" torque" class="form-control torque" name="torque'+closestindex+'" placeholder="Torque"></td>'
+    html += '<td><input type="text" id="diff_pressure" class="form-control diff_pressure" name="diff_pressure'+closestindex+'" placeholder="Differential Pressure"></td>'
+    html += '<td><button type="button" name="add" class="addpressurerows iconaction"><i class="fa fa-plus"></i></button><button type="button" name="add" class="deletepressurerows iconaction"><i class="fa fa-trash"></i></button></td>'
+    html += '</tr></tbody>'
+    html +='</table>'
+    html += '</div>'
+    html += '</div>'
+    html += '</div>'
+    html += '</div>'
+    
+    html += '<div class="modal-footer"><button type="button" class="btn btn-danger" data-modal='+modalid+' data-dismiss="mudmotor_input" id="modal-mud_motor-close" >Close</button></div> '
+    html += '</div>'
+    html +='</div>'
+    html +='</div>'
+    html +='</div>'
+    $('#mud_motor_edit').append(html);
+    $('#mud_motor_edit').show();
+    $('#'+modalid).modal('show');
+})
+var storedArray = JSON.parse(sessionStorage.getItem("items"));
+var well_id='{{well_id}}'
+if(well_id == storedArray[1]){
+    $('.warning').show();
+}else{
+    $('.warning').hide();
+}
+</script>
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+  var well_id='{{well_id}}'
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+<script src="{% static 'js/bhadata.js' %}"></script>
+<script src="{% static 'js/bhadata/edit.js' %}"></script>
+
+
+
+{%endblock%}
+      
+

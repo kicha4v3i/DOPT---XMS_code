@@ -1,0 +1,10 @@
+**/migrations
+*.DS_Store
+**/__pycache__
+**/.DS_Store
+*hydraulics-env
+*hydraulics-venv
+*env
+*dopt-venv
+manage.py
+/hydraulics/stg.py

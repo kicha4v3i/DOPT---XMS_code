@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+  <div class="container-fluid">
+    <!-- <div class="row" id="basic-table"> -->
+      <div class="row common-row-space" id="">
+        <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+        <div class="col-12">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Pumps</h4>
+            </div>
+
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <tr><td>Manufacturer:</td><td>{{pump.pump_manufacturer.name}}</td></tr>
+                    <tr><td>Pump Name:</td><td>{{pump.name}}</td></tr>
+                    <tr><td>Type:</td><td>{{pump.type}}</td></tr>
+                    <tr><td>Stroke Length(in):</td><td>{{pump.stroke_length}} in</td></tr>
+
+                </table>
+              </div>
+              <div class="col-12">
+                <table class="table table-bordered">
+                  <div class="card-header">
+                    <h4 class="card-title">Mud Pump Data</h4>
+                  </div>
+                    <tr  class="linearsize"><th>Liner Size(in)</th>
+                        {% for obj in pump.mudpumpmasterdata_set.all %}
+                        <td>{{obj.linear_size}} in</td>   
+                        {% endfor %}
+                    </tr>
+                    <tr class="pressure"><th>Max Discharge Pressure(psi)</th>
+                        {% for obj in pump.mudpumpmasterdata_set.all %}
+                        <td>{{obj.max_discharge_pressure}} psi</td>   
+                        {% endfor %}
+                    </tr>
+                </table>
+              </div>
+
+            <div class="col-12">
+                <table class="table mudpumptable table-bordered">
+                    <tr><th>Pump Speed(SPM)</th><th class="flowrateth" >Flowrate(GPM)</th></tr>
+
+                    {% for speed in pump.mudpumpmasterspeed_set.all %}
+                    <tr class="flowrate"> <td>
+                        {{speed.pump_speed}} SPM
+                    </td>
+                    {% for flowrateobj in speed.mudpumpmasterflowrate_set.all %}
+
+                    <td>
+                        {{flowrateobj.flowrate}} GPM
+                    </td>
+                    {% endfor %}
+
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+        </div>
+      </div>
+
+    
+    </div>
+    </section>
+    <div class="row" id="basic-table">
+  
+      <div class="col-12">
+          <!-- <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect pull-right" href="{% url 'mud:adminpumpdelete' pump.pk %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+
+          <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right" href="{% url 'mud:adminpumpedit' pump.pk %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a> -->
+
+      </div>
+      </div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% comment %} <div class="boxes-user">
+    <div class="user-box">
+    {% if request.user.is_superuser %}
+    <div class="ml-auto user_info">
+        <div class="icon rem-user">
+            <img class="" src="/static/images/icon2.svg" alt="home svg">
+        </div>
+    <div class="user_name">Admin</div>
+</div>
+{%else%}
+<div class="ml-auto user_info">
+    <a href="{% url 'custom_auth:license_details' %}">
+    <div class="icon rem-user">
+      
+        <img class="" src="/static/images/icon2.svg" alt="home svg">
+    </div>
+    {% if request.company.company_name %}
+    <div class="user_name">{{request.company.company_name}}</div>
+    {% else %}
+    <div class="user_name">{{request.user.name}}</div>
+    {% endif %}
+</a>
+</div>
+</div>
+
+<style>
+   
+</style>
+
+{% endif %} {% endcomment %}
+

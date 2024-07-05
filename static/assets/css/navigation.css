@@ -1,0 +1,43 @@
+/* body.vertical-layout.vertical-menu-modern.menu-expanded .main-menu {
+    width: 100px;
+}
+.menu-title {
+    display: none !important;
+}
+.nav-item.home-menu.active::before {
+    content: none;
+
+}
+.nav-item.home-menu.active::after {
+    content: none;
+
+}
+.nav-item.home-menu:hover .home-icon-svg, .nav-item.home-menu.active .home-icon-svg {
+    margin-left: 26px !important;
+}
+.nav-item.home-menu:hover, .nav-item.home-menu.active {
+    background: #fff;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+
+}
+.mani-logo {
+    border: 1px solid white;
+    border-radius: 50%;
+    height: 75px;
+    width: 75px;
+    background: white;
+    margin: 0px 9px;
+    display: flex;
+}
+html body .content {
+    margin-left: 96px !important;
+} */
+
+.new-curve.side-section{
+    max-width: 16.66667%;
+    width: 100%;
+    padding-left: 6px;
+    /* margin-left: -15px !important; */
+    /* margin-right: 10px; */
+}

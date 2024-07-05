@@ -1,0 +1,480 @@
+{% load pressureloss_filters %}
+<!DOCTYPE html>
+<html>
+<body>
+    <header>
+        <div style="text-align: center; font-weight: bold;">
+            <table class="main-head-table">
+                <thead>
+                    <tr>
+                        <th>DOPT</th>
+                        <th>{{well_and_project_details.name}}</th>
+                        <th>HYDRAULICS REPORT</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </header>
+    <footer>
+        <div style="text-align: center; font-weight: bold;">
+           
+        </div>
+    </footer>
+    <div class="firstpage">
+        <p class="date-format">{{formatted_date}}</p>
+        <div class="project-details">
+           
+
+            <p>{{well_and_project_details.project.project_name}}</p>
+            <p>{% getblockdetails_bywell well_and_project_details.block_id as block %}
+                {{block.block_name}}
+            </p>
+            <p>{% getfielddetails_bywell well_and_project_details.field_id as field %}
+                {{field.field_name}}
+            </p>
+            <p>{{well_and_project_details.name}}</p>
+        </div>
+        <div>
+            <h2 class="main-heading">HYDRAULICS<br> REPORT</h2>
+        </div>
+        <div>
+            <h4 class="welphase-name">{{wellphase_details.phase_name}}</h4>
+        </div>
+        <div class="wellphase-details">
+            <p>1.0</p>
+            <p>{{user.name}} {{user.lastname}}</p>
+            <p>
+                {% if user.licence_type == 'CompanyPlan' %}
+                Company
+                {% elif user.licence_type == 'Enterprise' %}
+                Enterprise
+                {%else%}
+                Individual
+                {% endif %}
+                {{user.licence_type}}
+            </p>
+        </div>
+    </div>
+
+    <div style="padding-top: 2cm;">
+
+        <div class="logo" style="background-image: url('/media/{{image_name}}')";>
+                
+        </div>
+        <h4 class="heading-title">WELL INFORMATION</h4>
+        <table class="full-wdt">
+            <tr>
+                <td>
+        <table class="project-tbl">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>{{well_and_project_details.project.project_name}}</th>
+                </tr>
+                <tr>
+                    <th>Block</th>
+                    <th> {{block.block_name}}</th>
+                </tr>
+                <tr>
+                    <th>Field</th>
+                    <th>{{field.field_name}}</th>
+                </tr>
+                <tr>
+                    <th>Well</th>
+                    <th>{{well_and_project_details.name}}</th>
+                </tr>
+            </thead>
+        </table>
+    </td>
+    <td>
+        <table class="projection-tbl">
+            <thead>
+                <tr>
+                    <th>Projection</th>
+                    <th>{{well_and_project_details.project.project_name}}</th>
+                </tr>
+                <tr>
+                    <th>Northing</th>
+                    <th>{{well_and_project_details.northing}}</th>
+                </tr>
+                <tr>
+                    <th>Easting</th>
+                    <th>{{well_and_project_details.easting}}</th>
+                </tr>
+                <tr>
+                    <th>Zone</th>
+                    <th>{{well_and_project_details.zone}}</th>
+                </tr>
+                <tr>
+                    <th>Latitutde</th>
+                    <th>{{well_and_project_details.latitude}}</th>
+                </tr>
+                <tr>
+                    <th>Longitude</th>
+                    <th>{{well_and_project_details.longtitude}}</th>
+                </tr>
+            </thead>
+        </table>
+    </td>
+    </tr>
+    </table>
+        <h4 class="heading-title">WELL HYDRAULICS</h4>
+        {% getallwellphases_bywellid well_id as wellphases %}
+        {% for wellphase in wellphases %}
+            {% getmuddata_by_wellphase wellphase.id as muddetails %}
+            {% if muddetails|length > 0 %}
+                {% for muddetail in muddetails %}
+                    {% checkcalculationdata_exist wellphase.id muddetail.section as calculationdata_exist %}
+                    {% if calculationdata_exist|length > 0 %}
+                        {% getinputdata_bywellphase wellphase muddetail.section as input_data %}
+                        {% getrheogram_data_bywellphase wellphase.id muddetail.id muddetail.section as rheogram_datas %}
+
+                        {% getrheogram_chart_bywellphase wellphase.id muddetail.section as rheogram_chart %}
+
+                        {% getviscocity_details muddetail as viscocity %}
+                        {% get_annular_drillingstringloss wellphase.well_id wellphase.id muddetail.section as annular_drillingstringloss %}
+                        {% get_bitpressure_loss wellphase.well_id wellphase.id muddetail.section as bitpressure_loss %}
+                        {% get_surfacepressure_loss wellphase.well_id wellphase.id muddetail.section as surfacepressure_loss %}
+
+                        {% gettotalsurfaceloss surfacepressure_loss as totalsurfaceloss %}
+                        {% gettotal_drillstring_annular_loss annular_drillingstringloss as totalannular_drillingstringloss %}
+                        {% gettotalpressureloss totalannular_drillingstringloss totalsurfaceloss bitpressure_loss as totalpressureloss %}
+                        {% get_alongwellecd_data wellphase.well_id wellphase.id muddetail.section as alongwellecd_data%}
+                        {% get_bitdepthecd_data wellphase.well_id wellphase.id muddetail.section as bitdepthecd_data%}
+
+                        {% getecdalongwell_chart_bywellphase wellphase.id muddetail.section as ecdalongwell_chart %}
+                        {% getecdbitdepth_chart_bywellphase wellphase.id muddetail.section as ecdbitdepth_chart %}
+                        {% getpressureloss_chart_bywellphase wellphase.id muddetail.section as pressureloss_chart %}
+
+                        
+
+                        <h4 class="well-phase-name">{{wellphase.phase_name}}</h4>
+                        <div class="border-bottom">
+                        <h4 class="well-phase-name">Section <span class="section-name">{{muddetail.from_depth}} to {{muddetail.todepth}}</span></h4>
+                        </div>
+                        <div>
+                            <h4 class="flow-proper">Flow Properties</h4>
+                            <table  class="flow-table">
+                                <thead>
+                                    <tr>
+                                        <th><p class="box-es">Flowrate<span>{{input_data.flowrate}}</span></p></th>
+                                        <th><p class="box-es">RPM <span>{{input_data.rpm}}</span></p></th>
+                                        <th><p class="box-es">ROP <span>{{input_data.rop}}</span></p></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div>
+                            <h4 class="flow-proper">Mud Properties</h4>
+                            <table class="mud-table-data">
+                                <thead>
+                                    <tr>
+                                        <th>Mud Weight</th>
+                                        <th>Mud Type</th>
+                                        <th>PV</th>
+                                        <th>YP</th>
+                                        <th>LSRYP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{muddetail.mud_weight}}</td>
+                                        <td>{% getmudtype_byid muddetail.mudtype_id as mudtype %} {{mudtype.mud_name}}</td>
+                                        <td>{{muddetail.plastic_viscosity}}</td>
+                                        <td>{{muddetail.yield_point}}</td>
+                                        <td>{{muddetail.low_shear_rate}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <table>
+                            <tr>
+                                <td>
+                        <div>
+                            <h4 class="head-samll">Gel Strength</h4>
+                            <table class="gel-table">
+                                <thead>
+                                    <tr>
+                                        <th>0 sec</th>
+                                        <th>10 min</th>
+                                        <th>30 min</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{muddetails.gel_strength_0sec}}</td>
+                                        <td>{{muddetails.gel_strength_10min}}</td>
+                                        <td>{{muddetails.gel_strength_30min}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h4 class="head-samll">Rheogram</h4>
+                            <table class="rheogram-table">
+                                <thead>
+                                    <tr>
+                                        <th>RPM</th>
+                                        <th>Dial</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for data in rheogram_datas %}
+                                    <tr>
+                                        <td>{{data.rpm}}</td>
+                                        <td>{{data.dial}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="rheogram_chart">
+                            {% comment %} <img src="data:image/jpeg;base64,{{ rheogram_chart }}" alt="Base64 Image"> {% endcomment %}
+                            <img src="data:image/jpeg;base64,{{ rheogram_chart }}" alt="Base64 Image">
+                        </div>
+                    </td>
+                    </tr>
+                    </table>
+                        <div>
+                            <table class="rheology-table">
+                                <tr>
+                                    <th>Rheology Model:</th>
+                                    <td>
+                                        {% if viscocity.selected_modal == '1' %}
+                                        Newtonian
+                                        {% elif viscocity.selected_modal == '2' %}
+                                        Bingham
+                                        {% elif viscocity.selected_modal == '3' %}
+                                        Powerlaw
+                                        {% else %}
+                                        Hershel Bulkley
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>PV:</th>
+                                    <td>{{viscocity.plastic_viscosity|default:"" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>YP:</th>
+                                    <td>{{viscocity.yieldpoint|default:""}}</td>
+                                </tr>
+                                <tr>
+                                    <th>n:</th>
+                                    <td>{{viscocity.n|default:""}}</td>
+                                </tr>
+                                <tr>
+                                    <th>K:</th>
+                                    <td>{{viscocity.K|default:""}}</td>
+                                </tr>
+                                <tr>
+                                    <th>LSRYP:</th>
+                                    <td>{{muddetails.low_shear_rate|default:""}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <h4 class="flow-proper">STRING PRESSURE LOSS</h4>
+                            <table class="string-table">
+                                <thead>
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>BHA Element</th>
+                                        <th>OD / ID</th>
+                                        <th>Length</th>
+                
+                                        <th>Drillstring</th>
+                                        <th>Annulus</th>
+                                        <th>Annular Flow Regime</th>
+                
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pressureloss in annular_drillingstringloss %}
+                                    <tr>
+                                        <td>{{pressureloss.element_type}}</td>
+                                        <td>{{pressureloss.element}}</td>
+                                        <td>{{pressureloss.od}} / {{pressureloss.id}}</td>
+                                        <td>{{pressureloss.length_against}}</td>
+                                        <td>{{pressureloss.drillstringloss}}</td>
+                                        <td>{{pressureloss.pressureloss}}</td>
+                                        <td>{{pressureloss.flowregime}}</td>
+                
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <h4 class="flow-proper">BIT HYDRAULICS</h4>
+                            <table class="string-table">
+                                <thead>
+                                    <tr>
+                                        <th>TFA</th>
+                                        <th>Bit Pressure Loss</th>
+                                        <th>Flowrate</th>
+                                        <th>BHHP</th>
+                                        <th>HSI</th>
+                                        <th>Impact force</th>
+                                        <th>Jet Velocity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for bitpressureloss in bitpressure_loss.bitpressure_loss %}
+                                    <tr>
+                                        <td>{{bitpressureloss.tfa_value}}</td>
+                                        <td>{% getroundvalue_withdecimal bitpressureloss.bit_pressure_loss %}</td>
+                                        <td>{{input_data.flowrate}}</td>
+                                        <td>{% getroundvalue_withdecimal bitpressureloss.bhhp %}</td>
+                                        <td>{% getroundvalue_withdecimal bitpressureloss.hsi %}</td>
+                                        <td>{% getroundvalue_withdecimal bitpressureloss.impact_forces %}</td>
+                                        <td>{% getroundvalue_withdecimal bitpressureloss.jet_velocity %}</td>
+                                    </tr>
+                            
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <h4 class="flow-proper">SURFACE PRESSURE LOSS</h4>
+                            <table  class="string-table">
+                                <thead>
+                                    <tr>
+                                        <th>Element</th>
+                                        <th>ID</th>
+                                        <th>Length</th>
+                                        <th>Pressure Loss</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for surfacepressureloss in surfacepressure_loss %}
+                                    <tr>
+                                        <td>{{surfacepressureloss.type}}</td>
+                                        <td>{{surfacepressureloss.id}}</td>
+                                        <td>{{surfacepressureloss.length}}</td>
+                                        <td>{{surfacepressureloss.pressureloss}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <h4 class="flow-proper">TOTAL PRESSURE LOSS</h4>
+                            <table class="total-pressure-table">
+                                <tbody>
+                                    <tr>
+                                        <th>Total Surface Losses</td>
+                                        <td>{{totalsurfaceloss}}</td>
+                                        <td>{% getpressureloss_percentage totalpressureloss totalsurfaceloss %} %</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Drillstring Losses</td>
+                                        <td>{{totalannular_drillingstringloss.totaldrillstringlosses}}</td>
+                                        <td>{% getpressureloss_percentage totalpressureloss totalannular_drillingstringloss.totaldrillstringlosses %} %</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Bit Pressure Loss</td>
+                                        <td>{{bitpressure_loss.totalbitpressureloss}}</td>
+                                        <td>{% getpressureloss_percentage totalpressureloss bitpressure_loss.totalbitpressureloss %} %</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Annular Losses</td>
+                                        <td>{{totalannular_drillingstringloss.totalannularlosses}}</td>
+                                        <td>{% getpressureloss_percentage totalpressureloss totalannular_drillingstringloss.totalannularlosses %} %</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <table class="flow-table space-top">
+                        <thead>
+                        <tr>
+                        <th>
+                        <p class="box-es">Cuttings Density : <span>{{input_data.cuttings_density}}</span></p></th>
+                       <th> <p class="box-es">Cuttings Diameter :<span> {{input_data.cuttings_size}}</span></p>
+                        </th>
+                        </tr>
+                        </thead>
+                        </table>
+                    
+                        <div class="pressurelosschart">
+                            {% comment %} <img src="data:image/jpeg;base64,{{ pressureloss_chart }}" alt="Base64 Image"> {% endcomment %}
+                            <img src="data:image/jpeg;base64,{{ pressureloss_chart }}" alt="Base64 Image">
+
+                        </div>
+
+                        <div>
+                            <h4 class="flow-proper">ECD ALONGWELL WHILE DRILLING </h4>
+                            <table class="ecd-along-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th class="remove-border-td">TD</th>
+                                        <th class="remove-border-td">Casing Shoe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>ECD</th>
+                                        <td>{{alongwellecd_data.alongwell_td_without}}</td>
+                                        <td>{{alongwellecd_data.alongwell_csg_without}}</td>
+                
+                                    </tr>
+                                    <tr>
+                                        <th>ECD with Cuttings</td>
+                                        <td>{{alongwellecd_data.alongwell_td_with}}</td>
+                                        <td>{{alongwellecd_data.alongwell_csg_with}}</td>
+                                    </tr>
+                                
+                                </tbody>
+                            </table>
+                            <div class="ecdalongwell_chart">
+                                {% comment %} <img src="data:image/jpeg;base64,{{ ecdalongwell_chart }}" alt="Base64 Image"> {% endcomment %}
+                                <img src="data:image/jpeg;base64,{{ ecdalongwell_chart }}" alt="Base64 Image">
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="flow-proper">ECD BITDEPTH WHILE DRILLING </h4>
+                            <table  class="ecd-along-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th class="remove-border-td">TD</th>
+                                        <th class="remove-border-td">Casing Shoe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>ECD</th>
+                                        <td>{{bitdepthecd_data.bitdepth_td_without}}</td>
+                                        <td>{{bitdepthecd_data.bitdepth_csg_without}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>ECD with Cuttings</td>
+                                        <td>{{bitdepthecd_data.bitdepth_td_with}}</td>
+                                        <td>{{bitdepthecd_data.bitdepth_csg_with}}</td>
+                                    </tr>
+                                
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="ecdbitdepthchart">
+                            {% comment %} <img src="data:image/jpeg;base64,{{ ecdbitdepth_chart }}" alt="Base64 Image"> {% endcomment %}
+                            <img src="data:image/jpeg;base64,{{ ecdbitdepth_chart }}" alt="Base64 Image">
+                        </div>
+                    {%endif%}
+                {%endfor%}
+            {%endif%}
+        {% endfor %}
+
+
+
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<section>
+    <div class="row" id="">
+      <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-3">
+
+        {% include "casing_menu.html" %}  
+
+</div>
+        <div class="col-9">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Edit Casing Range</h4>
+            </div>
+              
+            <form method="post" novalidate>
+              {% csrf_token %}
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="name">Name</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="name" class="form-control" name="range_name" placeholder="Name" value="{{form.range_name.value}}">
+                  </div>
+                </div>
+              </div>            
+              
+              <button type="submit" class="btn btn-primary">submit</button>
+           </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+      </div>
+      </div>
+</section>
+
+{% endblock %}

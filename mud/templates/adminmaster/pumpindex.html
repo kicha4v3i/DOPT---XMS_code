@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/super_Admin/pumps/pumps.css' %}">
+<section>
+  <div class="container-fluid">
+    <!-- <div class="row" id="basic-table"> -->
+      <div class="row common-row-space" id="">
+        <div class="col-md-10  create-pg p-0">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Pumps</h4>
+            </div>
+            <div class="card-body">
+            <a href="/wells/mud/adminpump/create/" class="btn btn-primary waves-effect waves-light add-new-bttn detail-button"><span><i class="feather icon-plus"></i> Add New</span></a>
+            <div class="table-responsive">
+              <table class="table master-data-list-view">
+      
+                  <thead class="text-center">
+                      <tr>      
+                          <th>Manufacturer</th>
+                          <th>Name</th>
+                          <th>Type</th>
+                          <th>Stroke Length</th>
+                          <th>Actions</th>
+                          </tr>
+                  </thead>
+                  <tbody>
+                      {% for obj in pumps %}
+      
+                      <tr>
+                          <td>{{obj.pump_manufacturer.name}}</td>
+                          <td>{{obj.name}}</td>
+                          <td>{{obj.type}}</td>
+                          <td>{{obj.stroke_length}}</td>
+
+                          <td  class="text-center">
+                            <a href="{% url 'mud:adminpumpview' pk=obj.id %}">
+                              <span class="action-edit"><i class="feather icon-eye"></i></span>
+                          </a>
+                          <a href="{% url 'mud:adminpumpedit' pk=obj.id %}">
+                              <span class="action-edit"><i class="feather icon-edit"></i></span>
+                          </a>
+                          <a onclick="confirmation(event)" href="{% url 'mud:adminpumpdelete' pk=obj.id %}">
+                            <span class="action-edit"><i class="feather icon-trash-2"></i></span>
+                          </a>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+        </div>
+                </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+        </div>
+      </div>
+    </div>
+    </section>
+
+{% endblock %}

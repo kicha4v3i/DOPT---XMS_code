@@ -1,0 +1,34 @@
+{% load app_filters %}
+
+<div class="side-project-tlt">
+    <h4>Projects</h4><a class="project-navigation"><i class="fa fa-plus-circle"></i></a>
+</div>
+<ul class="project-side-bar">
+   {% for country in countries%}
+     <li><span class="nested_list main-country country-point country_name allmultiple-menu main-contry-head{% if country.id == request.session.country|changeint %} caret-down {% endif %}" data-id="{{country.id}}" data-menu="country">{{country.name}}</span>
+       <ul class="nested prj-list-side {% if country.id == request.session.country|changeint %} active {% endif %}">
+         {% for project in country.id|getprojectby_countryid:company %}
+           <li><span class="nested_list main-country allmultiple-menu project_name {% if project.id == request.session.project|changeint %} caret-down {% endif %}" data-id="{{project.id}}"  data-menu="project">-{{project.project_name}}</span>
+             <ul class="nested prj-list-side {% if project.id == request.session.project|changeint %} active {% endif %}">
+             {% for block in project.id|getblockby_projectid:project.id %}
+               <li><span class="nested_list allmultiple-menu block_name {% if block.id == request.session.block|changeint %} caret-down {% endif %}" data-id="{{block.id}}"  data-menu="block">--{{block.block_name}}</span>
+                 <ul class="nested prj-list-side {% if block.id == request.session.block|changeint %} active {% endif %}">
+                 {% for field in block.id|getfieldby_blockid:block.id %}
+                   <li><span class="nested_list allmultiple-menu field_name {% if field.id == request.session.field|changeint %} caret-down {% endif %}" data-id="{{field.id}}"  data-menu="field">---{{field.field_name}}</span>
+                     <ul class="p-0 nested {% if field.id == request.session.field|changeint %} active {% endif %}">
+                       {% for well in field.id|getwellby_fieldid:field.id %}    
+                         <li><a href="{{url}}" class="well"><span class="nested_list allmultiple-menu well_name {% if well.id == request.session.well|changeint %} caret-down {% endif %}" data-menu="well" data-id="{{well.id}}">{{well.name}}</span></a></li>
+                       {% endfor %}
+                     </ul>
+                   </li>
+                 {% endfor %}
+                 </ul>
+               </li>
+             {% endfor %}
+             </ul>
+           </li>
+         {% endfor %}
+       </ul>
+     </li>
+   {%endfor%}
+</ul>

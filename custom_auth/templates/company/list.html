@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<section id="data-list-view" class="data-list-view-header">
+
+    <div class="row align-items-start">
+        <div class="col-md-10  create-pg">
+            <div class="create_project_sec scroll-line">
+                {% include "header.html" %}
+    <!-- DataTable starts -->
+    <div class="table-hover table-striped p-1">
+        <caption class="table-title" style="caption-side: top"><h1 class="till-e">Companies List</h1></caption>
+        <div class="scroll-cmlist">
+        <table class="table table_css tbbl-top">
+           
+
+            <thead>
+                <tr>
+                    <th>CIN</th>
+
+                    <th>Company Name</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Country</th>
+                    <th>Email</th>
+                    <th>Contact No</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                    <th style="display: none;"></th>
+                    </tr>
+            </thead>
+            <tbody>
+                {% for obj in companies %}
+                <tr>
+                    <td style="display:none">{{forloop.counter1}}</td>
+                    <td>{{obj.cin}}</td>
+                    <td>{{obj.company_name}}</td>
+                    <td>{{obj.first_name}}</td>
+                    <td>{{obj.last_name}}</td>
+                    <td>{{obj.country.name}}</td>
+                    <td>{{obj.email}}</td>
+                    <td>+{{obj.country.phonecode}} {{obj.contact_no}}</td>
+                    <td>
+                    {% if obj.status == 0 %}
+                    
+                    <div class="chip chip-warning">
+                        <div class="chip-body">
+                            <div class="chip-text">Pending</div>
+                        </div>
+                    </div>
+                    {% elif obj.status == 1 %}
+                    
+                    <div class="chip chip-success">
+                        <div class="chip-body">
+                            <div class="chip-text">Approved</div>
+                        </div>
+                    </div>
+                    {% elif obj.status == 2 %}
+                    
+                    <div class="chip chip-danger">
+                        <div class="chip-body">
+                            <div class="chip-text">Rejected</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                 </td>
+            
+                    <td  class="text-center">
+                    <a href="{% url 'custom_auth:companyview' id=obj.id %}" >
+                        <span class="action-edit"><i class="feather icon-eye"></i></span>
+                    </a>
+                    {% if perms.custom_auth.change_companies %}
+                    {% if obj.status == 0 %}
+                 
+                    <!-- <a>
+                       <span class="action-edit"><i class="fa fa-credit-card" id="company_approve" data_id="{{obj.id}}"></i></span>
+                    </a> -->
+                    <!-- <a href="{% url 'custom_auth:companyreject' id=obj.id %}" >
+                        <span class="action-edit"><i class="feather icon-thumbs-down"></i></span>
+                    </a> -->
+                    {% endif %}
+                    {% endif %}
+                    </td>   
+                  </tr>
+                  {% endfor %}
+
+            </tbody>
+        </table>
+        </div>
+    </div>
+    {% include "footer.html" %}
+    </div>
+    </div>
+    <div class="col-md-2">
+        {% include "userheader.html" %}
+    </div>
+    </div>
+    <!-- DataTable ends -->
+    <!-- add new sidebar ends -->
+    <!-- The Modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="invoice-popup">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title pay-pophed">Payment</h5>
+              <button type="button" id="invoice_close" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" class="close-popcom">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="payment_invoice_form" name="payment_invoice_form" >
+                {% csrf_token %}   
+                <div class="row">
+                    <input type="hidden" name="company_id" id="company_id">
+                    <div class="col-12">
+                        <label class="pop-com-hed">Date</label>
+                        <input type="text" id="invoice_date" class="form-control invoice_date" name="invoice_date" placeholder="Date">
+                        <span id="invoice_date_error" style="color: red;"></span>
+                    </div>
+                    <div class="col-12">
+                        <label class="pop-com-hed">Invoice No</label>
+                        <input id="invoice_no" type="text" class="form-control invoice_no" name="invoice_no" placeholder="Invoice No" >
+                        <span id="invoice_no_error" style="color: red;"></span>
+                    </div>
+                    <div class="col-12">
+                        <label class="pop-com-hed">Currency</label>
+                        <select class="form-control currency mar-botm" id="currency" name="currency" >
+                            <option value="">--Select--</option>
+                            {% for currency in currencies %}
+                            <option value="{{currency.currency}}">{{currency.currency}}</option>
+                            {% endfor %}
+    
+                        </select>
+                        <span id="currency_error" style="color: red;"></span>
+                    </div>
+                    <div class="col-12">
+                        <label class="pop-com-hed">Amount</label>
+
+                        <input id="amount" type="number" class="form-control amount" name="amount" placeholder="Amount">
+                        <span id="amount_error" style="color: red;"></span>
+                    </div>
+                    
+                </div>   
+                <div class=" button-cen-lic">
+                    <button type="button" id="invoice_submit_btn" class="btn waves-effect pop-comsub waves-float waves-light detail-button">Submit</button>
+                </div>
+                <!-- <input type="button" id="invoice_submit_btn" value="Submit" class="btn waves-effect pop-comsub waves-float waves-light detail-button"> -->
+                </form>       
+            </div>
+           
+          </div>
+        </div>
+      </div>
+</section>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+<script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+
+<script>
+$(document).ready( function () {
+    $('.table_css').DataTable({
+        language : {
+        sLengthMenu: "Show Entry _MENU_"
+    }
+    });    
+    $('#company_approve').click(function(){
+        var company_id=$(this).attr('data_id')
+        $('#company_id').val(company_id)
+        $('#invoice-popup').show()
+    })
+    $(document).on("click", "#invoice_submit_btn" , function() { 
+        var invoice_no=$("#invoice_no").val();
+        var amount=$("#amount").val();
+        var company_id=$('#company_id').val();
+        var currency=$('#currency').val();
+        var date=$('#invoice_date').val();
+        if(date==''){
+            $('#invoice_date_error').html('Please provide a date')
+        }else{
+            $('#invoice_date_error').html('')
+        }
+        if(invoice_no==''){
+            $('#invoice_no_error').html('Please Enter a number')
+        }else{
+            $('#invoice_no_error').html('')
+        }
+        if(currency==''){
+            $('#currency_error').html('Please select a currency')
+        }else{
+            $('#currency_error').html('')
+        }
+        if(amount==''){
+            $('#amount_error').html('Please Enter a amount')
+        }else if(amount == 0 ){
+            $('#amount_error').html('Please Enter a minimum amount')
+        }else{
+            $('#amount_error').html('')
+        }
+        
+        if (invoice_no !='' && currency!='' && date!='' && amount!='' && amount !=0 ){
+            payment_invoice_validation(invoice_no,amount,company_id,date)
+        }
+        function payment_invoice_validation(data){
+            $.ajax({ 
+            type: "POST",                      
+            url: "{% url 'custom_auth:addinvoice' %}",                  
+            data: {
+                invoice_no:invoice_no,
+                amount:amount,
+                company_id:company_id,
+                currency:currency,
+                date:date,
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+            },
+            dataType: "json",
+            success: function (data) { 
+                if(data.status=='success') {
+                    $('#invoice-popup').hide()
+                    var baseurl=window.location.host;
+                    window.location.href='http://'+baseurl+'/company/view/'+company_id;
+                }
+          
+            }
+        });
+        }
+        
+    });
+
+
+$('#invoice_close').click(function(){
+    $('#invoice-popup').hide()
+})
+} );
+
+$('body').on('focus',".invoice_date", function(){
+    $(this).flatpickr({
+        // minDate: "today",
+        dateFormat: "d-m-Y",
+        defaultDate: $(this).val()!=''?$(this).val():new Date()
+    });
+});
+
+$("#invoice_date").on('change',function(){
+    if($(this).val()){
+      $('#invoice_date_error').html('')
+    }
+  })
+  $("#invoice_no").on('keyup',function(){
+    if($(this).val() !=""){
+      $('#invoice_no_error').html('')
+    }else{
+      $('#invoice_no_error').html('Please Enter a number')
+    }
+  });
+  $("#currency").on("change",function(){
+    if($(this).val()){
+      $('#currency_error').html('')
+    }
+  })
+  $("#amount").on("keyup",function(){
+    if($(this).val()){
+      $("#amount_error").html('')
+    }
+  })
+</script>
+
+{% endblock %}

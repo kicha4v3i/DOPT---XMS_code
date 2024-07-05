@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+
+  
+<section>
+    <!-- <div class="row" id="basic-table"> -->
+  
+      <div class="row align-items-start">
+        <div class="col-md-10  create-pg">
+          <div class="create_project_sec scroll-line">
+            {% include "header.html" %}
+      <div class="col-md-12">
+        {% include "welldetails_menu.html" %} 
+      </div>
+      <div class="col-12">
+        {% include "welldetailssubmenu.html" %}  
+      </div>
+      <div class="rig-det">
+        <div class="row">
+      <div class="col-2">
+        {% include "rig_menu.html" %}  
+    </div>
+        <div class="col-10">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Surface Piping Details</h4>
+            </div>
+            <div class="table-responsive table-hover table-striped card-body">
+              <table class="table table_css surface-rating">
+                <tbody>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Standpipe Pressure Rating {%display_pressureunit request.session.unit%}</span>
+                    </th>
+                    <td>{{surfacepipe.rating|default_if_none:'-'}}</td>
+                  </tr>            
+                </tbody>
+              </table>
+
+              <table class="table table_css">
+                <thead>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Name</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Length{%display_lengthunit request.session.unit|default_if_none:'-'%}</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">ID{%display_diameterunit request.session.unit|default_if_none:'-'%}</span>
+                    </th>
+                  </tr>            
+                </thead>
+                <tbody>
+                  {% for surfacepipe in surfacepipedata %}
+
+                  <tr>
+                    <td>
+                  {{ surfacepipe.name }}
+                    </td>
+                    <td class="text-center">
+                      {{ surfacepipe.length|default:"-" }}
+                    </td>
+                    <td class="text-center">
+                      {{ surfacepipe.identity|default:'-'}}
+                    </td>
+                  </tr>  
+                  {% endfor %}
+          
+                </tbody>
+              </table>
+
+              <div class="row" id="basic-table">
+  
+                <div class="col-sm-12">
+                    <a onclick="confirmation(event)" class="btn btn-outline-primary ml-1 waves-effect" href="{% url 'surfacepipe:delete' surfacepipe.pk %}" > <span class="action-delete-well delete"><i class="feather icon-trash delete"></i> Delete</span></a>
+        
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'surfacepipe:edit' surfacepipe.pk %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+                </div>
+
+            </div>
+          </div>
+          </div>
+          </div>
+          </div>
+          {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+          <div class="col-md-12 warning"></div>
+      </div>
+      </div>
+
+      <!-- <div class="row" id="basic-table">
+  
+        <div class="col-sm-9 offset-sm-3">
+            <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect detail-button" href="{% url 'surfacepipe:delete' surfacepipe.pk %}" > <span class="action-delete-well delete"><i class="feather icon-trash delete"></i> Delete</span></a>
+
+            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'surfacepipe:edit' surfacepipe.pk %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+            <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+        </div>
+        </div> -->
+    
+      
+    </section>
+<script>
+  var storedArray = JSON.parse(sessionStorage.getItem("items"));
+    var well_id='{{well_id}}'
+    if(well_id == storedArray[1]){
+      $('.warning').show();
+    }else{
+      $('.warning').hide();
+    }
+</script>
+{% endblock %}

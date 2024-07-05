@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+  <div class="container-fluid">
+    <div class="row common-row-space" id="">
+      <div class="col-md-10  create-pg p-0">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+     
+        <div class="col-9.5">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Drill Pipe Edit</h4>
+            </div>
+            <form method="post" id="drillpipeform" novalidate>
+                {% csrf_token %}              
+                <div class="row">
+                    <div class="col-12 p-0">
+                        <table class="table" id="drillpipetable">             
+                            <tr><th>Nominal OD</th><th>Class</th><th>Pipe OD</th><th>Weight</th><th>Pipe ID</th><th>Connection type</th><th>Upset</th><th>Tool OD</th><th>Tool ID</th><th>Box Length</th><th>Pin Length</th><th>Steel grade</th><th>ACTIONS</th></tr>
+                            {%for drill in drillpipe%}
+                            <tr id="drillpiperow">
+                                <td><input id="normal_od" type="text" class="form-control" name="normal_od" value="{{drill.normal_od}}" ></td>
+                                <td><input id="class_type" type="text" class="form-control" name="class_type"value="{{drill.class_type}}"></td>
+                                <td><input id="pipebody_od" type="text" class="form-control" name="pipebody_od" value="{{drill.pipebody_od}}"></td>
+                                <td><input id="weight" type="text" class="form-control" name="weight" value="{{drill.weight}}" ></td>
+                                <td><input id="pipebody_id" type="text" class="form-control" name="pipebody_id" value="{{drill.pipebody_id}}" ></td>
+                                <td><input id="connection_type" type="text" class="form-control" name="connection_type" value="{{drill.connection_type}}" ></td>
+                                <td><input id="upset" type="text" class="form-control" name="upset" value="{{drill.upset}}" ></td>
+                                <td><input id="tool_od" type="text" class="form-control" name="tool_od" value="{{drill.tool_od}}" ></td>
+                                <td><input id="tool_id" type="text" class="form-control" name="tool_id" value="{{drill.tool_id}}" ></td>
+                                <td><input id="box_length" type="text" class="form-control" name="box_length" value="{{drill.box_length}}" ></td>
+                                <td><input id="pin_length" type="text" class="form-control" name="pin_length" value="{{drill.pin_length}}" ></td>
+                                <td><input id="steel_grade" type="text" class="form-control" name="steel_grade" value="{{drill.steel_grade}}" ></td>
+                                <td>
+                                    <a type="button" name="add" id="iconaction" class="drillpipeaddrow iconaction"><i class="fa fa-plus"></i></a>
+                                    <a type="button" name="removerow" id="iconaction" class="drillpiperemoverows iconaction"><i class="fa fa-trash"></i></a>
+                                </td>        
+                            </tr>
+                         {%endfor%}  
+                         <tr id="drillpiperow2" style="display:none">
+                          <td><input id="normal_od" type="text" class="form-control" name="normal_od" placeholder="Normal OD" ></td>
+                          <td><input id="class_type" type="text" class="form-control" name="class_type" placeholder="Type" ></td>
+                          <td><input id="pipebody_od" type="text" class="form-control" name="pipebody_od" placeholder="Pipe OD" ></td>
+                          <td><input id="weight" type="text" class="form-control" name="weight" placeholder="Weight" ></td>
+                          <td><input id="pipebody_id" type="text" class="form-control" name="pipebody_id" placeholder="Pipe ID" ></td>
+                          <td><input id="connection_type" type="text" class="form-control" name="connection_type" placeholder="Connection type" ></td>
+                          <td><input id="upset" type="text" class="form-control" name="upset" placeholder="Upset" ></td>
+                          <td><input id="tool_od" type="text" class="form-control" name="tool_od" placeholder="Tool OD" ></td>
+                          <td><input id="tool_id" type="text" class="form-control" name="tool_id" placeholder="Tool ID" ></td>
+                          <td><input id="box_length" type="text" class="form-control" name="box_length" placeholder="Box Length" ></td>
+                          <td><input id="pin_length" type="text" class="form-control" name="pin_length" placeholder="Pin Length" ></td>
+                          <td><input id="steel_grade" type="text" class="form-control" name="steel_grade" placeholder="Steel grade" ></td>
+                          <td>
+                              <a type="button" name="add" id="iconaction" class="drillpipeaddrow iconaction"><i class="fa fa-plus"></i></a>
+                              <a type="button" name="removerow" id="iconaction" class="drillpiperemoverows iconaction"><i class="fa fa-trash"></i></a>
+                          </td>        
+                      </tr> 
+                        </table>
+                        <div class="col-sm-9 offset-sm-3">
+                        <button type="submit" class="btn btn-primary detail-button">submit</button>
+                        <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+          </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+      </div>
+      </div>
+    </div>
+</section>
+<style>
+  #iconaction
+{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:15px;
+  color:#7367F0;
+}
+</style>
+
+{% endblock %}

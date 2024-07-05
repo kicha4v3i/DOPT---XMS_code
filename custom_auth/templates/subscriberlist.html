@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/super_Admin/subscribers/subscriberlist.css' %}">
+
+<section>
+    <div class="container-fluid">
+    <div class="row align-items-start common-row-space">
+        <div class="col-md-12 p-0 create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+                <ul class="nav nav-tabs press-losstab sub-parent-tap" role="tablist">
+                    <li class="nav-item drill-list">
+                    <a class="nav-link sub-press-tab {% if subscriber_menu == 'Individual' %}active {%endif%}" data-toggle="tab" href="#individual" role="tab">Individual</a>
+                </li>
+                <li class="nav-item drill-list ">
+                    <a class="nav-link sub-press-tab {% if subscriber_menu == 'CompanyPlan' %}active {%endif%}" data-toggle="tab" href="#company" role="tab">Company</a>
+                </li>
+                <li class="nav-item drill-list">
+                    <a class="nav-link sub-press-tab {% if subscriber_menu == 'Enterprise' %}active {%endif%}" data-toggle="tab" href="#enterprise" role="tab">Enterprises</a>
+                </li>
+            </ul>
+            <div class="tab-content subscribe-tab m-0">
+                <div class="tab-pane {% if subscriber_menu == 'Individual' %}active {%endif%}" id="individual" role="tabpanel">
+                    <div class="card">
+                        {% comment %} <div class="card-body"> {% endcomment %}
+                            <table id="individual-table" class="table" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th class="common-txt-center">Actions</th>
+
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+
+                    {% comment %} </div> {% endcomment %}
+                   
+
+                </div>
+                <div class="tab-pane {% if subscriber_menu == 'CompanyPlan' %}active {%endif%}" id="company" role="tabpanel">
+
+                    <div class="card">
+                        {% comment %} <div class="card-body"> {% endcomment %}
+                            <div class="table-responsive">
+                            <table id="company-table" class="table company-table" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Company Name</th>
+                                        <th>Email</th>
+                                        <th>Number of Users</th>
+                                        <th>Subscription Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        </div>
+                    {% comment %} </div> {% endcomment %}
+                </div>
+                <div class="tab-pane {% if subscriber_menu == 'Enterprise' %}active {%endif%}" id="enterprise" role="tabpanel">
+                    <div class="card">
+                        {% comment %} <div class="card-body"> {% endcomment %}
+                            <table id="enterprise-table" class="table enterprise-table" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Enterprise Name</th>
+                                        <th>Email</th>
+                                        <th>Number of Users</th>
+                                        <th>Subscription Type</th>
+                                        <th class="common-txt-center">Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        {% comment %} </div> {% endcomment %}
+        <!-- <div class="col-md-2">
+            {% include "userheader.html" %}
+        </div> -->
+    </div>
+</div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/auth/subscriberlist.js' %}"></script>
+{%endblock%}

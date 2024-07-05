@@ -1,0 +1,3314 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<div class="container-fluid">
+<div class="row align-items-start common-row-space">
+    <input type="hidden" name="mudweight_hidden" id="mudweight_hidden">
+    <input type="hidden" name="pv_hidden" id="pv_hidden">
+    <input type="hidden" name="yp_hidden" id="yp_hidden">
+    <input type="hidden" name="todepth_hidden" id="todepth_hidden">
+    <input type="hidden" name="original_mudweight" id="original_mudweight">
+    <input type="hidden" name="original_flowrate" id="original_flowrate">
+    <input type="hidden" name="original_rop" id="original_rop">
+    <input type="hidden" name="original_cs" id="original_cs">
+    <input type="hidden" name="original_cd" id="original_cd">
+    <input type="hidden" name="original_pv" id="original_pv">
+    <input type="hidden" name="original_yp" id="original_yp">
+    <input type="hidden" name="well_id" id="well_id" value="{{well_id}}">
+    <input type="hidden" name="section_name" id="section_name" >
+    <input type="hidden" name="unit" id="change_units" class="change_units" value="{{request.session.unit}}">
+    <div id="loader" class="lds-dual-ring hidden overlay"></div>
+    {% getcountries countries as countries %}
+    {% include 'projectsidemenu.html' %} 
+    <div class="col-md-12 p-0  create-pg main-section col-md-10">
+        <div class="create_project_sec scroll-line new-cru-well">
+            {% comment %} <div class="well-name-list">{{well.name}}</div>
+            <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+            {% include "projectheader.html" %}
+
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="col-12">
+                        {% include "welldetails_menu.html" %} 
+                    </div>
+                    <div class="col-12">
+                        <div class="sample-sub-menu">
+                            <div class="col-md-3">
+                            <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+                                <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+                            </div>
+                            </div>
+                        
+                            <div class="col-md-3">
+                            <div class="sub-list drill-data {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+                                <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                            </div>
+                            </div>
+                            <div class="col-md-3">
+                            <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                                <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                            </div>
+                            </div>
+                        
+                            <div class="col-md-3 data-drill">
+                                <div class="sub-list drill-data2 {% if request.session.submenu == 'pressureloss' %}active{% endif %}">
+                                    <a href="{% url 'muddata:calculateallpressureloss' wellphase_id %}" id="bhadata">Hydraulics</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!--row end -->
+                    <div class="col-12 input-bor-siz">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item sub-list btn-sub">
+                                        <a class="nav-link middle-center btn-lists" data-toggle="tab" href="#inputs" role="tab">Inputs</a>
+                                    </li>
+                                    <li class="nav-item sub-list btn-sub">
+                                        <a class="nav-link middle-center btn-lists" data-toggle="tab" href="#results" role="tab">Results</a>
+                                    </li>
+                                    <li class="nav-item sub-list btn-sub">
+                                        <a class="nav-link middle-center btn-lists sensitivity" data-toggle="tab" href="#sensivity" role="tab">Sensitivity </a>
+                                    </li>
+                                    <li class="nav-item sub-list btn-sub">
+                                        <a class="nav-link middle-center comparison btn-lists" data-toggle="tab" href="#comparison" role="tab">Comparison</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="tab-content">
+                            <div class="tab-pane" id="inputs" role="tabpanel">
+                            </div>
+                            <div class="tab-pane" id="sensivity" role="tabpanel">
+                                <div class="text-right">
+                                    <button class="change_sensitive_unit sen-unit-con">Unit Conversion</button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12"><h1 class="sen-head">Sensitivity Analysis</h1></div>
+                                    <div class="col-12">
+                                        <ul class="nav nav-tabs ecd-tab" role="tablist">
+                                            <li class="nav-item sub-list btn-sub">
+                                                <a class="nav-link middle-center sen-menulists active" data-toggle="tab" href="#pressure_sensitivity" role="tab">Pressure</a>
+                                            </li>
+                                            <li class="nav-item sub-list btn-sub">
+                                                <a class="nav-link middle-center  ecd_sensitivity ecd-sen sen-menulists" data-toggle="tab" href="#ecd_sensitivity" role="tab">ECD</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 cir-vlusen">
+                                        <div class="opt-thead">
+                                            <div class="circle-opt-vlu">
+                                                <p class="opt-p">Flowrate</p>
+                                                <input type="text" name="flowrate_sensitivity" data-type="flowrate" id="flowrate_sensitivity" class="form-control other_input sensitivity_input common-txt-center" >
+                                                <span id="flowrate-unit" class="sen-ft">({%display_flowrateunit well.project.unit%})</span>
+                                            </div>
+                                        </div>
+                                        <div class="opt-thead">
+                                            <div class="circle-opt-vlu">
+                                                <p class="opt-p">Mud Weight</p>
+                                                <input type="text" name="mudweight_sensitivity" data-type="mudweight" id="mudweight_sensitivity" class="form-control other_input sensitivity_input common-txt-center"> 
+                                                <span id="mudweight-unit" class="sen-ft">{%display_densityunit well.project.unit%}</span> 
+                                            </div>
+                                        </div>
+                                        <div class="opt-thead">
+                                            <div class="circle-opt-vlu">
+                                                <p class="rop_circle">ROP</p>
+                                                <input type="text" name="rop_sensitivity" id="rop_sensitivity" data-type="rop" class="form-control other_input1 sensitivity_input"> 
+                                                <span id="rop-unit" class="sen-ft">{%display_lengthunit well.project.unit%}/h</span>
+                                            </div>
+                                        </div>
+                                        <div class="opt-thead">
+                                            <div class="circle-opt-vlu">
+                                                <p class="opt-p">Cuttings Size</p>
+                                                <input type="text" name="cs_sensitivity"  id="cs_sensitivity" data-type="cuttings_size" class="form-control other_input sensitivity_input common-txt-center"> 
+                                                <span id="cs-unit" class="sen-ft">{%display_densityunit well.project.unit%}</span>
+                                            </div>
+                                        </div>
+                                        <div class="opt-thead">
+                                            <div class="circle-opt-vlu">
+                                                <p class="opt-p">Cuttings Density</p>
+                                                <input type="text" name="cd_sensitivity" id="cd_sensitivity" data-type="cuttings_density" class="form-control other_input sensitivity_input common-txt-center"> 
+                                                <span id="cd-unit" class="sen-ft">{%display_densityunit well.project.unit%}</span>
+                                            </div>
+                                        </div>
+                                        <div class="opt-thead">
+                                            <div class="circle-opt-vlu">
+                                                <p class="pv_yp_circle">PV</p>
+                                                <input type="text" name="pv_sensitivity" id="pv_sensitivity" data-type="pv" class="form-control other_input1 sensitivity_input"> 
+                                                <span id="pv-unit" class="sen-ft-pv">{%display_plastic_viscosity well.project.unit%}</span>
+                                            </div>
+                                        </div>
+                                        <div class="opt-thead">
+                                            <div class="circle-opt-vlu">
+                                                <p class="pv_yp_circle">YP</p>
+                                                <input type="text" name="yp_sensitivity" id="yp_sensitivity" data-type="yp" class="form-control other_input1 sensitivity_input"> 
+                                                <span id="yp-unit" class="sen-ft-yp">{%display_gelstrengthunit well.project.unit%}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-10">
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="pressure_sensitivity" role="tabpanel">
+                                                <div class="row">
+                                                    <div class="col-9">
+                                                        <div class="sen-scroll">
+                                                            {% include 'sensitivitypressure.html' %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <ul class="right-sensitivity">
+                                                            <li data-id="sensitivity_flowrate_chart" class="focus_chart">Flowrate</li>
+                                                            <li data-id="sensitivity_pressureloss_chart" class="focus_chart">Mud Weight</li>
+                                                            <li data-id="sensitivity_tfa_chart" class="focus_chart">TFA</li>
+                                                            <li class="focus_chart">ROP</li>
+                                                            <li data-id="sensitivity_viscocity_chart" class="focus_chart">PV</li>
+                                                            <li data-id="sensitivity_yieldpoint_chart" class="focus_chart">YP</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="ecd_sensitivity" role="tabpanel">
+                                                <div class="row">
+                                                    <div class="col-9">
+                                                        <div class="sen-scroll">
+                                                            {% include 'sensitivityecd.html' %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <ul class="right-sensitivity">
+                                                            <li data-id="flowrate_ecd_chart" class="focus_chart">Flowrate</li>
+                                                            <li data-id="mudweight_ecd_chart" class="focus_chart">Mud Weight</li>
+                                                            <li data-id="rop_ecd_chart" class="focus_chart">ROP</li>
+                                                            <li data-id="cuttingssize_ecd_chart" class="focus_chart">Cuttings Size</li>
+                                                            <li data-id="cuttingsdensity_ecd_chart" class="focus_chart">Cuttings Density</li>
+                                                            <li data-id="viscocity_ecd_chart" class="focus_chart">PV</li>
+                                                            <li>YP</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% include 'sensitivity_chartdata_popup.html' %}
+                            </div>
+                            <div class="tab-pane" id="results" role="tabpanel">
+                                <div class="card pt-2">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="final_data fyn-vlu">Final Value</button>
+                                        <button class="change_unit pull-right unit-cons">Unit Conversion</button>
+                                        <h4 class="phase_det re-downline">Phase Details</h4>
+                                        <div id="phase_details"></div>
+                                        <div id="drilling_parameters">
+                                            <h4 class="phase_det1">Drilling Parameters</h4>
+                                            <div class="row">
+                                                <div class="col-2">
+                                                    <label class="flowrate_lable">Flow Rate ({%display_flowrateunit well.project.unit%})</label>
+                                                </div>
+                                                <div class="col-3">
+                                                    <input type="number" step="any" name="flowrate" id="flowrate_userenter" class="form-control flowrate pressurelawinput hyt-press" placeholder="Flowrate">
+                                                    <input type="hidden" name="flowrate" id="flowrate_drag" class="form-control flowrate pressurelawinput" placeholder="Flowrate">
+                                                </div>
+                                                <div class="col-7">
+                                                    <div class="rangeslider-wrap">
+                                                        <input type="range" min="0" id="flowrate" max="500" step="1" labels="0, 100, 200, 300, 400, 500">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-2"><label>RPM (rpm)</label></div>
+                                                <div class="col-3">
+                                                    <input type="number" step="any" name="rpm" id="rpm_userenter" class="form-control rpm pressurelawinput hyt-press" placeholder="RPM">
+                                                    <input type="hidden" name="rpm" id="rpm_drag" class="form-control rpm pressurelawinput" placeholder="RPM">
+                                                </div>
+                                                <div class="col-7">
+                                                    <div class="rangeslider-wrap">
+                                                        <input type="range" id="rpm" min="0" max="200" step="1" labels="0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-2"><label class="rop_lable">ROP ({%display_lengthunit well.project.unit%}/h)</label></div>
+                                                <div class="col-3">
+                                                    <input type="number" step="any" name="rop" id="rop_userenter" class="form-control rop pressurelawinput hyt-press" placeholder="ROP">
+                                                    <input type="hidden" name="rop" id="rop_drag" class="form-control rop pressurelawinput">
+        
+                                                </div>
+                                                <div class="col-7">
+                                                    <div class="rangeslider-wrap">
+                                                        <input type="range" id="rop" min="0" max="100" step="1" labels="0,10,20,30,40,50,60,70,80,90,100"> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-2"><label class="bitdepth_lable">Bit Depth ({%display_depthunit well.project.unit%})</label></div>
+                                                <div class="col-3">
+                                                    <input type="number" step="any" name="bitdepth" id="bitdepth_userenter" class="form-control bitdepth pressurelawinput hyt-press" placeholder="bitdepth">
+                                                    <input type="hidden" name="bitdepth" id="bitdepth_drag" class="form-control bitdepth pressurelawinput">
+                                                    
+                                                </div>
+                                                <div class="col-7">
+                                                    <div class="rangeslider-wrap">
+                                                        <input type="range" id="bitdepth_slider" step="1"> 
+                                                        <input type="hidden" id="bitdepth_labels"> 
+        
+        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h4 class="phase_det1">Rheology and Mud Parameters</h4>
+                                        <div id="rheology_mud_parameters"></div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="grap-box">
+                                            {% if pressure_count == 0%}
+                                            <div class="row">
+                                                <div class="col-6">
+                                                </div>
+                                                <div class="col-6">
+                                                    <ul class="nav nav-tabs" role="tablist">
+                                                        <li class="nav-item grap-mainmenu">
+                                                            <a class="nav-link grap-menu active" data-toggle="tab" href="#pressure-loss" role="tab">Pressure Loss</a>
+                                                        </li>
+                                                        <li class="nav-item  grap-mainmenu">
+                                                            <a class="nav-link grap-menu" data-toggle="tab" href="#ecdchart" role="tab" id="ecdtab">ECD</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>    
+                                    
+                                            <div class="tab-content">
+                                                <div class="tab-pane active" id="pressure-loss" role="tabpanel">
+                                                    <figure class="highcharts-figure charts">
+                                                        Total Pressure loss
+                                                        <a class="btn pressureloss_data pull-right allchartdatapopup" id="pressureloss_data" href="#">Pressure data</a>
+                                                        <div class="totalpressure"></div>
+                                                        <!-- <div class="graph-heading">
+                                                            <p class="annu-name">Annular</p>
+                                                            <p class="bit-name">Bit Nozzle</p>
+                                                            <p class="drill-name">Drillstring</p>
+                                                            <p class="surface-name">Surface</p>
+                                                        </div> -->
+                                                        <div id="container" style="min-width: 400px; max-width: 800px; height: 90px; margin: 0 auto"></div>
+                                                        <div id="pressurelosschart"></div>
+                                                        <div id="pressureloss_charts" style = "display:none" ></div>
+                                                        
+                                                        
+                                                    </figure>
+                                                </div>
+                                            
+                                                <div class="tab-pane ecdmenu" id="ecdchart" role="tabpanel">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <ul class="nav nav-tabs " role="tablist">
+                                                                <li class="nav-item ecd-lists">
+                                                                    <!-- <a class="pull-left" href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="ECD profile in the annulus when Bit is at Bit Depth"><i class="fa fa-info-circle i-con" style="font-size:20px;;color:#7f0201"></i></a> -->
+                                                                    <a class="nav-link grap-sub-menu ecd-tab-btn" data-toggle="tab" href="#alonghole" role="tab">Along Hole</a>
+                                                                </li>
+                                                                <li class="nav-item ecd-lists">
+                                                                    <!-- <a class="pull-left" href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="ECD profile alone Annulus"><i class="fa fa-info-circle i-con" style="font-size:20px;;color:#7f0201"></i></a> -->
+                                                                    <a class="nav-link grap-sub-menu ecd-tab-btn" data-toggle="tab" href="#bitdepth" role="tab">Bit Depth</a>
+                                                                </li>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="tab-content">
+                                                                <div class="row">
+                                                                    <div class="col-6 hy-top">
+                                                                        <div class="cuttings-div">
+                                                                            <label class="cutting-nme">Cuttings Density</label>
+                                                                            <input type="text" name="cuttings_density" id="cuttings_density" value="21" class="form-control cuttings-input">
+                                                                        </div>
+                                                                        <div class="cuttings-div">
+                                                                            <label class='cuttings-label cutting-nme'>Cuttings Diameter</label>
+                                                                            <input type="text" name="cuttings_size" id="cuttings_size" value="0.25" class="form-control cuttings-input">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-6"></div>
+                                                                </div>
+                                                                <div class="tab-pane" id="alonghole" role="tabpanel">
+                                                                    <div class="row ecddata-row">
+                                                                        <div class="col-6 fit-inside-box">
+                                                                            <h6 class="head-hy">TD</h6>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_td_without">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_td_with">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD+Cut</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-6 fit-inside-box">
+                                                                            <h6 class="head-hy">CSG Shoe</h6>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_csg_without">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                    <p class="ecd-text">ECD</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_csg_with">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD+Cut</p>
+                                                                            </div>
+                                                                        </div>
+        
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <a class="btn ecd_alonghole_data pull-right allchartdatapopup" id="ecd_alonghole_data" href="#">ECD Alonghole data</a>
+                                                                    </div>
+                                                                    <figure class="highcharts-figure charts">
+                                                                        Total Pressure loss
+                                                               
+                                                                        <!-- <div class="totalpressure"></div> -->
+                                                                        <input type="hidden" class="total_pressure_loss" id="total_pressure_loss">
+                                                                        <!-- <a class="pull-left" href="#" data-toggle="tooltip" data-placement="top" title="ECD measured at the Bit as it drills"><i class="fa fa-info-circle i-con" style="font: size 17px;color:#444242"></i></a> -->
+                                                                        <div id="alongholeecd_chart">
+                                                                        </div>
+                                                                        <div id="ecdalonghole_chart_pdf" style = "display:none">
+                                                                    </figure>
+                                                                </div>
+                                                                <div class="tab-pane" id="bitdepth" role="tabpanel">
+                                                                    <div class="row ecddata-row">
+                                                                        <div class="col-6 fit-inside-box">
+                                                                            <h6 class="head-hy">TD</h6>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_td_without_bitdepth">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p class="hd-blue"  id="ecd_td_with_bitdepth">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <input type="hidden" id="ecd_with_bitdepth">
+                                                                                <p class="ecd-text">ECD+Cut</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-6 fit-inside-box">
+                                                                            <h6 class="head-hy">CSG Shoe</h6>   
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_csg_without_bitdepth">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                    <p class="ecd-text">ECD</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_csg_with_bitdepth">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD+Cut</p>
+                                                                            </div>
+                                                                        </div>
+        
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <a class="btn ecd_bitdepth_data pull-right allchartdatapopup" id="ecd_bitdepth_data" href="#">ECD Bitdepth data</a>
+                                                                    </div>
+                                                                    <figure class="highcharts-figure charts">
+                                                                        Total Pressure loss
+                                                                       
+                                                                        <!-- <div class="totalpressure"></div> -->
+                                                                        <!-- <a class="pull-left" href="#" data-toggle="tooltip" data-placement="top" title="ECD profile in the annulus when Bit is at Bit Depth"><i class="fa fa-info-circle i-con" style="font-size:25px;;color:#7f0201"></i></a> -->
+                                                                        <div id="ecd_chart"></div>
+                                                                        <div id="ecdbitchart_pdf" style = "display:none"></div>
+                                                                    </figure>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {%else%}
+                                            <div class="row">
+                                                <div class="col-6">
+                                                </div>
+                                                <div class="col-6">
+                                                    <ul class="nav nav-tabs" role="tablist">
+                                                        <li class="nav-item grap-mainmenu">
+                                                            <a class="nav-link grap-menu active" data-toggle="tab" href="#pressure-loss" role="tab">Pressure Loss</a>
+                                                        </li>
+                                                        <li class="nav-item  grap-mainmenu">
+                                                            <a class="nav-link grap-menu" data-toggle="tab" href="#ecdchart" role="tab" id="ecdtab">ECD</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="tab-content">
+                                                <div class="tab-pane active" id="pressure-loss" role="tabpanel">
+                                                    <figure class="highcharts-figure charts">
+                                                        Total Pressure loss
+                                                        <a class="btn pressureloss_data pull-right allchartdatapopup" id="pressureloss_data" href="#">Pressure data</a>
+                                                        <div class="totalpressure"></div>
+                                                        <div class="graph-heading">
+                                                            <p class="annu-name">Annular</p>
+                                                            <p class="bit-name">Bit Nozzle</p>
+                                                            <p class="drill-name">Drillstring</p>
+                                                            <p class="surface-name">Surface</p>
+                                                        </div>
+                                                        <div id="container" style="min-width: 400px; max-width: 800px; height: 90px; margin: 0 auto"></div>
+                                                        <div id="pressurelosschart"></div>
+                                                        <div id="pressureloss_charts" style = "display:none" ></div>
+                                                    </figure>
+                                                </div>
+                                                
+                                            
+                                                <div class="tab-pane ecdmenu" id="ecdchart" role="tabpanel">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <ul class="nav nav-tabs " role="tablist">
+                                                                <li class="nav-item ecd-lists">
+                                                                    <!-- <a class="pull-left" href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="ECD profile in the annulus when Bit is at Bit Depth"><i class="fa fa-info-circle i-con" style="font-size:20px;;color:#7f0201"></i></a> -->
+                                                                    <a class="nav-link grap-sub-menu ecd-tab-btn" data-toggle="tab" href="#alonghole" role="tab">Along Hole</a>
+                                                                </li>
+                                                                <li class="nav-item ecd-lists">
+                                                                    <!-- <a class="pull-left" href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="ECD profile alone Annulus"><i class="fa fa-info-circle i-con" style="font-size:20px;;color:#7f0201"></i></a> -->
+                                                                    <a class="nav-link grap-sub-menu ecd-tab-btn" data-toggle="tab" href="#bitdepth" role="tab">Bit Depth</a>
+                                                                </li>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="tab-content">
+                                                                <div class="row">
+                                                                    <div class="col-6 hy-top">
+                                                                        <div class="cuttings-div">
+                                                                            <label class="cutting-nme">Cuttings Density</label>
+                                                                            <input type="text" name="cuttings_density" id="cuttings_density" value="21" class="form-control cuttings-input">
+                                                                        </div>
+                                                                        <div class="cuttings-div">
+                                                                            <label class='cuttings-label cutting-nme'>Cuttings Diameter</label>
+                                                                            <input type="text" name="cuttings_size" id="cuttings_size" value="0.25" class="form-control cuttings-input">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-6"></div>
+                                                                </div>
+                                                                <div class="tab-pane" id="alonghole" role="tabpanel">
+                                                                    <div class="row ecddata-row">
+                                                                        <div class="col-6 fit-inside-box">
+                                                                            <h6 class="head-hy">TD</h6>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_td_without">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_td_with">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD+Cut</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-6 fit-inside-box">
+                                                                            <h6 class="head-hy">CSG Shoe</h6>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_csg_without">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                    <p class="ecd-text">ECD</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_csg_with">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD+Cut</p>
+                                                                            </div>
+                                                                        </div>
+        
+                                                                    </div>
+                                                                    <!-- <figure class="highcharts-figure charts"> -->
+                                                                        Total Pressure loss
+                                                                        <!-- <a class="btn  ecd_bitdepth_data pull-right allchartdatapopup" id="ecd_bitdepth_data" href="#">ECD Bitdepth data</a> -->
+                                                                        <div class="totalpressure"></div>
+                                                                        <input type="hidden" class="total_pressure_loss" id="total_pressure_loss">
+                                                                        <!-- <a class="pull-left" href="#" data-toggle="tooltip" data-placement="top" title="ECD measured at the Bit as it drills"><i class="fa fa-info-circle i-con" style="font: size 17px;color:#444242"></i></a> -->
+                                                                        <div id="alongholeecd_chart">
+                                                                        </div>
+                                                                        <div id="ecdalonghole_chart_pdf" style = "display:none"></div>
+                                                                    <!-- </figure> -->
+                                                                </div>
+                                                                <div class="tab-pane" id="bitdepth" role="tabpanel">
+                                                                    <div class="row ecddata-row">
+                                                                        <div class="col-6 fit-inside-box">
+                                                                            <h6 class="head-hy">TD</h6>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_td_without_bitdepth">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p class="hd-blue"  id="ecd_td_with_bitdepth">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <input type="hidden" id="ecd_with_bitdepth">
+                                                                                <p class="ecd-text">ECD+Cut</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-6 fit-inside-box">
+                                                                            <h6 class="head-hy">CSG Shoe</h6>   
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_csg_without_bitdepth">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                    <p class="ecd-text">ECD</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p class="hd-blue" id="ecd_csg_with_bitdepth">11.4 {% display_densityunit request.session.unit %}</p>
+                                                                                <p class="ecd-text">ECD+Cut</p>
+                                                                            </div>
+                                                                        </div>
+        
+                                                                    </div>
+                                                                    <!-- <figure class="highcharts-figure charts"> -->
+                                                                        Total Pressure loss
+                                                                        <!-- <a class="btn ecd_alonghole_data pull-right allchartdatapopup" id="ecd_alonghole_data" href="#">ECD Alonghole data</a> -->
+                                                                        <div class="totalpressure"></div>
+                                                                        <!-- <a class="pull-left" href="#" data-toggle="tooltip" data-placement="top" title="ECD profile in the annulus when Bit is at Bit Depth"><i class="fa fa-info-circle i-con" style="font-size:25px;;color:#7f0201"></i></a> -->
+                                                                        <div id="ecd_chart"></div>
+                                                                        <div id="ecdbitchart_pdf" style = "display:none"></div>
+                                                                    <!-- </figure> -->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {%endif%}
+                                                  <div id="directchart_rheology" style = "display:none"></div>
+                                            <!-- <canvas id="pressurelosschart_canvas" hidden="hidden" ></canvas> -->
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="modal fade pressureloss-modal" id="pressureloss-modal">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content"> 
+                                        <!-- Modal Header -->
+                                            <div class="modal-header">
+                                            <!-- <h4 class="modal-title">Drill Collars</h4> -->
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                        
+                                        <!-- Modal body -->
+                                            <div class="modal-body">
+                                                <div class="table-responsive">
+                                                    <div id="pressureloss_datatable"></div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger detail-button" id="modals-close">Close</button>
+                                            </div>
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                                {% include 'pressureloss_chartdata_popup.html' %}
+        
+                                
+        
+                                <div class="modal fade allModal" id="allModal">
+                                    <div class="modal-dialog">
+                                    <div class="modal-content sample-model">
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                        <h4 class="modal-title">All Models pressureloss</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                        <div class="table-responsive" id="newtonian-id"></div>
+                                        <div class="table-responsive" id="bingham-id"></div>
+                                        <div class="table-responsive" id="powerlaw-id"></div>
+                                        <div class="table-responsive" id="hershel-id"></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger detail-button" id="allmodal-close" >Close</button>
+                                        </div> 
+                                    </div>
+                                    </div>
+                                </div>
+                        
+                        <div class="col-12 p-0">
+                            <div class="row">
+                                <div class="col-12 ">
+                                    <div class="card p-1">
+                                        <div class="row conbined_chart_row">
+                                            <div class="col-3 border-right-col">
+                                                <div class="row">
+                                                    <a class="btn slip_annular_data pull-right allchartdatapopup" id="slip_annular_data" href="#">Slip Velocity</a>
+                                                </div>
+                                                <figure class="highcharts-figure charts">
+                                                    <div id="slipvelocity_chart"> </div>
+                                                </figure>
+                                            </div>
+                                            <div class="col-3 border-right-col">
+                                                <div class="row">
+                                                    <a class="btn cci pull-right allchartdatapopup" id="cci" href="#">CCI</a>
+                                                </div>
+                                                <figure class="highcharts-figure charts">
+                                                    <div id="cci_chart">
+                                                    </div>
+                                                    <div id="ccichart_pdf" style = "display:none"></div>
+                                                </figure>
+                                            </div>  
+                                            <div class="col-3 border-right-col">
+                                                <div class="row">
+                                                    <a class="btn transport_ratio pull-right allchartdatapopup" id="transport_ratio" href="#">Transport Ration</a>
+                                                </div>
+                                                <figure class="highcharts-figure charts">
+                                                    <div id="transportratio_chart">
+                                                    </div>
+                                                    <div id="transportratiochart_pdf" style = "display:none"></div>
+                                                </figure>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="row">
+                                                    <a class="btn cuttings_concentration pull-right allchartdatapopup" id="cuttings_concentration" href="#">Cuttings Concentration</a>
+                                                </div>
+                                                <figure class="highcharts-figure charts">
+                                                    <div id="cuttingconcentration_chart"></div>
+                                                </figure>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 p-0">
+                        <div class="row">
+                            <div class="col-12 ">
+                            <div id="Annular-loss" class="pressureloss_table"></div>
+                            <input type="hidden" id="annular_loss_value">
+                            <input type="hidden" id="drillstring_loss_value">
+                            </div>
+                            </div>
+                        </div>
+                        <div class="col-12 p-0">
+                        <div class="row">
+                            <div class="col-12">
+                            <div id="bit-loss" class="pressureloss_table"></div>
+                            <input type="hidden" id="bit_loss_value">
+        
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-12 p-0">
+                        <div class="row">
+                            <div class="col-12 ">
+                            <div id="surface-loss" class="pressureloss_table"></div>
+                            <input type="hidden" id="surface_loss_value">
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-12 p-0">
+                        <div class="row">
+                            <div class="col-12">
+                            <div id="summary_pressureloss" class="pressureloss_table"></div>
+                            </div>
+                        </div>
+                        </div>
+        
+                            </div>
+                            <div class="tab-pane " id="comparison" role="tabpanel">
+                                
+                            
+                                <div class="row">
+                                    
+                                    <button class="allmodel_change_unit unit-con">Unit Conversion</button>
+                                    
+                                    <div class="col-12">
+                                        <div class="row box-sha m-2">
+                                            <div class="col-5">
+                                            <div class="tab-pane" id="total_details" role="tabpanel"></div>
+                                        </div>
+                                            <div class="col-7">
+                                            <figure class="highcharts-figure">
+                                                <div id="allmodel_chart" class="" style="max-width: 800px; height: 300px;"></div>
+                                            </figure>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="col-12">
+                                                <div class="row m-2">
+                                                    <div class="col-4">
+                                        <div class="tab-pane" id="rheogram_mudparameter"></div>
+                                        </div>
+                                        <div class="col-8 box-sha">
+                                            <div class="row">
+                                        
+                                            <div class="col-8">
+                                            <figure class="highcharts-figure txt-gra">
+                                                <div id="drillstring_annular"></div>
+                                            </figure>
+                                            </div>
+                                            <div class="col-4 dril-line">
+                                            <div id="drill-bit"></div>
+                                            </div>
+                                    
+                                        </div>
+                                        </div>
+                                        </div>
+                                        </div>
+                                        </div>
+                
+                                        <div class="card p-1">
+                                            <h4 class="phase_det_head">Pressure Loss Details</h4>
+                                            <div class="tab-pane" id="circulation-loss" role="tabpanel">
+                                                <div class="col-12">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                <ul class="nav nav-tabs press-losstab" role="tablist">
+                                                    <li class="nav-item drill-list">
+                                                    <a class="nav-link press-mnu" data-toggle="tab" href="#allpipe-loss" role="tab">DrillString</a>
+                                                </li>
+                                                <li class="nav-item drill-list">
+                                                    <a class="nav-link press-mnu" data-toggle="tab" href="#allAnnular-loss" role="tab">Annulus</a>
+                                                </li>
+                                                <li class="nav-item drill-list">
+                                                    <a class="nav-link press-mnu" data-toggle="tab" href="#allsurface-loss" role="tab">Surface</a>
+                                                </li>
+                                            </ul>
+                                                        </div>
+                                            </div>
+                                            </div>
+                                            <div class="card p-1">
+                                                <div class="tab-content">
+                                                    <div class="tab-pane" id="allsurface-loss" role="tabpanel"></div>
+                                                    <div class="tab-pane" id="allAnnular-loss" role="tabpanel"></div>
+                                                    <div class="tab-pane" id="allpipe-loss" role="tabpanel"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        
+                                </div>
+                            </div>     
+                            </div>
+                        </div>
+            
+        
+                </div>
+
+                </div>
+
+                <div class="col-md-3">
+                    <div class="">
+                        {% include "userheader.html" %}
+                        <h4 class="model-caption">Well Phases</h4>
+                        {% for wellphase in wellphases %}
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="press-wellmenu">
+                                    <button class="pressure-phase">
+                                        <label class="tree-toggle nav-header glyphicon-icon-rpad hyd-head ">
+                                            <span class="glyphicon glyphicon-folder-close m5"></span>{{wellphase.phase_name}}
+                                            <span class="menu-collapsible-icon glyphicon glyphicon-chevron-down"></span>
+                                        </label>
+                                    </button>
+                                    <ul class="myDIV nav navbar-nav custom_active_list pressure-sidemenu {% if wellphase_id == wellphase.id %}show{% endif %}">
+                                        {% getsectionbywellphase_id wellphase.id as sections %}
+                                        <!-- {{sections.count}} -->
+                                        {% for section in sections %}
+                                        <!-- {{forloop.counter}} -->
+                
+                                        <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="nav-item wellphase_sidemenu {% if forloop.counter == sections.count and wellphase.id == wellphase_id %}active{% endif %}">{{section.section_name | depthunit:request.session.unit}}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %} 
+                        <div class="report-sec">
+                            <div class="rep-ort-list"><button class="btn-re-po"><a class="phase_report" href="{% url 'pressureloss:generate_phase_report' wellphase_id%}?section_name={{section_name}}">Phase Report</a></button></div>
+                            <div class="rep-ort-list"><button class="btn-re-po"><a class="sensitivity_report" href="{% url 'pressureloss:sensitivity_report' wellphase_id%}?section_name={{section_name}} " target="new">Sensitivity Report</a></button></div>
+                            <div class="rep-ort-list"><button class="btn-re-po"><a class="totalwell_report" href="{% url 'pressureloss:generate_totalwell_report' wellphase_id%}?section_name={{section_name}} " target="new">Total well hydraulics report</a></button></div>
+                        </div>
+                        <div class="col-md-12 " id='warning'>
+                            <div class="col-md-12 alert"><span class="closebtn" onclick="this.parentElement.style.display=none;">&times;</span>
+                                <strong>ECD is greater than Fracture Pressure.</strong></div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+         
+       
+    
+    {% include "footer.html" %}
+    </div>
+    </div>
+
+   
+  </div>
+
+</div>
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://code.highcharts.com/8.1.2/modules/offline-exporting.js"></script>
+<script>
+
+var allmodalchart
+
+
+
+
+var unit='{%display_depthunit request.session.unit%}';
+
+allmodalchart=Highcharts.chart('allmodel_chart', {
+        
+        chart: {
+            type: 'column',
+            style: {
+                fontFamily: 'serif',
+                color:'red'
+            }
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            // categories: ['Newtonian', 'Bingham Plastic', 'Power Law', 'Hershel Bulkley']
+            categories: ['Bingham Plastic', 'Power Law', 'Hershel Bulkley']
+
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            },
+            stackLabels: {
+                enabled: true,
+                formatter: function () {
+                return this.total + " {%display_pressureunit request.session.unit%}";      
+            },
+                style:{
+                    color:'gray'
+                }
+                // style: {
+                //     fontWeight: 'bold',
+                //     color: ( // theme
+                //         Highcharts.defaultOptions.title.style &&
+                //         Highcharts.defaultOptions.title.style.color
+                //     ) || 'gray'
+                // }
+            },
+            labels: {
+                formatter: function () {
+                    return this.value +' {%display_pressureunit request.session.unit%}';
+                }
+            },
+        },
+        legend: {
+            align: 'right',
+            enabled: false,
+        },
+        credits: {
+        enabled: false
+       },
+        tooltip: {
+        
+        },
+        plotOptions: {
+            series: {
+            borderRadius: 5
+        },
+
+            column: {
+                stacking: 'normal',
+                pointWidth:30,
+                // dataLabels: {
+                //     enabled: true
+                // }
+            }
+        },
+
+        series : []
+
+    });
+   
+
+
+
+
+$(document).ready(function() {
+var unit = '{{well.project.unit}}';
+    $('#warning').hide();
+    $('#rpm').val(0).change();
+    $('#flowrate').val(0).change();
+
+
+const triggers = Array.from(document.querySelectorAll('[data-toggle="collapse"]'));
+
+window.addEventListener('click', (ev) => {
+  const elm = ev.target;
+  if (triggers.includes(elm)) {
+    const selector = elm.getAttribute('data-target');
+    collapse(selector, 'toggle');
+  }
+}, false);
+
+
+const fnmap = {
+  'toggle': 'toggle',
+  'show': 'add',
+  'hide': 'remove'
+};
+const collapse = (selector, cmd) => {
+  const targets = Array.from(document.querySelectorAll(selector));
+  targets.forEach(target => {
+    target.classList[fnmap[cmd]]('show');
+  });
+}
+
+    $('[data-toggle="tooltip"]').tooltip();  
+    // $('#bitdepth_sensitivity').rangeslider({
+    //     polyfill: false,
+
+    //     // rangeClass: 'rangeslider',
+    //     // disabledClass: 'rangeslider--disabled',
+    //     // horizontalClass: 'rangeslider--horizontal',
+    //     // verticalClass: 'rangeslider--vertical',
+    //     // fillClass: 'rangeslider__fill',
+    //     // handleClass: 'rangeslider__handle',
+
+    //     // Callback function
+    //     onInit: function() {
+    //         $rangeEl = this.$range;
+    //         // add value label to handle
+    //         var $handle = $rangeEl.find('.rangeslider__handle');
+    //         var handleValue = '<div class="rangeslider__handle__value">' + this.value + '</div>';
+    //         $handle.append(handleValue);
+            
+    //         // get range index labels 
+          
+    //     },
+
+    //     // Callback function
+    //     onSlide: function(position, value) {
+    //         var $handle = this.$range.find('.rangeslider__handle__value');
+    //         $handle.text(this.value);
+    //     },
+
+    //     // Callback function
+    //     onSlideEnd: function(position, value) {
+    //         calculatesensitivity(this.value)
+
+    //     }
+    // });
+
+    $('#flowrate').rangeslider({
+        polyfill: false,
+        rangeClass: 'rangeslider',
+        disabledClass: 'rangeslider--disabled',
+        horizontalClass: 'rangeslider--horizontal',
+        fillClass: 'rangeslider__fill',
+        handleClass: 'rangeslider__handle',
+
+        onInit: function() {
+        $rangeEl = this.$range;
+        // add value label to handle
+        // var $handle = $rangeEl.find('.rangeslider__handle');
+        // var handleValue = '<div class="rangeslider__handle__value">' + this.value + '</div>';
+        // $handle.append(handleValue);
+        
+        // get range index labels 
+        var rangeLabels = this.$element.attr('labels');
+        rangeLabels = rangeLabels.split(', ');
+        
+        // add labels
+        $rangeEl.append('<div class="rangeslider__labels"></div>');
+        $(rangeLabels).each(function(index, value) {
+            $rangeEl.find('.rangeslider__labels').append('<span class="rangeslider__labels__label">' + value + '</span>');
+        })
+        },
+
+        onSlide: function(position, value) {
+        // var $handle = this.$range.find('.rangeslider__handle__value');
+        // $handle.text(this.value);
+        },
+
+        onSlideEnd: function(position, value) {
+            $('#flowrate_drag').val(value)
+            
+            $('#flowrate_userenter').val(value)
+            rangeinputflowrate(value)
+
+        }
+    });
+
+    $('#rop').rangeslider({
+    polyfill: false,
+    rangeClass: 'rangeslider',
+    disabledClass: 'rangeslider--disabled',
+    horizontalClass: 'rangeslider--horizontal',
+    fillClass: 'rangeslider__fill',
+    handleClass: 'rangeslider__handle',
+
+    onInit: function() {
+    $rangeEl = this.$range;
+    // add value label to handle
+    // var $handle = $rangeEl.find('.rangeslider__handle');
+    // var handleValue = '<div class="rangeslider__handle__value">' + this.value + '</div>';
+    // $handle.append(handleValue);
+    
+    // get range index labels 
+    var rangeLabels = this.$element.attr('labels');
+    rangeLabels = rangeLabels.split(',');
+    
+    // add labels
+    $rangeEl.append('<div class="rangeslider__labels"></div>');
+    $(rangeLabels).each(function(index, value) {
+        $rangeEl.find('.rangeslider__labels').append('<span class="rangeslider__labels__label">' + value + '</span>');
+    })
+    },
+
+    onSlide: function(position, value) {
+    // var $handle = this.$range.find('.rangeslider__handle__value');
+    // $handle.text(this.value);
+    },
+
+    onSlideEnd: function(position, value) {
+        $('#rop_drag').val(value)
+        $('#rop_userenter').val(value)
+        rangeinputflowrate(value)
+
+    }
+});
+
+$('#rpm').rangeslider({
+    polyfill: false,
+
+    rangeClass: 'rangeslider',
+    disabledClass: 'rangeslider--disabled',
+    horizontalClass: 'rangeslider--horizontal',
+    fillClass: 'rangeslider__fill',
+    handleClass: 'rangeslider__handle',
+
+    onInit: function() {
+    $rangeEl = this.$range;
+    // var $handle = $rangeEl.find('.rangeslider__handle');
+    // var handleValue = '<div class="rangeslider__handle__value">' + this.value + '</div>';
+    // $handle.append(handleValue);
+    
+    var rangeLabels = this.$element.attr('labels');
+    rangeLabels = rangeLabels.split(', ');
+    
+    $rangeEl.append('<div class="rangeslider__labels"></div>');
+    $(rangeLabels).each(function(index, value) {
+        $rangeEl.find('.rangeslider__labels').append('<span class="rangeslider__labels__label">' + value + '</span>');
+    })
+    },
+
+    onSlide: function(position, value) {
+    // var $handle = this.$range.find('.rangeslider__handle__value');
+    // $handle.text(this.value);
+    },
+
+    onSlideEnd: function(position, value) {
+        $('#rpm_drag').val(value)
+        $('#rpm_userenter').val(value)
+        rangeinputflowrate(value)
+
+
+    }
+});
+
+
+
+
+
+   if(unit == 'API'){
+       $('#cuttings_density').val(21);
+       $('#cuttings_size').val(0.25);
+   }
+   else{
+       $('#cuttings_density').val(2.52);
+       $('#cuttings_size').val(6.34);
+   }
+});
+
+    $(function(){
+        var section_name=$('.wellphase_sidemenu.active').attr('data-id')
+        // console.log(section_name)
+        var wellphase_id=$('.wellphase_sidemenu.active').attr('wellphase_id')
+        // console.log(wellphase_id)
+
+       
+        getwellphasedetails(wellphase_id,section_name)
+        $('.custom_active_list li').click(function(){
+            $('.custom_active_list li').removeClass('active');
+            $(this).addClass('active');
+            $(this).closest('div').addClass('active');
+
+        });
+
+
+
+
+
+
+        $(document).on("click",'.wellphase_sidemenu',function(){
+            var section_name=$(this).attr('data-id')
+            var wellphase_id=$(this).attr('wellphase_id')
+            getwellphasedetails(wellphase_id,section_name)
+            $('.phase_report').attr('href','/wells/muddata/generate_report/'+wellphase_id+'/?section_name='+section_name)
+            $('.sensitivity_report').attr('href','/wells/muddata/sensitivity_report/'+wellphase_id+'/?section_name='+section_name)
+        })
+    })
+    function getwellphasedetails(wellphase_id,section_name){
+        setsession(wellphase_id,"wellphase_id")
+        $.ajax({
+            type: "GET",
+            url:"/wells/muddata/checkmudmotor",
+            cache: false,        
+
+            data:{
+                wellphase_id:wellphase_id,
+                section_name:section_name
+                
+            },
+            
+            success: function(data) {
+                setsession(section_name,"section_name")
+                var html=''
+                if(data.status=='true'){
+                    html +='<div class="row" id="torque_row">'
+                    html +='<div class="col-2"><label>Torque</label></div>'
+                    html +='<div class="col-3"><input type="text" name="torque" id="torque" class="form-control" placeholder="Torque"></div>'
+                    html +='</div>'
+                    html +='<div class="row" id="wob_row">'
+                    html +='<div class="col-2"><label>Working WOB</label></div>'
+                    html +='<div class="col-3"><input type="text" name="wob" id="wob" class="form-control" placeholder="WOB"></div>'
+                    html +='</div>'
+                    $('#drilling_parameters').append(html)
+                }
+                else{
+                    $('#torque_row').remove() 
+                    $('#wob_row').remove() 
+                }
+                $('#bitdepth_labels').val(data.rangelabels.toString())
+                
+                bitdepthrange()
+                $('#bitdepth_slider').prop('min', data.sectionfromdepth );
+                $('#bitdepth_slider').prop('max',  data.sectiontodepth);
+                $('#bitdepth_slider').rangeslider('update', true);
+            }
+        })
+    }
+    function rangeinputflowrate(flowrate){
+        var rpm=$('#rpm_drag').val()
+        var flowrate=$('#flowrate_drag').val()
+        var rop=$('#rop_drag').val()
+        if(flowrate!='' && rpm!='' && rop!=''){
+            getannuluspressurelaw(rpm,flowrate,rop)
+        }
+    }
+
+
+var load_chart=false;
+
+// function container(surfaceloss,drillstringloss,bitloss,annularloss){
+//     directchart_bar=Highcharts.chart('container', {
+//         chart: {
+//             type: 'bar',
+//             // borderWidth:0,
+//             marginLeft:89,
+//             marginRight:-30,
+//             groupPadding: 0,
+//             spacingBottom: -80,
+//             spacingTop: -120,
+//         },
+//         title:{
+//             text:''
+//         },
+//         exporting: {
+//     enabled: false
+//   },
+//     credits: {
+//         enabled: false
+//        },
+        
+//        legend:{
+//         align: 'right',
+//         verticalAlign: 'top',
+//         x: -40,
+//         y: 120,  
+//         reversed: true,
+//         enabled: false            
+//         },
+//           plotOptions: {              
+//               bar:{
+//                   pointWidth:35,
+//                   dataLabels: {
+//                     format: '{y} {%display_pressureunit request.session.unit%}',
+//                       enabled: true,
+//                     },
+//                     animation:true,
+//                 },
+//                 series: {
+//                     showInLegend: true,
+//                     reversed: true,
+//                     shadow:false,
+//                     borderWidth:0,
+//                     stacking:true
+//                 }
+//     //dataLabels: {
+//            //enabled: true,
+//         //},
+//  },
+//         xAxis:{
+//             categories:[''],
+//             lineColor:'transparant',
+//             // lineWidth:1,
+//             tickColor:'#666',
+//             // tickLength:3,
+            
+
+//         },
+//          yAxis: {
+//             reversed: false,
+//             labels: {
+//             enabled: false,
+//             },	
+            
+//             gridLineWidth: 0,
+//             lineColor: 'transparant',
+//             // lineWidth:1,
+//             tickColor:'transparant',
+//             tickWidth:1,
+//             tickLength:3,
+//             gridLineColor:'#ddd',
+//             title:{
+//                 text:'',
+//                 rotation:0,
+//                 margin:50
+//             }
+//         },
+//         series: [{
+//             color:'#FFF3CE',
+//             name:'Surface',
+//             // legendIndex:8,
+//             data: [surfaceloss],
+//             borderRadiusTopRight: '20px',
+//             borderRadiusTopLeft: '20px',
+//             // borderRadiusBottomLeft: '20px',
+//         },{
+//             name:'Drillstring',
+//             color:'#F9C7C8',
+//             // legendIndex:7,
+//             data: [drillstringloss]
+//         },{
+//             name:'Bit Nozzle',
+//             color:'#BDD9E7',
+//             // legendIndex:0,
+//             data: [bitloss]
+//         },{
+//             // showInLegend: false,
+//             name:'Annular',
+//             color:'#C7ECD0',
+//             // legendIndex:0,
+//             data: [annularloss],
+//             borderRadiusBottomRight: '20px',
+//             borderRadiusBottomLeft: '20px',
+             
+//         }] 
+//     });
+// };//bar chart end
+
+
+// var pdf = new jsPDF('p', 'mm', [1000, 1400]);
+// var counter = 0;
+// var imgurls = [];
+
+// Highcharts.downloadURL = function(dataURL, filename) {
+//   if (dataURL.length > 2000000) {
+//     dataURL = Highcharts.dataURLtoBlob(dataURL);
+//     if (!dataURL) {
+//       throw 'Data URL length limit reached';
+//     }
+//   }
+//   imgurls.push(dataURL);
+//   counter++;
+// };
+
+// function  createSVGFromChart(chart,target,name = ''){
+//     var ret = chart.getSVGForExport().replace('<div aria-hidden="false" class="highcharts-a11y-proxy-container-before" style="top: 0px; left: 0px; white-space: nowrap; position: absolute;"></div>','');
+//     // console.log("ret"+ret)
+    
+//     canvg(document.getElementById(target),ret);
+//     var canvas = document.getElementById(target)
+//     // console.log("canvas"+canvas)
+
+//     var img = canvas.toDataURL("image/png");
+//     // console.log("img"+img)
+
+//     img = img.replace('data:image/png;base64,', '');
+//     console.log("img"+img)
+//         var data ={
+//             png:img,
+//             filename:name,
+//             type: 'image/png',
+//         }
+//         $.ajax({
+//         type: "POST",
+//         url: "/wells/muddata/chart_image",
+//         data: {
+//             csrfmiddlewaretoken: '{{ csrf_token }}',
+//             data:data
+//         },
+//         success: function(data){
+//             // alert(data);
+//         }
+//         });
+// }
+
+
+
+// $(function() {
+
+// $('#btn').on('click', function() {
+//     // createSVGFromChart(directchart, 'pressurelosschart_canvas','direct');
+//     // createSVGFromChart(directchart_cci, 'pressurelosschart_canvas','directchart_cci');
+//     // createSVGFromChart(directchart_tr, 'pressurelosschart_canvas','directchart_tr');
+//     // createSVGFromChart(directchart_cc, 'pressurelosschart_canvas','directchart_cc');
+//     // createSVGFromChart(directchart_slip, 'pressurelosschart_canvas','directchart_slip');
+//     // createSVGFromChart(directchart_ecdalong, 'ecdalong_canvas','directchart_ecdalong');
+//     // createSVGFromChart(directchart_ecdbit, 'ecdbit_canvas','directchart_ecdbit');
+// });
+
+// });
+
+
+
+var t_line=[];
+var well_id='{{well_id}}';
+get_line_intersection = function(p0,p1,p2,p3)
+{        
+    var p0_x = p0.x;
+    var p0_y = p0.y;
+    var p1_x = p1.x;
+    var p1_y = p1.y;
+    var p2_x = p2.x;
+    var p2_y = p2.y;
+    var p3_x = p3.x;
+    var p3_y = p3.y;  
+
+    var s1_x, s1_y, s2_x, s2_y;
+    s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
+    s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
+
+    var s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
+    var t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
+
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+    {
+        line_intercet=[p0_x + (t * s1_x),p0_y + (t * s1_y)];
+        line=line_intercet[1];
+        t_line.push(line.toFixed(2));
+        return [p0_x + (t * s1_x),p0_y + (t * s1_y)];
+    }
+
+    return false;
+}
+
+
+
+function ecdchart(ecdchartdata,previous_measured_depth,mudweight,todepth,ecd_chart_max,increasedecdchartdata,ecd_fracturepressure){
+    var categories=[]
+    for(var i=0;i<ecdchartdata.length;i++){
+        categories.push(ecdchartdata[i]['x'].toFixed(2))
+    }
+    // console.log(categories)
+    var unit='{%display_depthunit request.session.unit%}';
+    directchart_ecdbit = Highcharts.chart('ecd_chart', {
+        chart: {
+            reflow: false,
+        },
+        title: {
+            text: ''
+        },
+        credits: {
+        enabled: false
+       },
+        xAxis: {
+            opposite: true,
+            reversed: false,
+            title: {
+                enabled: true,
+                text: 'ECD {%display_densityunit request.session.unit%}'
+            },
+            tickInterval : 0.20,
+            min:mudweight-0.5,
+            max:ecd_chart_max+1,
+            gridLineWidth:1,
+            // categories: categories
+
+        },
+        yAxis: {
+            reversed: true,
+            opposite: false,
+            title: {
+                text: 'MD('+unit+')'
+            },
+            labels: {
+                format: '{value}'
+            },
+            tickInterval : 1000,
+
+        },
+        legend: { 
+        },
+        plotOptions: {
+            scatter: {
+                marker: {
+                    radius: 2,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            lineColor: 'rgb(100,100,100)'
+                        }
+                    }
+                },
+                states: {
+                    hover: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {  
+                    headerFormat: '<b>{series.name}</b><br>',
+                },
+                lineWidth:2,
+            },
+            series: {
+            marker: {
+                enabled: false
+            }
+        },
+            dataLabels: {
+                    style: {
+                      fontSize: "100px"
+            }
+            
+        }
+        },
+        
+        series: [
+        {
+            type:'scatter',
+            color: 'rgb(22,96,178)',
+            data: ecdchartdata,
+            name:'ECD(Without Cuttings)',
+            dashStyle: 'Solid',
+
+        },{
+            type:'scatter',
+            color: '#741413',
+            data: increasedecdchartdata,
+            name:'ECD(With Cuttings)',
+            dashStyle: 'Solid',
+
+        }
+        ,{
+        name: 'Mud Weight',
+        color:'#bb1111',
+        data: [{
+                x:mudweight,
+                y:0,
+                marker: {
+                    enabled: false,
+                    symbol: '',
+                    radius: 0
+                }
+            },{
+                x:mudweight,
+                y:todepth
+            }],
+    },
+    {
+        name:'Fracture Pressure',
+        color:'#DB843D',
+        data:ecd_fracturepressure
+    },
+        {
+            name: 'Intersect',
+            data: [],
+            type: 'scatter',
+            lineWidth: 0,
+            color:'red',
+            marker: {
+                symbol: 'point',
+                enabled: true,
+                radius: 4
+                }
+        },
+        {
+            type:'line',
+            name:'Casing',
+            color:'black',
+            lineWidth:4,
+            data:[{
+                x:mudweight-0.5,
+                y:0,
+                marker: {
+                    enabled: false,
+                    symbol: ''
+                }
+            },{
+                x:mudweight-0.5,
+                y:previous_measured_depth
+            }],
+            marker: {
+                enabled: true,
+                symbol: 'url(../../../../static/images/chart/casing.png)',
+                width: 30,
+                height: 30,
+            },
+            label: {
+                    connectorAllowed: true,
+                    enabled:false
+            }
+        }
+      ]
+    },
+    function(chart){
+        var s0 = chart.series[1].points;
+        var s1 = chart.series[3].points;
+        var s2 = chart.series[4];
+        var n0 = s0.length;
+        var n1 = s1.length;
+        var i,j,isect;
+        for (i = 1; i < n0; i++){
+           for (j = 1; j < n1; j++){
+               if (isect = get_line_intersection(s0[i-1],s0[i],
+                                   s1[j-1],s1[j])){
+                   s2.addPoint(isect, false, false);
+
+               }
+           } 
+        }
+        window.sessionStorage.setItem("items", JSON.stringify(t_line));
+        if(s2.processedXData !=''){
+            $('#warning').show();
+        }
+        else{
+            $('#warning').hide();
+        }
+        chart.redraw();
+    }
+    );
+}
+
+var flowrateecd
+var flowratechart
+var mudweightchart
+var mudweightecd_chart
+var tfachart
+
+// $(document).on("blur", "#flowrate_sensitivity" , function() {
+//     var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+//     var section_name = $('ul.custom_active_list').find('li.active').attr('data-id'); 
+//     var flowrate=$(this).val()
+//     var rpm=$('.rpm').val();
+//     var rop=$('#original_rop').val()
+//     var cuttings_density=$('#original_cd').val()
+//     var cuttings_size=$('#original_cs').val()
+//     var mudweight=$("#original_mudweight").val()
+//     var plastic_viscocity=$('#original_pv').val()
+//     var yieldpoint=$('#original_yp').val()
+//     var bitdepth=$('#todepth_hidden').val()
+//     $.ajax({
+//         type: "GET",
+//         url:"/wells/muddata/calculatesensitivity",
+//         data:{
+//             rpm:rpm,
+//             flowrate:flowrate,
+//             wellphase_id:wellphase_id,
+//             section_name:section_name,
+//             rop:rop,
+//             cuttings_density:cuttings_density,
+//             cuttings_size:cuttings_size,
+//             bitdepth:bitdepth,
+//             torque:$('#torque').val(),
+//             wob:$('#wob').val(),
+//             mudweight:mudweight,
+
+
+//         },
+//         beforeSend: function() {
+//         $('#loader').removeClass('hidden')
+//         },
+//         success: function(data) {
+//             if ( !mudweightchart.get( 'mudweight_flowrate' ) ) {
+//                 mudweightchart.addSeries({
+//                     type: 'spline',
+//                     name: 'Total Pressure Loss',
+//                     color: 'rgb(245,173,43)',
+//                     data: data.totalpressureloss,
+//                     dashStyle: 'ShortDot',
+//                     id:"mudweight_flowrate"
+//                 })  
+//             }else{
+//                 mudweightchart.series[mudweightchart.get('mudweight_flowrate').index].update({
+//                     data: data.totalpressureloss
+//                 });
+//             }
+
+//             if ( !tfachart.get( 'tfabit_flowrate' ) ) {
+//                 tfachart.addSeries({
+//                     type: 'spline',
+//                     name: 'Bit Pressure Loss',
+//                     color: 'rgb(22,96,178)',
+//                     data: data.tfa_chart,
+//                     dashStyle: 'ShortDot',
+//                     id:"tfabit_flowrate"
+//                 })  
+//             }else{
+//                 tfachart.series[tfachart.get('tfabit_flowrate').index].update({
+//                     data: data.tfa_chart
+//                 });
+//             }
+
+//             if ( !tfachart.get( 'tfatotal_flowrate' ) ) {
+//                 tfachart.addSeries({
+//                     type: 'spline',
+//                     name: 'Bit Pressure Loss',
+//                     color: 'rgb(22,96,178)',
+//                     data: data.allchart_bit,
+//                     dashStyle: 'ShortDot',
+//                     id:"tfatotal_flowrate"
+//                 })  
+//             }else{
+//                 tfachart.series[tfachart.get('tfatotal_flowrate').index].update({
+//                     data: data.allchart_bit
+//                 });
+//             }
+
+//             if ( !mudweightecd_chart.get( 'mudweightecd_flowrate' ) ) {
+//                 mudweightecd_chart.addSeries({
+//                     type: 'spline',
+//                     name: 'ECD',
+//                     color: 'rgb(22,96,178)',
+//                     data: data.mudweight_ecd,
+//                     dashStyle: 'ShortDot',
+//                     id:"mudweightecd_flowrate"
+//                 })  
+//             }else{
+//                 mudweightecd_chart.series[mudweightecd_chart.get('mudweightecd_flowrate').index].update({
+//                     data: data.mudweight_ecd
+//                 });
+//             }
+ 
+//         },
+//         error: function (request, error) {
+//             // alert(" Can't do because: " + error);
+//             $('#loader').addClass('hidden')
+
+//         },
+//         complete: function(){
+//             $('#loader').addClass('hidden')
+//         },
+//     });
+// })
+// $(document).on("blur", "#mudweight_sensitivity" , function() {
+//     var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+//     var section_name = $('ul.custom_active_list').find('li.active').attr('data-id'); 
+//     var flowrate=$('#original_flowrate').val()
+//     var rpm=$('.rpm').val();
+//     var rop=$('#original_rop').val()
+//     var cuttings_density=$('#original_cd').val()
+//     var cuttings_size=$('#original_cs').val()
+//     var mudweight=$(this).val()
+//     var plastic_viscocity=$('#original_pv').val()
+//     var yieldpoint=$('#original_yp').val()
+//     var bitdepth=$('#todepth_hidden').val()
+//     $.ajax({
+//         type: "GET",
+//         url:"/wells/muddata/calculatesensitivity",
+//         data:{
+//             rpm:rpm,
+//             flowrate:flowrate,
+//             wellphase_id:wellphase_id,
+//             section_name:section_name,
+//             rop:rop,
+//             cuttings_density:cuttings_density,
+//             cuttings_size:cuttings_size,
+//             bitdepth:bitdepth,
+//             torque:$('#torque').val(),
+//             wob:$('#wob').val(),
+//             mudweight:mudweight,
+
+
+//         },
+//         beforeSend: function() {
+//         $('#loader').removeClass('hidden')
+//         },
+//         success: function(data) {
+//             console.log(data)
+//             if ( !flowratechart.get( 'flowrate_mudweight' ) ) {
+//                 flowratechart.addSeries({
+//                     type: 'spline',
+//                     name: 'Total Pressure Loss',
+//                     color: 'rgb(245,173,43)',
+//                     data: data.flowratetotalpressureloss,
+//                     dashStyle: 'ShortDot',
+//                     id:"flowrate_mudweight"
+//                 })  
+//             }else{
+//                 flowratechart.series[flowratechart.get('flowrate_mudweight').index].update({
+//                     data: data.flowratetotalpressureloss
+//                 });
+//             }
+
+//             if ( !flowrateecd.get( 'flowrateecd_mudweight' ) ) {
+//                 flowrateecd.addSeries({
+//                     type: 'spline',
+//                     name: 'Total Pressure Loss',
+//                     color: 'rgb(245,173,43)',
+//                     data: data.flowrate_ecd,
+//                     dashStyle: 'ShortDot',
+//                     id:"flowrateecd_mudweight"
+//                 })  
+//             }else{
+//                 flowrateecd.series[flowrateecd.get('flowrateecd_mudweight').index].update({
+//                     data: data.flowrate_ecd
+//                 });
+//             }
+
+//             if ( !tfachart.get( 'tfabit_mudweight' ) ) {
+//                 tfachart.addSeries({
+//                     type: 'spline',
+//                     name: 'Bit Pressure Loss',
+//                     color: 'rgb(22,96,178)',
+//                     data: data.tfa_chart,
+//                     dashStyle: 'ShortDot',
+//                     id:"tfabit_mudweight"
+//                 })  
+//             }else{
+//                 tfachart.series[tfachart.get('tfabit_mudweight').index].update({
+//                     data: data.tfa_chart
+//                 });
+//             }
+
+//             if ( !tfachart.get( 'tfatotal_mudweight' ) ) {
+//                 tfachart.addSeries({
+//                     type: 'spline',
+//                     name: 'Bit Pressure Loss',
+//                     color: 'rgb(22,96,178)',
+//                     data: data.allchart_bit,
+//                     dashStyle: 'ShortDot',
+//                     id:"tfatotal_mudweight"
+//                 })  
+//             }else{
+//                 tfachart.series[tfachart.get('tfatotal_mudweight').index].update({
+//                     data: data.allchart_bit
+//                 });
+//             }
+
+
+//         },
+//         error: function (request, error) {
+//             $('#loader').addClass('hidden')
+//         },
+//         complete: function(){
+//             $('#loader').addClass('hidden')
+//         },
+//     });
+
+// })
+var sensitivity={}
+function calculatesensitivity(bitdepth,flowrate,rpm,rop,wellphase_id,section_name,cuttings_density,cuttings_size,mudweight,plastic_viscocity,yieldpoint,type){
+    $.ajax({
+        type: "GET",
+        url:"/wells/muddata/calculatesensitivity",
+        data:{
+            rpm:rpm,
+            flowrate:flowrate,
+            wellphase_id:wellphase_id,
+            section_name:section_name,
+            rop:rop,
+            cuttings_density:cuttings_density,
+            cuttings_size:cuttings_size,
+            bitdepth:bitdepth,
+            torque:$('#torque').val(),
+            wob:$('#wob').val(),
+            mudweight:mudweight,
+
+
+        },
+        beforeSend: function() {
+        $('#loader').removeClass('hidden')
+        },
+        success: function(data) {
+            if(type=='original'){
+                sensitivity_pressureloss_chart(data,type)
+                sensitivity_flowrate_chart(data,type)
+                sensitivity_viscocity_chart(data)
+                sensitivity_yieldpoint_chart(data)
+                bitpressurechart(data)
+                flowrateecdchart(data.flowrate_ecd,type)
+                mudweightecdchart(data.mudweight_ecd,type)
+                viscocityecdchart(data.viscocity_ecd)
+                ropecdchart(data.rop_ecd_with,data.rop_ecd_without)
+                cuttingsdensityecdchart(data.cuttings_density_withecd,data.cuttings_density_withoutecd)
+                cuttingssizeecdchart(data.cuttings_size_withoutecd,data.cuttings_size_withecd)
+
+            }else{
+                console.log("fttty")
+            }
+            
+
+           
+        },
+        error: function (request, error) {
+            $('#loader').addClass('hidden')
+        },
+        complete: function(){
+            $('#loader').addClass('hidden')
+        },
+    });
+}
+// $(document).on("click", ".sensitivity" , function() {
+//     var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+//     var section_name = $('ul.custom_active_list').find('li.active').attr('data-id');
+//     $.ajax({
+//         type: "GET",
+//         url:"/wells/muddata/getsectionrange",
+//         data:{
+//             wellphase_id:wellphase_id,
+//             section_name:section_name
+//         },
+//         success: function(data) {
+//             $('#bitdepth_sensitivity').prop('min', data.sectionfromdepth);
+//             $('#bitdepth_sensitivity').prop('max',  data.sectiontodepth);
+//             $('#bitdepth_sensitivity').val(data.sectionfromdepth);
+//             var html=''
+//             for(var i=0;i<data.rangelabels.length;i++){
+//                 html +='<div><span></span>'+data.rangelabels[i]+'</div>'
+
+//             }
+//             $('.custom_labels').html(html)
+//         }
+//     });
+// })
+
+// $(document).on("click", ".sensitivity" , function() {
+//     var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+//     var section_name = $('ul.custom_active_list').find('li.active').attr('data-id'); 
+//     var flowrate=$('.flowrate').val();
+//     var rpm=$('.rpm').val();
+//     var rop=$('#rop_userenter').val();
+//     var cuttings_density=$('#cuttings_density').val()
+//     var cuttings_size=$('#cuttings_size').val()
+//     var mudweight=$('#mudweight_hidden').val()
+//     var plastic_viscocity=$('#pv_hidden').val()
+//     var yieldpoint=$('#yp_hidden').val()
+//     var bitdepth=$('#todepth_hidden').val()
+
+//     $('#flowrate_sensitivity').val(flowrate)
+//     $('#rop_sensitivity').val(rop)
+//     $('#cs_sensitivity').val(cuttings_size)
+//     $('#cd_sensitivity').val(cuttings_density)
+//     $('#mudweight_sensitivity').val(mudweight)
+//     $('#pv_sensitivity').val(plastic_viscocity)
+//     $('#yp_sensitivity').val(yieldpoint)
+
+//     calculatesensitivity(bitdepth,flowrate,rpm,rop,wellphase_id,section_name,cuttings_density,cuttings_size,mudweight,plastic_viscocity,yieldpoint,'original')
+
+// })
+
+// $(document).on("blur", ".sensitivity_input" , function() {
+//     var type=$(this).attr('data-type')
+//     var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+//     var section_name = $('ul.custom_active_list').find('li.active').attr('data-id'); 
+//     var flowrate=(type=="flowrate") ? $(this).val() : $('.flowrate').val();
+//     var rpm=$('.rpm').val();
+//     var rop=(type=="rop") ? $(this).val() : $('#rop_userenter').val();
+//     var cuttings_density=(type=="cuttings_density") ? $(this).val() : $('#cuttings_density').val()
+//     var cuttings_size=(type=="cuttings_size") ? $(this).val() : $('#cuttings_size').val()
+//     var mudweight=(type=="mudweight") ? $(this).val() :$('#mudweight_hidden').val()
+//     var plastic_viscocity=(type=='pv') ? $(this).val() : $('#pv_hidden').val()
+//     var yieldpoint=(type=='yp') ? $(this).val() : $('#yp_hidden').val()
+//     var bitdepth=$('#todepth_hidden').val()
+//     calculatesensitivity(bitdepth,flowrate,rpm,rop,wellphase_id,section_name,cuttings_density,cuttings_size,mudweight,plastic_viscocity,yieldpoint,'changed')
+      
+
+// });
+
+// $(document).on('mouseup', '#bitdepth_sensitivity', function() {
+//     calculatesensitivity($(this).val())
+//     // alert($(this).val())
+// });
+function ropecdchart(withecd,withoutecd){
+    Highcharts.chart('rop_ecd_chart', {
+    title: {
+        text: 'ECD'
+    },
+    credits: {
+      enabled: false
+    },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'ROP'
+        },
+        tickInterval : 10,
+        min:0,
+        max:200
+
+    },
+    yAxis: {
+        title: {
+            text: 'ECD'
+        },
+        tickInterval : 0.5,
+
+    },
+
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    
+    series: [
+    {
+        type: 'spline',
+        name: 'ECD(With Cuttings)',
+        color: 'rgb(22,96,178)',
+        data: withecd,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+    {
+        type: 'spline',
+        name: 'ECD(Without Cuttings)',
+        color: 'rgb(22,96,178)',
+        data: withoutecd,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+
+  ]
+});
+}
+function cuttingsdensityecdchart(withecd,withoutecd){
+    Highcharts.chart('cuttingsdensity_ecd_chart', {
+    title: {
+        text: 'ECD'
+    },
+    credits: {
+      enabled: false
+    },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'Cuttings Density'
+        },
+        tickInterval : 0.5,
+        min:19,
+        max:25
+
+    },
+    yAxis: {
+        title: {
+            text: 'ECD'
+        },
+        tickInterval : 0.5,
+
+    },
+
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    
+    series: [
+    {
+        type: 'spline',
+        name: 'ECD(With Cuttings)',
+        color: 'rgb(22,96,178)',
+        data: withecd,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+    {
+        type: 'spline',
+        name: 'ECD(Without Cuttings)',
+        color: 'rgb(22,96,178)',
+        data: withoutecd,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+
+  ]
+});
+}
+function cuttingssizeecdchart(withoutecd,withecd){
+    Highcharts.chart('cuttingssize_ecd_chart', {
+    title: {
+        text: 'ECD'
+    },
+    credits: {
+      enabled: false
+    },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'Cuttings Size'
+        },
+        tickInterval : 0.05,
+        min:0,
+        max:1
+
+    },
+    yAxis: {
+        title: {
+            text: 'ECD'
+        },
+        tickInterval : 0.5,
+
+    },
+
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    
+    series: [
+    {
+        type: 'spline',
+        name: 'ECD(Without Cuttings)',
+        color: 'rgb(22,96,178)',
+        data: withoutecd,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+    {
+        type: 'spline',
+        name: 'ECD(With Cuttings)',
+        color: 'rgb(22,96,178)',
+        data: withecd,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+
+  ]
+});
+}
+function viscocityecdchart(data){
+    Highcharts.chart('viscocity_ecd_chart', {
+    title: {
+        text: 'ECD'
+    },
+    credits: {
+      enabled: false
+    },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'Plastic Viscocity'
+        },
+        tickInterval : 5,
+
+    },
+    yAxis: {
+        title: {
+            text: 'ECD'
+        },
+        tickInterval : 0.5,
+
+    },
+
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    
+    series: [
+    {
+        type: 'spline',
+        name: 'ECD',
+        color: 'rgb(22,96,178)',
+        data: data,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+
+  ]
+});
+}
+function mudweightecdchart(data,type){
+
+mudweightecd_chart=Highcharts.chart('mudweight_ecd_chart', {
+    title: {
+        text: 'ECD'
+    },
+    credits: {
+        enabled: false
+       },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'Mud Weight'
+        },
+        tickInterval : 0.5,
+
+    },
+    yAxis: {
+        title: {
+            text: 'ECD'
+        },
+        tickInterval : 0.5,
+
+    },
+
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    
+    series: [
+    {
+        type: 'spline',
+        name: 'ECD',
+        color: 'rgb(22,96,178)',
+        data: data,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+
+]
+});
+
+}
+function flowrateecdchart(data,type){
+    flowrateecd=Highcharts.chart('flowrate_ecd_chart', {
+        title: {
+            text: 'ECD'
+        },
+        credits: {
+            enabled: false
+        },
+        xAxis: {
+            title: {
+                enabled: true,
+                text: 'Flowrate'
+            },
+            tickInterval : 50,
+
+        },
+        yAxis: {
+            title: {
+                text: 'ECD'
+            },
+            tickInterval : 0.5,
+
+        },
+
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: false
+                }
+            }
+        },
+        
+        series: [
+        {
+            type: 'spline',
+            name: 'ECD',
+            color: 'rgb(22,96,178)',
+            data: data,
+            dashStyle: 'Solid',
+            marker: {
+                enabled: false
+            },
+        },
+
+    ]
+    });
+}
+function bitpressurechart(data){
+    tfachart=Highcharts.chart('sensitivity_tfa_chart', {
+    title: {
+        text: 'Pressure Loss'
+    },
+    credits: {
+        enabled: false
+       },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'TFA'
+        },
+        tickInterval : 0.1,
+
+    },
+    yAxis: {
+        title: {
+            text: 'Pressure Loss'
+        },
+        tickInterval : 100,
+
+    },
+
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    
+    series: [
+    {
+        type: 'spline',
+        name: 'Bit Pressure Loss',
+        color: 'rgb(22,96,178)',
+        data: data.tfa_chart,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+    {
+        type: 'spline',
+        name: 'Total Pressure Loss',
+        color: 'rgb(22,96,178)',
+        data: data.allchart_bit,
+        dashStyle: 'Solid',
+        marker: {
+            enabled: false
+        },
+    },
+
+  ]
+});
+}
+function sensitivity_yieldpoint_chart(data){
+    Highcharts.chart('sensitivity_yieldpoint_chart', {
+    title: {
+        text: 'Pressure Loss'
+    },
+    credits: {
+        enabled: false
+       },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'Yield Point'
+        },
+        tickInterval : 5,
+
+    },
+    yAxis: {
+        title: {
+            text: 'Pressure Loss'
+        },
+        tickInterval : 100,
+
+    },
+
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    
+    series: [
+    {
+        type: 'spline',
+        name: 'Total Pressure Loss',
+        color: 'rgb(245,173,43)',
+        data: data.yieldtotalpressureloss,
+        dashStyle: 'Solid',
+    }
+  ]
+});
+}
+function sensitivity_viscocity_chart(data){
+    Highcharts.chart('sensitivity_viscocity_chart', {
+    title: {
+        text: 'Pressure Loss'
+    },
+    credits: {
+        enabled: false
+       },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'Plastic Viscocity'
+        },
+        tickInterval : 5,
+
+    },
+    yAxis: {
+        title: {
+            text: 'Pressure Loss'
+        },
+        tickInterval : 100,
+
+    },
+
+    plotOptions: {
+        spline: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    
+    series: [
+    {
+        type: 'spline',
+        name: 'Total Pressure Loss',
+        color: 'rgb(245,173,43)',
+        data: data.viscocitytotalpressureloss,
+        dashStyle: 'Solid',
+    }
+  ]
+});
+}
+function sensitivity_flowrate_chart(data,type){
+    flowratechart=Highcharts.chart('sensitivity_flowrate_chart', {
+            title: {
+                text: 'Pressure Loss'
+            },
+            credits: {
+                enabled: false
+                },
+            xAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Flowrate'
+                },
+                tickInterval : 50,
+
+            },
+            yAxis: {
+                title: {
+                    text: 'Pressure Loss'
+                },
+                tickInterval : 100,
+                labels: {
+                        format: '{value}'
+                    },
+            },
+
+            plotOptions: {
+                spline: {
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+            
+            series: [
+            {
+                type: 'spline',
+                name: 'Total Pressure Loss',
+                color: 'rgb(245,173,43)',
+                data: data.flowratetotalpressureloss,
+                dashStyle: 'Solid',
+            }
+        ]
+        });
+}
+function sensitivity_pressureloss_chart(data,type){
+    mudweightchart=Highcharts.chart('sensitivity_pressureloss_chart', {
+        title: {
+            text: 'Pressure Loss'
+        },
+        credits: {
+            enabled: false
+        },
+        xAxis: {
+            title: {
+                enabled: true,
+                text: 'Mudweight'
+            },
+            tickInterval : 0.5,
+
+        },
+        yAxis: {
+            title: {
+                text: 'Pressure Loss'
+            },
+            tickInterval : 100,
+
+        },
+
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: false
+                }
+            }
+        },
+        
+        series: [
+        {
+            type: 'spline',
+            name: 'Total Pressure Loss',
+            color: 'rgb(245,173,43)',
+            data: data.totalpressureloss,
+            dashStyle: 'Solid',
+        }
+    ]
+    });
+   
+}
+$(document).on("blur", ".rpm_data" , function() {
+    var rpm=$(this).val();
+    var flowrate=$('#flowrate_data').val()
+    if(flowrate!='' && rpm!=''){
+        getallmodellosses(rpm,flowrate)
+    }  
+});
+$(document).on("blur", ".flowrate_data" , function() {
+    var flowrate=$(this).val();
+    var rpm=$('#rpm_data').val();
+    if(flowrate!='' && rpm!=''){
+        getallmodellosses(rpm,flowrate)
+    }  
+});
+
+var comparison={};
+
+function getallmodel_surface(rpm,flowrate){
+    
+    var section_name = $('ul.custom_active_list').find('li.active').attr('data-id');
+    var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+    var rop=$('#rop_userenter').val();
+    $.ajax({
+        type: "GET",
+        url:"/wells/muddata/allmodel_surface",
+        data:{
+            rpm:rpm,
+            flowrate:flowrate,
+            wellphase_id:wellphase_id,
+            section_name:section_name,
+            rop:rop
+        },
+        success: function(data) {
+            
+            var all_surface=""
+            var total_surface_newtonian=0
+            var total_surface_bingham=0 
+            var total_surface_powerlaw=0
+        
+            all_surface +="<div class='card p-3'><table class='table surface-tbl'><thead><tr><th>Element</th><th>ID</th><th>Length</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+                // if(data.ty>0){
+                //     all_surface +="<th class='hershel-clr'>Hershel</th></tr>"
+                // }else{
+                //     all_surface +="</tr>"
+                // }
+              
+                all_surface +="<tr><th></th><th></th><th></th><th id='surface_bingham'></th><th id='surface_powerlaw'></th>"
+                // if(data.ty>0){
+                //     all_surface +="<th id='surface_hershel'></th></tr></thead><tbody>"
+                // }else{
+                //     all_surface +="</tr></thead><tbody>"
+                // }
+                for(var i=0;i<data.allmodalsurface.length;i++){
+                all_surface +='<tr>';
+                all_surface +='<td>'+data.allmodalsurface[i].element+'</td>';
+                all_surface +='<td>'+data.allmodalsurface[i].id+' {%display_diameter request.session.unit%}</td>';
+                all_surface +='<td>'+data.allmodalsurface[i].length+' {%display_depthunit request.session.unit%}</td>';
+                all_surface +='<td>'+Math.round(data.allmodalsurface[i].bingham)+' {%display_pressureunit request.session.unit%}</td>';
+                all_surface +='<td>'+Math.round(data.allmodalsurface[i].powerlaw)+' {%display_pressureunit request.session.unit%}</td>';
+                // if(data.ty>0){
+                //     all_surface +='<td>'+Math.round(data.allmodalsurface[i].hershel)+' {%display_pressureunit request.session.unit%}</td>';
+                // }
+                all_surface +='</tr>'  
+                total_surface_newtonian =total_surface_newtonian+data.allmodalsurface[i].newtonion
+                total_surface_bingham =total_surface_bingham+data.allmodalsurface[i].bingham
+                total_surface_powerlaw=total_surface_powerlaw+data.allmodalsurface[i].powerlaw
+            }
+            all_surface +='</tbody></table>';
+            $('#allsurface-loss').html(all_surface)
+            $('#surface_bingham').html(total_surface_bingham.toFixed()+' {%display_pressureunit request.session.unit%}')
+            $('#surface_powerlaw').html(total_surface_powerlaw.toFixed()+' {%display_pressureunit request.session.unit%}')
+           
+
+        }
+    })
+}
+function getallmodel_annular(rpm,flowrate){
+    
+    var section_name = $('ul.custom_active_list').find('li.active').attr('data-id');
+    var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+    var rop=$('#rop_userenter').val();
+    $.ajax({
+        type: "GET",
+        url:"/wells/muddata/allmodel_annular",
+        data:{
+            rpm:rpm,
+            flowrate:flowrate,
+            wellphase_id:wellphase_id,
+            section_name:section_name,
+            rop:rop
+        },
+        success: function(data) {
+            console.log('annular',data)
+            var allannularlosses=''
+            var cumulative_length=0
+            var totaldrillstring_bingham=0
+            var totaldrillstring_newtonian=0
+            var totaldrillstring_powerlaw=0
+            var totalannular_newtonian_loss=0
+            var totalannular_bingham_loss=0
+            var totalannular_powerlaw_loss=0
+
+                // allannularlosses +="<table class='table annuls-tbl'><thead><tr><th></th><th>BHA Element</th><th>OD / ID / Length</th><th>Cumulative Length</th><th class='newton-clr'>Newtonian</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+                
+                allannularlosses +="<table class='table annuls-tbl'><thead><tr><th></th><th>BHA Element</th><th>OD / ID / Length</th><th>Cumulative Length</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+                
+                // if(data.ty>0){
+                //     allannularlosses +="<th class='hershel-clr'>Hershel</th></tr>"
+                // }else{
+                //     allannularlosses +="</tr>"
+                // }
+
+                // allannularlosses +="<tr><th></th><th></th><th></th><th></th><th id='annul_newton'></th><th id='annul_bingham'></th><th id='annul_powerlaw'></th>"
+                allannularlosses +="<tr><th></th><th></th><th></th><th></th><th id='annul_bingham'></th><th id='annul_powerlaw'></th>"
+                // if(data.ty>0){
+                //     allannularlosses +="<th id='annul_hershel'></th></tr></thead><tbody>"
+                // }else{
+                //     allannularlosses +="</tr></thead><tbody>"
+                // }
+                for(var i=data.all_annular_pressure_loss.length-1;i>=0;i--){
+                cumulative_length=cumulative_length+data.all_annular_pressure_loss[i].length
+                allannularlosses +='<tr>';
+                allannularlosses +='<td><span class='+data.all_annular_pressure_loss[i].element_type+'>'+data.all_annular_pressure_loss[i].element_type+'</span></td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].element+'</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].od+' {%display_diameter request.session.unit%} / '+data.all_annular_pressure_loss[i].id+' {%display_diameter request.session.unit%} / '+data.all_annular_pressure_loss[i].length.toFixed(0)+' {%display_depthunit request.session.unit%}</td>';
+                // allannularlosses +='<td>'+data.all_annular_pressure_loss[i].length_against.toFixed(0)+' ft</td>';
+                allannularlosses +='<td>'+cumulative_length.toFixed(0)+' {%display_depthunit request.session.unit%}</td>';
+                // allannularlosses +='<td>'+data.all_annular_pressure_loss[i].newtonion.toFixed()+' psi</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].bingham.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].powerlaw.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                // if(data.ty>0){
+                //     allannularlosses +='<td>'+data.all_annular_pressure_loss[i].hershel.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                // }
+                allannularlosses +='</tr>'
+                totalannular_newtonian_loss = totalannular_newtonian_loss + data.all_annular_pressure_loss[i].newtonion
+                totalannular_bingham_loss = totalannular_bingham_loss + data.all_annular_pressure_loss[i].bingham
+                totalannular_powerlaw_loss = totalannular_powerlaw_loss + data.all_annular_pressure_loss[i].powerlaw
+                
+            }
+            // allannularlosses +='<tr><td></td><td></td><td></td><td>'+totalannular_newtonian_loss+'</td><td>'+totalannular_bingham_loss+'</td><td>'+totalannular_powerlaw_loss+'</td><td>'+totalannular_hershel_loss.to+'</td></tr>'
+            allannularlosses +='</tbody></table>';
+            console.log('all_loss')
+            $('#allAnnular-loss').html(allannularlosses);
+            $('#annul_bingham').html(totalannular_bingham_loss.toFixed()+' {%display_pressureunit request.session.unit%}');
+            $('#annul_powerlaw').html(totalannular_powerlaw_loss.toFixed()+' {%display_pressureunit request.session.unit%}');
+            
+
+
+            var all_drillstring_losses = ''
+            var cumulative_length=0
+
+            // all_drillstring_losses +="<table class='table drilling-tbl'><thead><tr><th></th><th>BHA Element</th><th>OD / ID / Length</th><th class='newton-clr'>Newtonian</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+            all_drillstring_losses +="<table class='table drilling-tbl'><thead><tr><th></th><th>BHA Element</th><th>OD / ID / Length</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+                // if(data.ty>0){
+                //     all_drillstring_losses +="<th class='hershel-clr'>Hershel</th></tr>"
+                // }else{
+                //     all_drillstring_losses +="</tr>"
+                // }
+                // all_drillstring_losses +="<tr><th></th><th></th><th></th><th class='drill-name' id='drill_newton'></th><th class='drill-name' id='drill_bingham'></th><th class='drill-name' id='drill_powerlaw'></th>"
+                all_drillstring_losses +="<tr><th></th><th></th><th></th><th class='drill-name' id='drill_bingham'></th><th class='drill-name' id='drill_powerlaw'></th>"
+                // if(data.ty>0){
+                //     all_drillstring_losses +="<th class='drill-name' id='drill_hershel'></th></tr></thead><tbody>"
+                // }else{
+                //     all_drillstring_losses +="</tr></thead><tbody>"
+                // }
+                for(var i=data.alldrillstringloss.length-1;i>=0;i--){
+                all_drillstring_losses +='<tr>';
+                all_drillstring_losses +='<td><span class='+data.alldrillstringloss[i].element_type+'>'+data.alldrillstringloss[i].element_type+'</span></td>';
+                all_drillstring_losses +='<td>'+data.alldrillstringloss[i].element+'</td>';
+                all_drillstring_losses +='<td>'+data.alldrillstringloss[i].od+' {%display_diameter request.session.unit%}/ '+data.alldrillstringloss[i].id+' {%display_diameter request.session.unit%}/ '+data.alldrillstringloss[i].length.toFixed(2)+' {%display_depthunit request.session.unit%}</td>';
+                // all_drillstring_losses +='<td>'+data.alldrillstringloss[i].newtonion.toFixed()+' psi</td>';
+                all_drillstring_losses +='<td>'+data.alldrillstringloss[i].bingham.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                all_drillstring_losses +='<td>'+data.alldrillstringloss[i].powerlaw.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                // if(data.ty>0){
+                //     all_drillstring_losses +='<td>'+data.alldrillstringloss[i].hershel.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                // }
+                all_drillstring_losses +='</tr>'
+
+                totaldrillstring_newtonian = totaldrillstring_newtonian + data.alldrillstringloss[i].newtonion
+                totaldrillstring_bingham = totaldrillstring_bingham + data.alldrillstringloss[i].bingham
+                totaldrillstring_powerlaw = totaldrillstring_powerlaw + data.alldrillstringloss[i].powerlaw
+                
+
+            
+                // all_drillstring_losses +='<tr><td></td><td></td><td></td><td>'+totaldrillstring_newtonian+'</td><td>'+totaldrillstring_bingham+'</td><td>'+totaldrillstring_powerlaw+'</td><td>'+totaldrillstring_hershel+'</td></tr>'
+
+            }
+            all_drillstring_losses +='</tbody></table>';
+            
+            $('#allpipe-loss').html(all_drillstring_losses)
+            $('#drill_bingham').html(totaldrillstring_bingham.toFixed()+' {%display_pressureunit request.session.unit%}')
+            $('#drill_powerlaw').html(totaldrillstring_powerlaw.toFixed()+' {%display_pressureunit request.session.unit%}')
+    
+        }
+    })
+}
+
+
+
+function getallmodellosses(rpm,flowrate){
+    var section_name = $('ul.custom_active_list').find('li.active').attr('data-id');
+    var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+    var rop=$('#rop_userenter').val();
+    $.ajax({
+        type: "GET",
+        url:"/wells/muddata/getallmodels",
+        data:{
+            rpm:rpm,
+            flowrate:flowrate,
+            wellphase_id:wellphase_id,
+            section_name:section_name,
+            rop:rop
+        },
+        success: function(data) {
+            var totalannular =[];
+            var totaldrillstring =[];
+            allmodel_chart(data.allnewtonion_pressureloss,data.allbingham_pressureloss,data.allpowerlaw_pressureloss,data.allhershel_pressureloss,data.ty)
+            // var totalallsurface_loss = 0
+            console.log('all',data.allnewtonion_pressureloss,data.allbingham_pressureloss,data.allpowerlaw_pressureloss,data.allhershel_pressureloss,data.ty)
+            var totalannular_newtonian_loss = 0
+            var totalannular_bingham_loss = 0
+            var totalannular_powerlaw_loss = 0
+            var totalannular_hershel_loss = 0
+            var totaldrillstring_newtonian =0
+            var totaldrillstring_bingham =0
+            var totaldrillstring_powerlaw =0
+            var totaldrillstring_hershel =0
+            var total_surface_newtonian=0
+            var total_surface_bingham=0
+            var total_surface_powerlaw=0
+            var total_surface_hershel=0
+
+            var total_details=""
+            total_details +='<h4 class="head-tlt">Total Pressure Loss</h4>'
+            total_details +='<table class="total-loss"><tr><td><span class="value-colr"><input type="number" step="any" name="flowrate_data" value='+flowrate+' id="flowrate_data" class="form-control flowrate_data edit-vlu"></span> {%display_flowrateunit request.session.unit%} <br>Flowrate</td><td> <span class="value-colr"><input type="number" step="any" name="rpm_data" id="rpm_data" value='+rpm+' class="form-control rpm_data edit-vlu"></span> rpm<br>RPM</td></tr>'
+            total_details +='<tr><td> <span class="value-colr">'+data.todepth+'</span> {%display_depthunit request.session.unit%}<br>Bit Depth</td><td><span class="value-colr">'+rop+'</span> {%display_depthunit request.session.unit%}/hr<br>ROP</td></tr>'
+            $('#total_details').html(total_details)
+
+            var rheogram_mudparameter=""
+            rheogram_mudparameter +='<table class="rmp-tbl">'
+            rheogram_mudparameter +='<h4 class="rmp-txt">Rheology and Mud Parameters</h4>'
+            rheogram_mudparameter +='<tr><th>Mud Weight</th><td>'+data.mudweight+' {%display_densityunit request.session.unit%}</td></tr>'
+            rheogram_mudparameter +='<tr><th>Rheology</th><td>'+data.selected_modal+'</td></tr>'
+            rheogram_mudparameter +='<tr><th>PV / YP</th><td>'+data.pv+' {%display_plastic_viscosity request.session.unit%} / '+data.yp+' {%display_gelstrengthunit request.session.unit%}</td></tr>'
+            rheogram_mudparameter +='<tr><th>n/K</th><td>'+data.K+' / '+data.m+'</td></tr>'
+            rheogram_mudparameter +='</table>'
+            $('#rheogram_mudparameter').html(rheogram_mudparameter)
+
+            var all_surface=""
+            // all_surface +="<div class='card p-3'><table class='table surface-tbl'><thead><tr><th>Element</th><th>ID</th><th>Length</th><th class='newton-clr'>Newtonian</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+            all_surface +="<div class='card p-3'><table class='table surface-tbl'><thead><tr><th>Element</th><th>ID</th><th>Length</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+                if(data.ty>0){
+                    all_surface +="<th class='hershel-clr'>Hershel</th></tr>"
+                }else{
+                    all_surface +="</tr>"
+                }
+                // all_surface +="<tr><th></th><th></th><th></th><th id='surface_newton'></th><th id='surface_bingham'></th><th id='surface_powerlaw'></th>"
+                all_surface +="<tr><th></th><th></th><th></th><th id='surface_bingham'></th><th id='surface_powerlaw'></th>"
+                if(data.ty>0){
+                    all_surface +="<th id='surface_hershel'></th></tr></thead><tbody>"
+                }else{
+                    all_surface +="</tr></thead><tbody>"
+                }
+                for(var i=0;i<data.allmodalsurface.length;i++){
+                all_surface +='<tr>';
+                all_surface +='<td>'+data.allmodalsurface[i].element+'</td>';
+                all_surface +='<td>'+data.allmodalsurface[i].id+' {%display_diameter request.session.unit%}</td>';
+                all_surface +='<td>'+data.allmodalsurface[i].length+' {%display_depthunit request.session.unit%}</td>';
+                // all_surface +='<td>'+Math.round(data.allmodalsurface[i].newtonion)+' psi</td>';
+                all_surface +='<td>'+Math.round(data.allmodalsurface[i].bingham)+' {%display_pressureunit request.session.unit%}</td>';
+                all_surface +='<td>'+Math.round(data.allmodalsurface[i].powerlaw)+' {%display_pressureunit request.session.unit%}</td>';
+                if(data.ty>0){
+                    all_surface +='<td>'+Math.round(data.allmodalsurface[i].hershel)+' {%display_pressureunit request.session.unit%}</td>';
+                }
+                all_surface +='</tr>'  
+                total_surface_newtonian =total_surface_newtonian+data.allmodalsurface[i].newtonion
+                total_surface_bingham =total_surface_bingham+data.allmodalsurface[i].bingham
+                total_surface_powerlaw=total_surface_powerlaw+data.allmodalsurface[i].powerlaw
+                total_surface_hershel=total_surface_hershel+data.allmodalsurface[i].hershel
+            }
+            all_surface +='</tbody></table>';
+            $('#allsurface-loss').html(all_surface)
+            // $('#surface_newton').html(total_surface_newtonian.toFixed()+' psi')
+            $('#surface_bingham').html(total_surface_bingham.toFixed()+' {%display_pressureunit request.session.unit%}')
+            $('#surface_powerlaw').html(total_surface_powerlaw.toFixed()+' {%display_pressureunit request.session.unit%}')
+            $('#surface_hershel').html(total_surface_hershel.toFixed()+' {%display_pressureunit request.session.unit%}')
+
+            var all_drillstring_losses = ''
+            // all_drillstring_losses +="<table class='table drilling-tbl'><thead><tr><th></th><th>BHA Element</th><th>OD / ID / Length</th><th class='newton-clr'>Newtonian</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+            all_drillstring_losses +="<table class='table drilling-tbl'><thead><tr><th></th><th>BHA Element</th><th>OD / ID / Length</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+                if(data.ty>0){
+                    all_drillstring_losses +="<th class='hershel-clr'>Hershel</th></tr>"
+                }else{
+                    all_drillstring_losses +="</tr>"
+                }
+                // all_drillstring_losses +="<tr><th></th><th></th><th></th><th class='drill-name' id='drill_newton'></th><th class='drill-name' id='drill_bingham'></th><th class='drill-name' id='drill_powerlaw'></th>"
+                all_drillstring_losses +="<tr><th></th><th></th><th></th><th class='drill-name' id='drill_bingham'></th><th class='drill-name' id='drill_powerlaw'></th>"
+                if(data.ty>0){
+                    all_drillstring_losses +="<th class='drill-name' id='drill_hershel'></th></tr></thead><tbody>"
+                }else{
+                    all_drillstring_losses +="</tr></thead><tbody>"
+                }
+                for(var i=data.alldrillstringloss.length-1;i>=0;i--){
+                all_drillstring_losses +='<tr>';
+                all_drillstring_losses +='<td><span class='+data.alldrillstringloss[i].element_type+'>'+data.alldrillstringloss[i].element_type+'</span></td>';
+                all_drillstring_losses +='<td>'+data.alldrillstringloss[i].element+'</td>';
+                all_drillstring_losses +='<td>'+data.alldrillstringloss[i].od+' {%display_diameter request.session.unit%}/ '+data.alldrillstringloss[i].id+' {%display_diameter request.session.unit%}/ '+data.alldrillstringloss[i].length.toFixed(2)+' {%display_depthunit request.session.unit%}</td>';
+                // all_drillstring_losses +='<td>'+data.alldrillstringloss[i].newtonion.toFixed()+' psi</td>';
+                all_drillstring_losses +='<td>'+data.alldrillstringloss[i].bingham.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                all_drillstring_losses +='<td>'+data.alldrillstringloss[i].powerlaw.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                if(data.ty>0){
+                    all_drillstring_losses +='<td>'+data.alldrillstringloss[i].hershel.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                }
+                all_drillstring_losses +='</tr>'
+                totaldrillstring_newtonian = totaldrillstring_newtonian + data.alldrillstringloss[i].newtonion
+                totaldrillstring_bingham = totaldrillstring_bingham + data.alldrillstringloss[i].bingham
+                totaldrillstring_powerlaw = totaldrillstring_powerlaw + data.alldrillstringloss[i].powerlaw
+                totaldrillstring_hershel = totaldrillstring_hershel + data.alldrillstringloss[i].hershel
+            
+                // all_drillstring_losses +='<tr><td></td><td></td><td></td><td>'+totaldrillstring_newtonian+'</td><td>'+totaldrillstring_bingham+'</td><td>'+totaldrillstring_powerlaw+'</td><td>'+totaldrillstring_hershel+'</td></tr>'
+
+            }
+            all_drillstring_losses +='</tbody></table>';
+            
+            $('#allpipe-loss').html(all_drillstring_losses)
+            // $('#drill_newton').html(totaldrillstring_newtonian.toFixed()+' psi')
+            $('#drill_bingham').html(totaldrillstring_bingham.toFixed()+' {%display_pressureunit request.session.unit%}')
+            $('#drill_powerlaw').html(totaldrillstring_powerlaw.toFixed()+' {%display_pressureunit request.session.unit%}')
+            $('#drill_hershel').html(totaldrillstring_hershel.toFixed()+' {%display_pressureunit request.session.unit%}')
+            var allannularlosses=''
+                cumulative_length=0
+                // allannularlosses +="<table class='table annuls-tbl'><thead><tr><th></th><th>BHA Element</th><th>OD / ID / Length</th><th>Cumulative Length</th><th class='newton-clr'>Newtonian</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+                
+                allannularlosses +="<table class='table annuls-tbl'><thead><tr><th></th><th>BHA Element</th><th>OD / ID / Length</th><th>Cumulative Length</th><th class='bing-clr'>Bingham</th><th class='power-clr'>Powerlaw</th>"
+                
+                if(data.ty>0){
+                    allannularlosses +="<th class='hershel-clr'>Hershel</th></tr>"
+                }else{
+                    allannularlosses +="</tr>"
+                }
+
+                // allannularlosses +="<tr><th></th><th></th><th></th><th></th><th id='annul_newton'></th><th id='annul_bingham'></th><th id='annul_powerlaw'></th>"
+                allannularlosses +="<tr><th></th><th></th><th></th><th></th><th id='annul_bingham'></th><th id='annul_powerlaw'></th>"
+                if(data.ty>0){
+                    allannularlosses +="<th id='annul_hershel'></th></tr></thead><tbody>"
+                }else{
+                    allannularlosses +="</tr></thead><tbody>"
+                }
+                for(var i=data.all_annular_pressure_loss.length-1;i>=0;i--){
+                cumulative_length=cumulative_length+data.all_annular_pressure_loss[i].length
+                allannularlosses +='<tr>';
+                allannularlosses +='<td><span class='+data.all_annular_pressure_loss[i].element_type+'>'+data.all_annular_pressure_loss[i].element_type+'</span></td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].element+'</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].od+' {%display_diameter request.session.unit%} / '+data.all_annular_pressure_loss[i].id+' {%display_diameter request.session.unit%} / '+data.all_annular_pressure_loss[i].length.toFixed(0)+' {%display_depthunit request.session.unit%}</td>';
+                // allannularlosses +='<td>'+data.all_annular_pressure_loss[i].length_against.toFixed(0)+' ft</td>';
+                allannularlosses +='<td>'+cumulative_length.toFixed(0)+' {%display_depthunit request.session.unit%}</td>';
+                // allannularlosses +='<td>'+data.all_annular_pressure_loss[i].newtonion.toFixed()+' psi</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].bingham.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].powerlaw.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                if(data.ty>0){
+                    allannularlosses +='<td>'+data.all_annular_pressure_loss[i].hershel.toFixed()+' {%display_pressureunit request.session.unit%}</td>';
+                }
+                allannularlosses +='</tr>'
+
+                totalannular_newtonian_loss = totalannular_newtonian_loss + data.all_annular_pressure_loss[i].newtonion
+                totalannular_bingham_loss = totalannular_bingham_loss + data.all_annular_pressure_loss[i].bingham
+                totalannular_powerlaw_loss = totalannular_powerlaw_loss + data.all_annular_pressure_loss[i].powerlaw
+                totalannular_hershel_loss = totalannular_hershel_loss + data.all_annular_pressure_loss[i].hershel
+            }
+            // allannularlosses +='<tr><td></td><td></td><td></td><td>'+totalannular_newtonian_loss+'</td><td>'+totalannular_bingham_loss+'</td><td>'+totalannular_powerlaw_loss+'</td><td>'+totalannular_hershel_loss.to+'</td></tr>'
+            allannularlosses +='</tbody></table>';
+            $('#allAnnular-loss').html(allannularlosses);
+            // $('#annul_newton').html(totalannular_newtonian_loss.toFixed()+' psi');
+            $('#annul_bingham').html(totalannular_bingham_loss.toFixed()+' {%display_pressureunit request.session.unit%}');
+            $('#annul_powerlaw').html(totalannular_powerlaw_loss.toFixed()+' {%display_pressureunit request.session.unit%}');
+            $('#annul_hershel').html(totalannular_hershel_loss.toFixed()+' {%display_pressureunit request.session.unit%}');
+            var drillbit =''
+            drillbit +='<h5 class="head-tlt">Bit Hydraulics</h5><div><table class="bh-tbl">'
+            drillbit +='<tr><th>Bit Pressure Loss</th><td>'+data.bit_losses[0].bit_pressure_loss.toFixed()+' {%display_pressureunit request.session.unit%}</td></tr>'
+            drillbit +='<tr><th>Impact Force</th><td>'+data.bit_losses[0].impact_forces.toFixed()+' {%display_impactforce request.session.unit%}</td></tr>'
+            drillbit +='<tr><th>Jet Velocity</th><td>'+data.bit_losses[0].jet_velocity.toFixed()+' <sup>{%display_diameter request.session.unit%}</sup>/<sub>sec</sub></td></tr>'
+            drillbit +='<tr><th>BHHP</th><td>'+data.bit_losses[0].bhhp.toFixed()+' {%display_bhhp request.session.unit%}</td></tr>'
+            drillbit +='<tr><th>HSI</th><td>'+data.bit_losses[0].hsi.toFixed(2)+'  <sup>{%display_bhhp request.session.unit%}</sup>/{%display_diameter request.session.unit%}<sub>2</sub></td></tr>'
+            drillbit +='<tr><th>TFA</th><td>'+data.bit_losses[0].tfa_value.toFixed(2)+'{%display_diameter request.session.unit%}<sup>2</sup></td></tr>'
+            drillbit +='<td><a class="btn btn__first noz-name" data-toggle="collapse" data-target=".collapse.first" data-text="Collapse">Nozzle Details</a></td></table>';
+            drillbit +=`<div class="collapse first"><div class="block__content" id='nozzles-detail'></div></div>`
+            $('#drill-bit').html(drillbit)
+                
+            var drillbit_nozzle=""
+            drillbit_nozzle +="<table class='table noz-tbl'><thead><tr><th>Nozzle Size<br>({%display_nozzle_size_unit request.session.unit%})</th></thead><tbody>";
+            for(var i=0;i<data.bit_losses.length;i++){
+            for(var j=0;j<data.bit_losses[i].nozzle_size.length;j++){
+                drillbit_nozzle +='<tr>';
+                drillbit_nozzle +='<td>'+data.bit_losses[i].nozzle_size[j]+'</td>';
+                drillbit_nozzle +='</tr>';
+            }}
+            drillbit_nozzle +='</tbody></table></div>';
+            $('#nozzles-detail').html(drillbit_nozzle)
+            
+            // var totalall_newtonium =[];
+            // var totalall_bingham =[];
+            // var totalall_powerlaw =[];
+            // var totalall_hershel =[];
+            totalannular.push(data.binghamannular,data.powerlawannular,data.hershelannular)
+            totaldrillstring.push(data.binghamdrillstring,data.powerlawdrillstring,data.hersheldrillstring)
+            // totalall_newtonium=totaldrillstring_newtonian+totalannular_newtonian_loss+total_surface_newtonian
+            // totalall_bingham=totaldrillstring_bingham + totalannular_bingham_loss+total_surface_bingham
+            // totalall_powerlaw=totaldrillstring_powerlaw + totalannular_powerlaw_loss+ total_surface_powerlaw
+            // totalall_hershel=totaldrillstring_hershel+totalannular_hershel_loss+total_surface_hershel
+            drillstring_annular(totalannular,totaldrillstring)
+            // // allmodel_chart(parseInt(totalall_newtonium,10),parseInt(totalall_bingham,10),parseInt(totalall_powerlaw,10),parseInt(totalall_hershel,10))
+
+            comparison['flowrate']=$('.flowrate').val();
+            comparison['rpm']=$('.rpm').val();
+            comparison['bit_depth']=$('#todepth_hidden').val();
+            comparison['rop']=$('#rop_userenter').val();
+            comparison['allnewtonion_pressureloss']=data.allnewtonion_pressureloss
+            comparison['allbingham_pressureloss']=data.allbingham_pressureloss
+            comparison['allpowerlaw_pressureloss']=data.allpowerlaw_pressureloss
+            comparison['allhershel_pressureloss']=data.allhershel_pressureloss
+            comparison['ty']=data.ty
+            comparison['mudweight']=data.mudweight
+            comparison['selected_model']=data.selected_modal
+            comparison['pv']=data.pv
+            comparison['yp']=data.yp
+            comparison['K']=data.K
+            comparison['n']=data.m
+            comparison['allmodalsurface']=data.allmodalsurface
+            comparison['bit_losses']=data.bit_losses
+            comparison['binghamannular']=(data.binghamannular).toFixed()
+            comparison['powerlawannular']=(data.powerlawannular).toFixed()
+            comparison['hershelannular']=(data.hershelannular).toFixed()
+            comparison['binghamdrillstring']=data.binghamdrillstring
+            comparison['powerlawdrillstring']=data.powerlawdrillstring
+            comparison['hersheldrillstring']=data.hersheldrillstring
+            comparison['alldrillstringloss']=data.alldrillstringloss
+            comparison['all_annular_pressure_loss']=data.all_annular_pressure_loss
+            comparison['unit']='{{request.session.unit}}'
+
+        }
+    })
+}
+
+
+// getallmodalunit(comparison); 
+// unit_change(obj);
+$(document).on("click","#allmodal-close",function(){
+    $('#allModal').modal('hide');
+});	
+$(document).on("click",".focus_chart",function(){
+    var chartid=$(this).attr('data-id');
+    $(".focus_chart").removeClass("active");
+    $(this).addClass('active');
+    $('#'+chartid).focus()
+
+
+});	
+
+function drillstring_annular(totalannular,totaldrillstring){
+    Highcharts.chart('drillstring_annular', {
+        chart: {
+            type: 'bar',
+            width: 400,
+            height: 350
+        },
+        title: {
+            text: 'Drillstring and Annular losses'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            // categories: ['N', 'BP', 'PL', 'HB'],
+            categories: ['BP', 'PL', 'HB'],
+
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: '',
+                align: 'high'
+            },
+            // minorGridLineWidth: 0,
+            // lineColor: 'transparent',
+            // labels: {
+            //     enabled: false
+            // },
+            labels: {
+                formatter: function () {
+                    return this.value +' {%display_pressureunit request.session.unit%}';
+                }
+            }
+        },
+        tooltip: {
+            valueSuffix: ''
+        },
+        plotOptions: {
+            bar: {
+                pointWidth:5,
+                dataLabels: {
+                    enabled: true,
+                    format: '{y} {%display_pressureunit request.session.unit%}',
+                    style:{
+                        color:'gray'
+                    }
+                }
+            }
+        },
+        legend: {
+            // layout: 'vertical',
+            // align: 'right',
+            // verticalAlign: 'top',
+            // x: -40,
+            // y: 80,
+            // floating: true,
+            // borderWidth: 1,
+            // backgroundColor:
+            //     Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+            // shadow: true
+        },
+        credits: {
+            enabled: false
+        },
+        series: [ {
+            name: 'Drillstring',
+            data: totaldrillstring,
+            color: {
+            linearGradient: {
+                    x1: 0,
+                    x2: 0,
+                    y1: 1,
+                    y2: 0
+                    },
+                    stops: [
+                    [0, '#3EA1B8'],
+                    [1, '#6BE5F2']
+                    ]
+                }
+
+        }, {
+            name: 'Annulus',
+            data: totalannular,
+            color: {
+            linearGradient: {
+                    x1: 0,
+                    x2: 0,
+                    y1: 1,
+                    y2: 0
+                    },
+                    stops: [
+                    [0, '#944ED3 '],
+                    [1, '#BC85FD']
+                    ]
+                }
+        }]
+    });
+}
+
+
+function allmodel_chart(totalall_newtonium,totalall_bingham,totalall_powerlaw,totalall_hershel,ty){
+    var unit='{%display_depthunit request.session.unit%}';
+    allmodalchart=Highcharts.chart('allmodel_chart', {
+        chart: {
+            type: 'column',
+            style: {
+                fontFamily: 'serif',
+                color:'red'
+            }
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            // categories: ['Newtonian', 'Bingham Plastic', 'Power Law', 'Hershel Bulkley']
+            categories: ['Bingham Plastic', 'Power Law', 'Hershel Bulkley']
+
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            },
+            stackLabels: {
+                enabled: true,
+                formatter: function () {
+                return this.total + " {%display_pressureunit request.session.unit%}";      
+            },
+                style:{
+                    color:'gray'
+                }
+                // style: {
+                //     fontWeight: 'bold',
+                //     color: ( // theme
+                //         Highcharts.defaultOptions.title.style &&
+                //         Highcharts.defaultOptions.title.style.color
+                //     ) || 'gray'
+                // }
+            },
+            labels: {
+                formatter: function () {
+                    return this.value +' {%display_pressureunit request.session.unit%}';
+                }
+            },
+        },
+        legend: {
+            align: 'right',
+            enabled: false,
+        },
+        credits: {
+        enabled: false
+       },
+        tooltip: {
+        
+        },
+        plotOptions: {
+            series: {
+            borderRadius: 5
+        },
+
+            column: {
+                stacking: 'normal',
+                pointWidth:30,
+                // dataLabels: {
+                //     enabled: true
+                // }
+            }
+        },
+        series: [{
+            name: '',
+            data: [
+            // {
+            //     y:totalall_newtonium,
+            //     color: {
+            // linearGradient: {
+            //         x1: 0,
+            //         x2: 0,
+            //         y1: 1,
+            //         y2: 0
+            //         },
+            //         stops: [
+            //         [0, '#347EFC '],
+            //         [1, '#43B1FE']
+            //         ]
+            //     },
+            //  },
+             {
+                 y: totalall_bingham,
+                 color: {
+                    linearGradient: {
+                            x1: 0,
+                            x2: 0,
+                            y1: 1,
+                            y2: 0
+                            },
+                            stops: [
+                            [0, '#1AB099 '],
+                            [1, '#28DFC2']
+                            ]
+                        },
+              },{
+                y:totalall_powerlaw,
+                color: {
+                    linearGradient: {
+                            x1: 0,
+                            x2: 0,
+                            y1: 1,
+                            y2: 0
+                            },
+                            stops: [
+                            [0, '#1D8B38 '],
+                            [1, '#45DA6A']
+                            ]
+                        },
+              },{
+               y: totalall_hershel, 
+               color: {
+                    linearGradient: {
+                            x1: 0,
+                            x2: 0,
+                            y1: 1,
+                            y2: 0
+                            },
+                            stops: [
+                            [0, '#FAD169 '],
+                            [1, '#FCE766']
+                            ]
+                        },
+            } ] ,
+            
+        }]
+    });
+   
+}
+
+function bitdepthrange(){
+    $('#bitdepth_slider').rangeslider({
+        polyfill: false,
+        rangeClass: 'rangeslider',
+        disabledClass: 'rangeslider--disabled',
+        horizontalClass: 'rangeslider--horizontal',
+        fillClass: 'rangeslider__fill',
+        handleClass: 'rangeslider__handle',
+
+        onInit: function() {
+        $rangeEl = this.$range;
+        // add value label to handle
+        // var $handle = $rangeEl.find('.rangeslider__handle');
+        // var handleValue = '<div class="rangeslider__handle__value">' + this.value + '</div>';
+        // $handle.append(handleValue);
+        
+        // get range index labels 
+        var rangeLabels = $('#bitdepth_labels').val()
+        rangeLabels = rangeLabels.split(',');
+        
+        // add labels
+        $rangeEl.append('<div class="rangeslider__labels"></div>');
+        $(rangeLabels).each(function(index, value) {
+            $rangeEl.find('.rangeslider__labels').append('<span class="rangeslider__labels__label">' + value + '</span>');
+        })
+        },
+
+        onSlide: function(position, value) {
+        // var $handle = this.$range.find('.rangeslider__handle__value');
+        // $handle.text(this.value);
+        },
+
+        onSlideEnd: function(position, value) {
+            $('#bitdepth_drag').val(value)
+            $('#bitdepth_userenter').val(value)
+        }
+    });
+}
+
+// function largeFunction(unit){
+//   alert(unit);
+// }
+
+</script>
+
+<script>
+
+    $(document).ready(function(){
+        // $('.myDIV').hide();
+        $(".pressure-phase").click(function(){
+             $('.myDIV').removeClass('show');
+         let btn = $(this).next();
+         $('.myDIV').not(btn).removeClass('show');  
+
+         if(btn.hasClass("show")){
+             btn.removeClass('show');
+             }else{
+                 btn.addClass('show');
+             }
+            
+      });
+    });
+    
+</script>
+
+
+  
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+
+{% block scripts %}
+{{block.super}}
+<script>
+    var pressure='{{pressure.all_data}}'
+    console.log("pressure"+pressure)
+    if(pressure){
+        var alldata=JSON.parse(pressure.replace(/&#x27;/g,'"'));
+    }
+    var imgsrc="{% static 'images/loading-81.gif' %}"
+    var wellphase_id='{{wellphase_id}}'
+    var section_name='{{section_name}}'
+    var display_plastic_viscosity='{% display_plastic_viscosity request.session.unit %}'
+    var display_densityunit='{%display_densityunit request.session.unit%}'
+    var display_depthunit='{%display_depthunit request.session.unit%}'
+    var display_pressureunit='{%display_pressureunit request.session.unit%}'
+    var display_diameter='{%display_diameter request.session.unit%}'
+    var display_impactforce='{%display_impactforce request.session.unit%}'
+    var display_bhhp='{%display_bhhp request.session.unit%}'
+    var display_gelstrengthunit='{% display_gelstrengthunit request.session.unit %}'
+    var display_flowrateunit='{%display_flowrateunit request.session.unit%}'
+    var unit = '{{request.session.unit}}';
+    var csrf = getCookie('csrftoken');
+    var unit='{%display_depthunit request.session.unit%}';
+    var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+    var section_name = $('ul.custom_active_list').find('li.active').attr('data-id');
+    var cuttings_density=$('#cuttings_density').val();
+    var cuttings_size=$('#cuttings_size').val();
+    var obj ={};
+    var change_surface =[];
+    var annularpressure_values=[];
+    var summary_values =[];
+    var bitloss_values=[];
+    var rheology_parameters= [];
+    var casing_image_url = "{% static 'images/chart/casing.png' %}";
+
+
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+</script>
+
+<script src="{% static 'js/sensitivity.js' %}"></script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/unit_change.js' %}"></script>
+<script src="{% static 'js/comparison.js' %}"></script>
+<script src="{% static 'js/sensitivity_unit.js' %}"></script>
+<!-- <script src="{% static 'js/pressure_finaldata.js' %}"></script> -->
+<script src="{% static 'js/report.js' %}"></script>
+<script src="{% static 'js/planwell_output.js' %}"></script>
+{%endblock%}
+{% endblock %}
+

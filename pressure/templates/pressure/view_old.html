@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+
+  
+<section>
+    <div class="row" id="basic-table">
+  
+
+      <div class="col-12">
+
+        {% include "welldetails_menu.html" %}  
+
+</div>
+        <div class="col-12">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Pore Pressure and Frac Pressure</h4>
+            </div>
+            <div class="table-responsive">
+              <div>
+                <center><a id="ppg" class="units">ppg</a> | <a id="psi" class="units">psi</a> | <a class="units" id="psift">psi/ft</a></center>
+              </div>
+              <!-- <div>
+                <center><a id="gcc" class="units">g/cc</a> | <a id="MPa" class="units">MPa</a> | <a class="units" id="MPa_m">MPa/m</a></center>
+              </div> -->
+              <table class="table text-center" id="pressuretable">
+                <thead>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">MD</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">TVD</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Pore Pressure</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Fracture Pressure</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Comments</span>
+                    </th>
+                   
+                  </tr>            
+                </thead>
+                <tbody>
+                  {% for data in pressure %}
+
+                  <tr>
+                    <td>
+                 {%if data.measured_depth%} {{ data.measured_depth|depthunit:data.well.project.unit}}{%endif%}
+                    </td>
+                    <td>
+                      {%if data.true_vertical_depth%}{{ data.true_vertical_depth|depthunit:data.well.project.unit }}{%endif%}
+                    <input type="hidden" class="tvd" value="{%if data.true_vertical_depth%}{{data.true_vertical_depth}}{%endif%}">
+                    </td>
+                    <td class="pore_pressures">
+                      {%if data.pore_pressure%}{{ data.pore_pressure|pressureunit:data.well.project.unit}}{%endif%}
+                      <input type="hidden" class="pore_pressure" value="{%if data.pore_pressure%}{{ data.pore_pressure}}{%endif%}">
+                    </td>
+                    <td class="fracture_pressures">
+                      {%if data.fracture_pressure%}{{ data.fracture_pressure|pressureunit:data.well.project.unit}}{%endif%}
+                      <input type="hidden" class="fracture_pressure" value="{%if data.fracture_pressure%}{{ data.fracture_pressure}}{%endif%}">
+                    </td>
+                    <td>
+                      {%if data.comments%}{{ data.comments }}{%endif%}
+                    </td>
+                  </tr>  
+                  {% endfor %}
+          
+                </tbody>
+              </table>
+
+              <div class="card">
+              <div class="card-header">
+              <div class="card-title" >
+              {% if pressure.has_other_pages %}
+              <ul class="pagination">
+                {% if pressure.has_previous %}
+                  <li><a href="?page={{ pressure.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in pressure.paginator.page_range %}
+                  {% if pressure.number == i %}&nbsp;&nbsp;
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                  {% else %}&nbsp;&nbsp;
+                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}&nbsp;&nbsp;
+                {% if pressure.has_next %}
+                  <li><a href="?page={{ pressure.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+              </ul>
+            {% endif %}
+          </div>
+            </div>
+            </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class="row" id="basic-table">
+  
+        <div class="col-12">
+            <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect pull-right" href="{% url 'pressure:delete' well_id %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+
+            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right" href="{% url 'pressure:edit' well_id %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+
+           <!-- <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right" href="{% url 'pressure:create' well_id %}">  <span class="action-create-well"><i class="feather "></i> Add new</span></a> -->
+           <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right" href="{% url 'pressure:importpressure' well_id %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>
+           <a class="btn btn-primary pull-right" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+        </div>
+        </div>
+    
+       
+    </section>
+
+
+<!-- Chart -->
+    <figure class="highcharts-figure charts" >
+      <div id="pore_pressurecontainer" style="width: 74%; margin-left: 26%";></div>
+     
+  </figure>
+
+{% endblock %}

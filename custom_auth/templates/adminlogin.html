@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+{% load static %}
+
+<!-- <html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+      {% if messages %}
+  <ul class="messages">
+      {% for message in messages %}
+      <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+      {% endfor %}
+  </ul>
+{% endif %}
+    <form class="" action="" method="post">
+      {% csrf_token %}
+      {{form.as_p}}
+      <input type="submit" name="signup" value="Login">
+    </form>
+  </body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<!-- BEGIN: Head-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>Sign In -hydraulics</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600" rel="stylesheet">
+
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendors/css/vendors.min.css' %}">
+    <!-- END: Vendor CSS-->
+
+    <!-- BEGIN: Theme CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-extended.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/colors.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/themes/dark-layout.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/themes/semi-dark-layout.css' %}">
+
+    <!-- BEGIN: Page CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/core/menu/menu-types/vertical-menu.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/core/colors/palette-gradient.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pages/authentication.css' %}">
+    <!-- END: Page CSS-->
+
+    <!-- BEGIN: Custom CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <!-- END: Custom CSS-->
+
+    <!-- Login CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/login.css' %}">
+    <!-- Login CSS-->
+
+</head>
+<!-- END: Head-->
+
+<!-- BEGIN: Body-->
+
+<body
+    class="vertical-layout vertical-menu-modern 1-column  navbar-floating footer-static bg-full-screen-image  menu-collapsed blank-page blank-page"
+    data-open="click" data-menu="vertical-menu-modern" data-col="1-column">
+    <!-- BEGIN: Content-->
+    <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header">
+            </div>
+            <div class="content-body">
+                <section class="flexbox-container">
+                    <div class="col-sm-12 col-md-10 col-xl-8">
+
+                        <div class="card adminlogin-wid">
+
+                            <div class="text-center">
+                                <img class="log-img-login" src="{% static 'images/logo.png' %}">
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-12">
+
+                                    <div class="">
+                                        <h4 class="adminlogin-signin">Sign In</h4>
+                                    </div>
+                                    <!-- <p class="px-2 text-center">Welcome back, please Sign In to your account.</p> -->
+
+                                    {% if messages %}
+                                    <ul class="messages">
+                                        {% for message in messages %}
+                                        <p{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
+                                            {% endfor %}
+                                    </ul>
+                                    {% endif %}
+
+                                    <div class="">
+                                        <div class="adminlogin-form-input">
+                                            <form action="" method="post">
+                                                {% csrf_token %}
+
+                                                <fieldset class="form-label-group form-group icon-pos">
+                                                    <i class="fa-solid fa-user"></i>
+                                                    <input type="text" class="form-control" name="email" id="id_email"
+                                                        placeholder="Mail ID" required>
+                                                </fieldset>
+
+                                                <fieldset class="form-label-group icon-pos">
+                                                    <i class="fa-solid fa-lock"></i>
+                                                    <input type="password" class="form-control passwordInput" name="password"
+                                                        id="id_password" placeholder="Password" required>
+
+                                                    <i class="fa-regular fa-eye"></i>
+                                                </fieldset>
+
+                                                    <fieldset class="form-label-group checkbox">
+                                                        <div class="vs-checkbox-con vs-checkbox-primary">
+                                                            <input type="checkbox">
+                                                            <span class="vs-checkbox">
+                                                                <span class="vs-checkbox--check">
+                                                                    <i class="vs-icon feather icon-check"></i>
+                                                                </span>
+                                                            </span>
+                                                            <span class="remember">Remember Me</span>
+                                                        </div>
+                                                    </fieldset>
+
+                                                <div class="text-center">
+                                                    <button type="submit"
+                                                        class="btn adminlogin-btn">Login</button>
+                                                </div>
+
+                                                <div class="adminforgot-pass">
+                                                    <a href="{% url 'custom_auth:password_reset' %}">Forgot Password?</a>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="login-footer" style="visibility: hidden;">
+                                            <div class="divider">
+                                                <div class="divider-text">OR</div>
+                                            </div>
+                                            <div class="footer-btn d-inline">
+                                                <a href="#" class="btn btn-facebook"><span class="fa fa-facebook"></span></a>
+                                                <a href="#" class="btn btn-twitter white"><span class="fa fa-twitter"></span></a>
+                                                <a href="#" class="btn btn-google"><span class="fa fa-google"></span></a>
+                                            </div>
+                                        </div> -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+
+
+    <!-- BEGIN: Vendor JS-->
+    <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+    <!-- BEGIN Vendor JS-->
+
+    <!-- BEGIN: Page Vendor JS-->
+    <!-- END: Page Vendor JS-->
+
+    <!-- BEGIN: Theme JS-->
+    <script src="{% static 'js/core/app-menu.js' %}"></script>
+    <script src="{% static 'js/core/app.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+
+    <script src="{% static 'js/scripts/components.js' %}"></script>
+    <!-- END: Theme JS-->
+
+    <!-- BEGIN: Page JS-->
+    <!-- END: Page JS-->
+
+    <!-- Font Awesome CDN-->
+    <script src="https://kit.fontawesome.com/370f75d8e1.js" crossorigin="anonymous"></script>
+    <!-- Font Awesome CDN-->
+    <script src="{% static 'js/hidemessages.js' %}"></script>
+
+    <script>
+        const passwordInput = document.querySelector('.passwordInput');
+        const togglePassword = document.querySelector('.fa-eye');
+
+        togglePassword.addEventListener('click', function () {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePassword.classList.remove('fa-eye');
+                togglePassword.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                togglePassword.classList.remove('fa-eye-slash');
+                togglePassword.classList.add('fa-eye');
+            }
+        });
+    </script>
+
+</body>
+<!-- END: Body-->
+</html>

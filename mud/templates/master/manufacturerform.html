@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+  <div class="container-fluid">
+    <div class="row common-row-space" id="">
+      <div class="col-md-10 p-0 create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+           </div>
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Pump Manufacturer</h4>
+            </div>
+            <div class="card-body">
+            <form method="post" novalidate>
+              {% csrf_token %}
+              <div class="col-12">
+                <div class="form-group row align-items-center">
+                  <div class="col-sm-1 col-form-label">
+                    <label for="name">Name</label>
+                  </div>
+                  <div class="col-sm-11">
+                    <input type="text" id="name" class="form-control" name="name" value="{{form.name.value|default:''}}">
+                  </div>
+                </div>
+              </div>
+              <div class="text-center">
+              <button type="submit" class="btn btn-primary detail-button">submit</button>
+            </div>
+          </form>
+          </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+        </div>
+      </div>
+    </div>
+    
+      
+    </section>
+
+{% endblock %}

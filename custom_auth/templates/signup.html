@@ -1,0 +1,567 @@
+<!-- <!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <form class="" action="" method="post">
+      {% csrf_token %}
+      {{form.as_p}}
+      <input type="submit" name="signup" value="Signup">
+    </form>
+  </body>
+</html> -->
+
+{% load static %}
+
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<!-- BEGIN: Head-->
+ 
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+   <title>Company Registration</title>
+   <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600" rel="stylesheet">
+ 
+   <!-- BEGIN: Vendor CSS-->
+   <link rel="stylesheet" type="text/css" href="{% static 'vendors/css/vendors.min.css' %}">
+   <!-- END: Vendor CSS-->
+ 
+   <!-- BEGIN: Theme CSS-->
+   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-extended.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/colors.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/components.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/themes/dark-layout.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/themes/semi-dark-layout.css' %}">
+
+  <!-- BEGIN: Page CSS-->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/core/menu/menu-types/vertical-menu.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/core/colors/palette-gradient.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/pages/authentication.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   <!-- END: Page CSS-->
+   <!-- BEGIN: Custom CSS-->
+   <link rel="stylesheet" type="text/css" href="{% static 'vendors/css/forms/select/select2.min.css' %}">
+   <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+   <!-- END: Custom CSS-->
+ 
+</head>
+<!-- END: Head-->
+ 
+<!-- BEGIN: Body-->
+ 
+<body class="vertical-layout vertical-menu-modern 1-column  navbar-floating footer-static bg-full-screen-image  menu-collapsed blank-page blank-page" data-open="click" data-menu="vertical-menu-modern" data-col="1-column">
+   <!-- BEGIN: Content-->
+   <div class="app-content content">
+       <div class="content-overlay"></div>
+       <div class="header-navbar-shadow"></div>
+       <div class="content-wrapper">
+           <div class="content-header row">
+            <!-- <img  class="float-right" src="{% static 'images/logo/hydraulics.png' %}" width="150px" height="100px">
+            <img class="float-right"  src="{% static 'images/logo/irock.png' %}" width="150px" height="100px"> -->
+
+           </div>
+           <div class="content-body">
+               <section class="row flexbox-container">
+                   <div class="col-xl-8 col-10 d-flex justify-content-center">
+                       <div class="card bg-authentication rounded-0 mb-0">
+                           <div class="row m-0">
+
+                               <div class="col-lg-12 col-12 p-0">
+                                   <div class="card rounded-0 mb-0 p-2">
+                                       <div class="card-header pt-50 pb-1">
+                            
+                            
+
+                                           <div class="">                            
+                                               <h4 class="mb-0 card-title pb-0">Company Registration</h4>                                   
+                                           </div>
+                                       </div>
+                                       <p class="px-2  text-center">Fill the below form to Register your company.</p>
+                                       <div class="card-content ">
+            
+                                           <div class="card-body pt-0">
+                                               <form action="" method="post" name="registerform">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <div class="controls">
+                                                    <label for="inputCompanyName">Company Name</label>
+                                                       <input type="text" name="company_name" id="inputCompanyName" class="form-control" placeholder="Company Name">
+                                                   </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <div class="controls">
+                                                               <label for="inputName">First Name</label>
+                                                               <input type="text" name="name" id="inputName" class="form-control" placeholder="First Name">
+                                                               </div>
+                                                           </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <div class="controls">
+        
+                                                            <label for="inputLastName">Last Name</label>
+                                                            <input type="text" name="last_name" id="inputLastName" class="form-control" placeholder="Last Name" >
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                                           
+                                                        <div class="form-group">
+                                                            <div class="controls">
+                                                                <label for="inputCountryid">Country Name</label>
+                                                            <select class="form-control" id="inputCountryid" name="country_id">
+                                                              <option value="">-- country name --</option>
+                                                              {% for obj in countries %}
+                                                              <option value="{{obj.id}}" data-code="{{obj.iso}}">{{obj.name}}</option>
+
+                                                              {% endfor %}
+
+                                                          </select>
+                                                           </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                                 
+                                                        <div class="form-group">
+
+                                                            <fieldset>
+                                                                <label for="inputContactno">Contact No</label>
+                                                                <div class="controls">
+
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text" id="phonecode">+</span>
+                                                                    </div>
+                                                                    <input type="text" name="contact_no" id="inputContactno" class="form-control" placeholder="Contact No">
+                                                                </div>
+                                                                </div>
+                                                            </fieldset>
+                                    
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <div class="controls">
+                                                                <label for="inputEmail">Mail ID</label>
+        
+                                                               <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Mail ID" >
+                                                           </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+
+
+                                                            <fieldset>
+                                                                <label for="inputPassword">Password</label>
+                                                                <div class="controls">
+
+                                                                <div class="input-group">
+                                                   
+                                                                    <input type="password" name="password" id="inputPassword" class="form-control passwordfield" placeholder="Password">
+                                                                    <div class="input-group-append">
+                                                                        <span class="input-group-text" id="eye"><i class="feather icon-eye-off"></i></span>
+                                                                    </div>
+                                                                </div>
+                                                                </div>
+                                                            </fieldset>
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+            
+                                                <div class="form-group license">
+                                                    <div class="controls">
+                                                        <label for="licence">License Package:</label>
+
+                                                    <select class="custom-select" id="package" name="package">
+                                                        <option value="">--- Select Licence ---</option>
+                                                        {% for package in packages %}
+                                                        <option value='{{package.id}}'>{{ package.name }}</option>
+                                                    {% endfor %}
+                                                    </select>
+                                                   </div>
+                                                </div>                 
+                                                <div class="form-group concurrentuserdiv" style="display: none;">
+                                                    <div class="controls">
+                                                        <label for="licence">License Concurrent Users:</label>
+
+                                                    <select class="custom-select" id="concurrentuserselect" name="concurrentuserselect">
+                                                        <option>Select Concurrent Users</option>
+                                                    </select>
+                                                   </div>
+                                                </div>
+                                                <input class="form-control col-sm-10 usersinput" id="admins" type="text" name="admins" style="display: none;">
+                                                <table class="table userslist" style="display: none;">
+                                                    <thead>
+                                                      <tr>
+                                                        <th scope="col">Concurrent Users</th>
+                                                        <th scope="col"> Well Manager</th>
+                                                        <th scope="col">Well Engineer</th>
+                                                        <th scope="col">Viewers</th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                      <tr>
+                                                        <th><input class="form-control col-sm-10 usersinput" id="concurrent_users" type="text" name="concurrent_users" readonly>
+                                                        </th>
+                                                        
+                                                        <td><input class="form-control col-sm-10 usersinput" id="well_managers" type="text" name="well_managers" readonly>
+                                                        </td>
+                                                        <td><input class="form-control col-sm-10 usersinput" id="well_engineers" type="text" name="well_engineers" readonly>
+                                                        </td>
+                                                        <td><input class="form-control col-sm-10 usersinput" id="other_users" type="text" name="other_users" readonly>
+                                                        </td>
+                                                      </tr>
+                                                    </tbody>
+                                                  </table>
+                                                
+                                                <hr>
+
+                                                   <div class="form-group row">
+                                                       <div class="col-12">
+                                                           <fieldset class="checkbox">
+                                                               <div class="vs-checkbox-con vs-checkbox-primary">
+
+                                                                   <input name="terms" type="checkbox" value="1">
+                                                             
+
+                                                                   <span class="vs-checkbox">
+                                                                       <span class="vs-checkbox--check agree-box">
+                                                                           <i class="vs-icon feather icon-check"></i>
+                                                                       </span>
+                                                                   </span>
+                                                                   <span class=""> I accept the terms & conditions.</span>
+                                                               </div>
+                                                           </fieldset>
+                                                           <div class="help-block">
+                                                        </div>
+
+                                                       </div>
+                                                   </div>
+                                                   <a href="{% url 'custom_auth:login' %}"  class="btn btn-outline-primary float-left btn-inline mb-50">Back</a>
+                                                   <button type="submit" class="btn btn-primary float-right btn-inline mb-50 detail-button">Sign Up</a>
+                                               </form>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </section>
+ 
+           </div>
+       </div>
+   </div>
+   <!-- END: Content-->
+ 
+   <!-- BEGIN: Vendor JS-->
+   <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+   <!-- BEGIN Vendor JS-->
+   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+   <!-- BEGIN: Page Vendor JS-->
+   <!-- END: Page Vendor JS-->
+ 
+   <!-- BEGIN: Theme JS-->
+   <script src="{% static 'js/core/app-menu.js' %}"></script>
+
+   <script src="{% static 'js/core/app.js' %}"></script>
+   <script src="{% static 'js/custom.js' %}"></script>
+
+
+   <script src="{% static 'js/scripts/components.js' %}"></script>
+   <!-- END: Theme JS-->
+   <script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+   <script src="{% static 'vendors/js/forms/select/select2.full.min.js' %}"></script>
+   <script src="{% static 'js/scripts/forms/select/form-select2.js' %}"></script>
+
+   <!-- BEGIN: Page JS-->
+   <!-- END: Page JS-->
+ <script>
+
+const input = document.querySelector('#inputContactno');
+input.addEventListener('keyup', () => {
+  input.value = input.value.replace(/  +/g, ' ');
+});
+input.addEventListener('keypress', (e) => {
+    var x = e.which || e.keycode;
+             if ((x >= 48 && x <= 57)||x==32)
+                 return true;
+             else
+             e.preventDefault();
+});
+     $(function() {
+        $.validator.addMethod(
+    "regex",
+    function(value, element, regexp) {
+        return this.optional(element) || regexp.test(value);
+    },
+    "Please check your input."
+);
+    // Initialize form validation on the registration form.
+    // It has the name attribute "registration"
+    $("form[name='registerform']").validate({
+      // Specify validation rules
+      rules: {
+        company_name: "required",
+        name:"required",
+        last_name:"required",
+        country_id:"required",
+        terms:"required",
+        email: {
+          required: true,
+          email: true,
+          remote:{
+                      url: '../companymailexists',
+                      type: "get",
+                      data:
+                      {
+                          email: function()
+                          {
+                              return $('#inputEmail').val();
+                          }
+                      },
+                      dataFilter: function(data) {
+                        var json = JSON.parse(data);
+                        return !json.email;
+                    }
+                    }
+        },
+        contact_no:
+        {
+            required: true,
+            regex: /^[\d\s]+$/,
+            minlength:5,
+            maxlength:20,
+        },
+        password: {
+          required:true,
+        //   minlength: 8,
+        //   regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_+,.\\\/;':"-]).{8,}$/
+        },
+        package:"required",
+        concurrentuserselect : {
+          required: function(){
+            return $("#package").val()==1 || $("#package").val()==2 ? true:false;
+      }, },
+      totalusers : {
+          required: function(){
+            return $("input[name='totalusersradio']:checked").val()=="above50"?true:false;
+      }, },
+      totalprojects : {
+          required: function(){
+            return $("#licence").val()==3 || $("#licence").val()==5 ?true:false;
+      },
+      
+      },
+    },
+      messages: {
+        company_name:"Please enter your Company name",
+        name: "Please enter your first name",
+        last_name: "Please enter your last name",
+        country_id: "Please select a country",
+        package: "Please select a Licence Package",
+        concurrentuserselect: "Please select Concurrent Users",
+        totalusers: "Please enter No of Users",
+        totalprojects: "Please enter No of Projects",
+        terms:"Please Accept Terms And Conditions",
+        password: {
+          required: "Please provide a password",
+        //   minlength: "Your password must be at least 5 characters long",
+        //   regex: "Password should have minimum 8 letters consisting atleast one from A-Z, a-z, 0-9 and special characters",
+
+        },
+        contact_no: {
+          required: "Please provide a contact number",
+          regex: "Please provide a valid contact number",
+          minlength: "Please enter at least 5 numbers",
+          maxlength: "Please enter no more than 20 numbers"
+
+        },
+        email:{
+          required: "Please provide a email",
+          email: "Please provide a valid email",
+          remote: jQuery.validator.format("{0} is already taken.")
+        }
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+
+    });
+  });
+  
+     $(document).ready(function() {
+        $(".licensediv").hide();
+    $("input[name$='totalusersradio']").click(function() {
+        var rval = $(this).val();
+        if(rval=="above50")
+        {
+            $(".totalusersdiv").show();
+        }
+        else
+        {
+            $(".totalusersdiv").hide();
+
+        }
+    });
+    // $("#licence").change(function() {
+    //     $(".licensediv").hide();
+
+    //     var selectedval = $(this).val();
+    //     switch(parseInt(selectedval)) {
+    //         case 1:
+    //          $(".timebased").show();
+    //         break;
+    //         case 2:
+    //         $(".userbased").show();
+    //         break;
+    //         case 3:
+    //         $(".projectbased").show();
+    //         break;
+    //         case 4:
+    //         break;
+    //         case 5:
+    //         $(".timebased").show();
+    //         $(".userbased").show();
+    //         $(".projectbased").show();
+    //         break;
+    //         default:
+    //             // code block
+    //         }
+
+
+    // });
+
+    
+    $(".datepicker").flatpickr({
+    mode: "range",
+    minDate: "today",
+    dateFormat: "Y-m-d",
+
+}
+);
+
+});
+$( "#inputCountryid" ).change(function() {
+
+      $.ajax({
+        type: "GET",
+        url:"../countryphonecode",
+        contentType: 'application/json',  
+        data: {'country_id':this.value},
+        dataType: "json",
+        success: function(data) {
+            $('#phonecode').html("+"+data.phonecode);
+        }
+      });
+});
+
+
+
+$( "#package" ).change(function() {
+    var csrf =$('.getcsrf').val();
+    $('.userslist').hide();
+    $('.usersinput').val('');
+      $.ajax({
+        type: "GET",
+        url:"/getconcurrentusers",
+        contentType: 'application/json',  
+        data: {'package':this.value},
+        dataType: "json",
+        beforeSend: function(xhr){
+          xhr.setRequestHeader('X-CSRFToken', csrf);
+        },
+        success: function(data) {
+            console.log(data);
+            if(JSON.parse(data).length==0)
+            {
+                $('.concurrentuserdiv').hide();
+                $('.userslist').show();  
+                $('#admins').val(1);
+                $(".usersinput").attr("readonly", false); 
+            }
+            else
+            {
+            $('.concurrentuserdiv').show();
+            $(".usersinput").attr("readonly", true); 
+
+            $('#concurrentuserselect').empty();
+            $('#concurrentuserselect')
+            .append($("<option></option>")
+                       .attr("value", '')
+                       .text("Select Concurrent Users")); 
+            $.each(JSON.parse(data), function(key, value) {   
+                $('#concurrentuserselect')
+                    .append($("<option></option>")
+                               .attr("value", value.pk)
+                               .text(value.fields.name)); 
+           });
+        }
+        }
+      });
+  
+});
+  
+$( "#concurrentuserselect" ).change(function() {
+    var csrf =$('.getcsrf').val();
+
+      $.ajax({
+        type: "GET",
+        url:"/getuserscount",
+        contentType: 'application/json',  
+        data: {'packageconcurrent':this.value},
+        dataType: "json",
+        beforeSend: function(xhr){
+          xhr.setRequestHeader('X-CSRFToken', csrf);
+        },
+        success: function(data) {
+            console.log(data);
+            $('.userslist').show();
+            var userscount=JSON.parse(data)[0];
+            console.log(userscount);
+            $('#concurrent_users').val(userscount.fields.concurrent_users);
+            $('#admins').val(userscount.fields.admins);
+            $('#well_managers').val(userscount.fields.well_managers);
+            $('#well_engineers').val(userscount.fields.well_engineers);
+            $('#other_users').val(userscount.fields.other_users);
+
+        }
+      });
+ 
+});
+
+
+     </script>
+</body>
+<!-- END: Body-->
+<style>
+ .card
+ {
+     width:100%;
+ }
+ body {
+    /* background-image: url("{% static 'images/iwells-map.jpg' %}"); */
+    background-size: cover;
+    background-position: center;
+    background: #eee;
+}   
+
+
+
+</style> 
+</html>
+

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load ticket_tags %}
+
+<div class="container-fluid">
+<div class="row align-items-start common-row-space">
+    <div class="col-md-12  create-pg p-0">
+        <div class="create_project_sec scroll-line">
+            {% include "header.html" %}
+            <div class="col-12 p-0">
+                <div class="card pb-2">
+                    <div class="row head-txt-ful" id="basic-table button-types">
+                        <div class="col-4 text-right">
+                            <a class="btn detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                        </div>
+                    </div>
+            
+                    <div class="card-header">
+                        <h4 class="card-title">Query Details</h4>
+                    </div>
+                    <table class="table table_align tab-wit user-tbl-ui">
+                        {% getcompanydetails_byticket ticket_details as company_user_details %}
+                        {% getticketattachments_byticket ticket_details as ticket_attachments %}
+
+                        <tbody>
+                            <tr>
+                                <th>
+                                    {% if ticket_details.licence_type != 'Individual' %}
+                                    <span class="font-weight-bold">Company Name</span>
+                                    {% else %}
+                                    <span class="font-weight-bold">User Name</span>
+                                    {% endif %}
+
+                                </th>
+                                <td>{{company_user_details.name}}</td>
+                            </tr>
+                            <tr>
+                                <th class="font-weight-bold">Designation</th>
+                                <td>{{company_user_details.designation}}</td>
+                            </tr>
+                            <tr>
+                                <th class="font-weight-bold">Title</th>
+                                <td>{{ticket_details.title}}</td>
+                            </tr>
+                            <tr>
+                                <th class="font-weight-bold">Message</th>
+                                <td>{{ticket_details.message|striptags}}</td>
+                            </tr>
+                            <tr>
+                                <th class="font-weight-bold">Attachment</th>
+                                <td>
+                                    {% for ticket_attachment in ticket_attachments %}
+                                    <a href="{% url 'ticket:download_attachment' ticket_attachment.id %}" download>
+                                        {{ticket_attachment.name}}
+                                    </a>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row head-txt-ful" id="basic-table button-types">
+                        <div class="col-4 text-right">
+                            <a class="btn detail-button assign_users" href="#">Assign Users</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="assignuser-modal">
+                <div class="modal-dialog">
+                    <div class="modal-content"> 
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <form method="post" id="assignuser_form_div" name="assignuser_form">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <select name="user" class="form-control">
+                                <option value="">Select User</option>
+                                {% for country_allcountry_user in country_allcountry_users %}
+                                    <option value="{{country_allcountry_user.id}}" {% if ticket_details.assigne == country_allcountry_user.id %} selected {%endif%}>{{country_allcountry_user.name}} {{country_allcountry_user.lastname|default:""}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary waves-effect mt-1 waves-float waves-light detail-button">Submit</button>
+
+                        </form>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger detail-button" id="modals-close">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% include "footer.html" %}
+    </div>
+</div>
+</div>
+</div>
+{%endblock%}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/queries.js' %}"></script>
+{%endblock%}
+

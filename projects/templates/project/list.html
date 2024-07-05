@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="row">
+<div class="col-md-10  create-pg"> 
+    <div class="create_project_sec scroll-line">
+        {% include "header.html" %}
+        <div class="card create-project">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <div class="table-responsive table-striped table-hover all-table ">
+            <table class="table project-data-list-view table_css">
+            <caption class="table-title" style="caption-side: top"><h1>Projects List</h1></caption>
+            <!-- <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button " href="{% url 'projects:create'%}">  <span class="action-edit-project"><i class="feather icon-plus-circle"></i> Add project</span></a> -->
+            <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <!-- <th>Block</th>
+                    <th>Field</th> -->
+                    <!-- <th>Well Manager</th> -->
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+
+                <tr>
+                    <td class="name" >{{project.project_name}}</td>
+                    <!-- <td class="block">{{project.block}}</td>
+                    <td class="field">{{project.field}}</td> -->
+                    <td class="user">
+                        {% for pro in project.projectusers_set.all %}
+                        <span>{{pro.user.name}}</span>
+                        {% endfor %}
+                    </td>
+                    
+                    <td class="product-action text-center">
+                    <a class="table-action-links" href="{% url 'projects:detail' project.pk %}">  <span class="action-edit-project"><i class="feather icon-eye"></i></span></a>
+                    <a class="table-action-links" href="{% url 'projects:edit' project.pk %}">  <span class="action-edit-project"><i class="feather icon-edit"></i></span></a>
+                    <a class="table-action-links" onclick="confirmation(event)" href="{% url 'projects:delete' project.pk %}"> <span class="action-delete-project"><i class="feather icon-trash"></i></span></a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+            </table>
+        </div>
+        </div>
+        {% include "footer.html" %}
+    </div>
+</div>
+<div class="col-md-2">
+    {% include "userheader.html" %}
+</div>
+</div>
+
+<script>
+    $(function() {
+        // alert('hi');
+          $('#DataTables_Table_0').DataTable({
+            "bSortable": false,
+            "ordering": false
+          });
+        //   $('.table').DataTable({
+        //     "ordering": false
+        //   });
+    
+    });
+        </script>
+
+{% endblock %}

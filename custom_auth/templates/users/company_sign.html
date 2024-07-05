@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/auth.css' %}">
+
+
+<section id="data-list-view" class="data-list-view-header">
+  <div class="row align-items-start">
+    <div class="col-md-12  create-pg">
+      <div class="create_project_sec scroll-line">
+        {% include "header.html" %}
+        <!-- DataTable starts -->
+        <div class="card  bg-authentication rounded-0 mb-0">
+
+          <div class="row m-0">
+
+            <div class="col-lg-12 col-12 p-0">
+              <div class="card rounded-0 mb-0 mt-2 px-2">
+                <h1 class="page-main-title">Add Enterprise</h1>
+
+                <div class="card-content">
+                  <div class="card-body pt-1">
+                    <form method='POST' class="login_form"
+                      name="company_admin_form">
+                      {% csrf_token %}
+
+                      <div class="col-12 onshore p-0">
+                        <div class="form-group row">
+                          <div class="col-sm-4 col-form-label required-field">
+                            <label class="project-edit-name"
+                              for="ground_elevation">Title</label>
+                            <select name="gender" class="form-control">
+                              <option value>Select</option>
+                              <option value="Mr">Mr</option>
+                              <option value="Miss">Miss</option>
+                              <option value="Mrs">Mrs</option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4 col-form-label required-field">
+                            <label class="project-edit-name"
+                              for="ground_elevation">First Name</label>
+                            <input type="text" class="form-control"
+                              onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)"
+                              name="firstname" id="firstname"
+                              placeholder="First Name" required>
+                          </div>
+                          <div class="col-sm-4 col-form-label required-field">
+                            <label class="project-edit-name"
+                              for="ground_elevation">Last Name</label>
+                            <input type="text" class="form-control"
+                              onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)"
+                              name="lastname" id="lastname"
+                              placeholder="Last Name" required>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <div class="col-sm-4 col-form-label required-field">
+                          <label for="inputCompanyName">Email</label>
+                          <input type="email" name="email" id="email"
+                            class="form-control" placeholder="Email">
+                        </div>
+                        <div class="col-sm-4 col-form-label required-field">
+                          <label class="project-edit-name "
+                            for="ground_elevation">Company Name</label>
+                          <input type="text" class="form-control com-pany"
+                            name="companyname" id="companyname"
+                            placeholder="Company Name" required>
+                        </div>
+                        <div class="col-sm-4 col-form-label required-field">
+                          <label class="project-edit-name"
+                            for="ground_elevation">Designation</label>
+                          <input type="text" class="form-control"
+                            name="designation" id="designation"
+                            placeholder="Designation" required>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <div class="col-sm-4 col-form-label required-field">
+                          <label class="project-edit-name" for="no_of_users">No
+                            of Users</label>
+                          <input type="text" class="form-control"
+                            name="no_of_users" id="no_of_users"
+                            onkeypress="return /^\d*$/.test(event.key)"
+                            placeholder="Concurrent User" required>
+                        </div>
+                        <div class="col-sm-4 col-form-label required-field">
+                          <label class="project-edit-name"
+                            for="subscription_type">Subscription Type</label>
+                          <select id="subscription_type"
+                            name="subscription_type" class="form-control">
+                            <option value>Select</option>
+                            <option value="monthly" data-days="30">Monthly</option>
+                            <option value="yearly" data-days="365">Yearly</option>
+                          </select>
+                        </div>
+                        <div class="col-sm-4 col-form-label required-field">
+                          <label class="project-edit-name" for="start_date">Start
+                            Date of Subscription</label>
+                          <input type="date" class="form-control"
+                            name="start_date" id="start_date"
+                            placeholder="Start Date" required>
+                        </div>
+                        <div class="col-sm-4 col-form-label required-field">
+                          <label class="project-edit-name" for="end_date">End
+                            Date of Subscription</label>
+                          <input type="date" class="form-control"
+                            name="end_date" id="end_date" placeholder="End Date"
+                            required>
+                        </div>
+                        <div class="col-sm-4 col-form-label required-field">
+                          <label for="user-password">Password</label>
+                          <input type="password" name="new_password1"
+                            class="form-control" id="user-password"
+                            placeholder="Password" required>
+                        </div>
+                        <div class="col-sm-4 col-form-label required-field">
+                          <label for="user-confirm-password">Confirm Password</label>
+                          <input type="password" name="new_password2"
+                            class="form-control" id="user-confirm-password"
+                            placeholder="Confirm Password" required>
+                        </div>
+                      </div>
+                      <div class="button-cen">
+                        <button type="submit"
+                          class="btn btn-primary  btn-inline detail-button">Create
+                          Account</button>
+                        <a class="btn btn-primary  detail-button"
+                          href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+        {% include "footer.html" %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/common/regex.js' %}"></script>
+<script src="{% static 'js/auth/enterprise.js' %}"></script>
+
+{%endblock%}

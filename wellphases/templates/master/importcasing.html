@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<section id="data-list-view" class="data-list-view-header">
+  <div class="container-fluid">
+  <div class="row common-row-space" id="">
+  <div class="col-md-10  create-pg p-0">
+  <div class="create_project_sec scroll-line">
+    {% include "header.html" %}
+    <div class="card-create-user">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Import Data</h4>
+        </div>
+        <div class="">
+           <button type="submit" class="btn btn-primary detail-button"><a href="{% url 'wellphases:casing_download_csv_data' %}"><span class="action-create-well"><i class="feather"></i>Download format</span></a></button>
+        </div>  
+        <div class="card-body">
+          <div class="row">
+          </div>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <select name="unit" class="form-control mb-2">
+                <option value="">Select Unit</option>
+                <option value="API">API</option>
+                <option value="SI">SI</option>
+            </select>
+            <input type="file" name="myfile">
+            <button type="submit" class="detail-button import_upload">Upload</button>
+          </form>
+        </div>
+    </div>
+  </div>
+    {% include "footer.html" %}
+  </div>
+  </div>
+  <div class="col-md-2">
+    {% include "userheader.html" %}
+  </div>
+  </div>
+</div>
+</section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+</style>
+{% endblock %}

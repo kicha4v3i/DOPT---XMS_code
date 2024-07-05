@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section id="data-list-view" class="data-list-view-header">
+  <!-- <div class="row" id="basic-table"> -->
+    <div class="row align-items-start">
+      <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line new-cru-well">
+          {% include "header.html" %}
+    <div class="col-md-12">
+      {% include "welldetails_menu.html" %} 
+    </div>
+    <div class="col-12">
+      {% include "welldetailssubmenu.html" %}  
+    </div>
+    <div class="rig-det">
+      <div class="row">
+    <div class="col-2">
+      {% include "rig_menu.html" %}  
+  </div>
+    <div class="col-10">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Edit MudPump </h4>
+          </div>
+          
+          <div class="card-body">
+            <form class="form form-horizontal" method="POST">
+                {% csrf_token %}
+                <input type="hidden" id="well" class="form-control" name="well" value={{form.well.value}}>
+
+              <div class="row">
+                <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="pump_manufacturer">Pump Manufacturer</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="pump_manufacturer" class="form-control" name="pump_manufacturer" value="{{form.pump_manufacturer.value}}" placeholder="Pump Manufacturer">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="pump_name">Pump Name</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="pump_name" class="form-control" name="pump_name" value="{{form.pump_name.value}}" placeholder="Pump Name">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="pump_type">Pump Type</label>
+                      </div>
+                      <div class="col-sm-9">
+                          <select class="form-control" id="types" name="pump_type">
+                              <option value="">-- Pump Type --</option>
+                              <option value="Triplex" {% if "Triplex" == form.pump_type.value %}selected {% endif %} >Triplex</option>
+                              <option value="Duplex" {% if "Duplex" == form.pump_type.value %}selected {% endif %} >Duplex</option>
+                          </select></div>
+                    </div>
+                  </div>
+                 <input type="hidden" id="unit" value="{{unit}}">
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="stroke_length">Stroke Length{%display_diameterunit well.project.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" id="stroke_length" class="form-control" name="stroke_length" value="{{form.stroke_length.value}}" placeholder="Stroke Length">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="number_of_pumps">Number of Pumps</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" id="number_of_pumps" class="form-control" name="number_of_pumps" value="{{form.number_of_pumps.value}}" placeholder="Number of Pumps">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <table class="table mudpumpdata">
+                      <h4 class="card-title text-center">Mud Pump Data Table</h4>
+                        
+                        <tr  class="linearsize"><th>Liner Size{%display_diameterunit well.unit%}</th>
+                            {% for obj in mud.mudpumpdata_set.all %}
+    
+                            <td><input type="number" class="form-control linear_size" name="linear_size" value="{{obj.linear_size}}"></td>
+                            {% endfor %}
+    
+                        </tr>
+                        <tr class="pressure"><th>Max Discharge Pressure{%display_pressureunit well.unit%}</th>
+                            {% for obj in mud.mudpumpdata_set.all %}
+    
+                            <td><input type="number" class="form-control" name="max_discharge_pressure" value="{{obj.max_discharge_pressure}}"></td>
+                            {% endfor %}
+    
+                        </tr>
+                    </table>
+                  </div>
+    
+                <div class="col-12">
+                    <table class="table mudpumptable" id="mudpumptable">
+                        <tr><th>Pump Speed (SPM)</th><th class="flowrateth">Flowrate{%display_flowrateunit well.unit%}</th></tr>
+                            {% for speed in mud.mudpumpspeed_set.all %}
+    
+                        <tr class="flowrate"><th><input type="number" class="form-control pump_speed" name="pump_speed" value="{{speed.pump_speed}}"></th>
+                            {% for flowrateobj in speed.mudpumpflowrate_set.all %}
+    
+                            <td><input type="number" class="form-control" name="flowrate" value="{{flowrateobj.flowrate}}"></td>
+                            {% endfor %}
+    
+                        </tr>
+                            {% endfor %}
+    
+                        </table>
+                </div>
+
+                <div class="col-12 column-row">
+                  <button type="button" class="btn btn-outline-primary pull-right removemudpumpcolumn-master">Remove Column</button>
+                  <button type="button" class="btn btn-outline-primary pull-right removemudpumprow-master mr-2">Remove Row</button>
+                  <button type="button" class="btn btn-outline-primary pull-right addmudpumpcolumn mr-2">Add Column</button>
+                  <button type="button" class="btn btn-outline-primary pull-right addmudpumprow mr-2">Add Row</button>
+                  </div>
+                  <div class="col-sm-9 offset-sm-3">
+                    
+                  <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                  <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+                  <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        </div>
+        </div>
+      </div>
+      {% include "footer.html" %}
+      </div>
+      </div>
+      <div class="col-md-2">
+        {% include "userheader.html" %}
+        <div class="col-md-12 warning"></div>
+    </div>
+    </div>
+    
+    </section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+</style>
+<script>
+  var storedArray = JSON.parse(sessionStorage.getItem("items"));
+    var well_id='{{well_id}}'
+    if(well_id == storedArray[1]){
+      $('.warning').show();
+    }else{
+      $('.warning').hide();
+    }
+</script>
+{% endblock %}
+

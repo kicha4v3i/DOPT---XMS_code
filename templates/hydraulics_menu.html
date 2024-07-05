@@ -1,0 +1,115 @@
+{% load static %}
+
+<nav class="hydraulics_sidebar py-2 mb-4">
+     <ul class="nav flex-column" id="nav_accordion">
+          <li class="nav-item has-submenu">
+               <a class ="nav-link {% if request.session.submenu == 'well_details' %}active{% endif %}" href="{% url 'wells:detail' request.session.well_id %}"> Well Details</a>
+
+          </li>
+          <li class="nav-item has-submenu">
+               <a class ="nav-link active hydra-mainmenu" href="#"> Hydraulics </a>
+          </li>
+          <li class="nav-item has-submenu">
+               <a class ="nav-link" href="">  Optimization </a>
+          </li>
+     </ul>
+     <div class="row">
+          <div class="col-4">
+               <div class="nav flex-column nav-pills" id="section-tab" role="tablist" aria-orientation="vertical">
+                    {% for wellphases in wellphase %}
+                         <a class="nav-link " id="section{{forloop.counter0 }}-tab" data-toggle="pill" href="#section{{forloop.counter0}}" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                         <div class="row">
+                              <div class="col-md-4">
+                                   {{ wellphases.phase_name }}
+                              </div>
+                         </div>
+                         </a>
+                    {% endfor %}
+               </div>
+          </div>
+          <div class="col-8">
+               <div class="tab-content" id="section-content">
+                    {% for wellphases in wellphase %}
+                    <div class="tab-pane fade" id="section{{forloop.counter0}}" role="tabpanel" aria-labelledby="{{section.section_name}}-tab">
+                         <div class="row">
+                              <div class="col-md-2">
+                                   <div class="sub-list active">
+                                   <a class="text-center middle" href="{% url 'muddata:list' wellphases.id %}" id="mud"> Mud Data </a>
+                              </div>
+                              </div>
+                              <div class="col-md-2">
+                                   <div class="sub-list">
+                                   <a class="text-center middle" href="{% url 'muddata:rheogramlist' wellphases.id %}" id="Rheogram">Rheogram</a>
+                              </div>
+                              </div>
+                              <div class="col-md-2">
+                                   <div class="sub-list">
+                                   <a class="text-center middle" href="{% url 'drillbitdata:drillbitlist' wellphases.id %}" id="drillbit"> Drill Bit Data</a>
+                              </div>
+                              </div>
+                              <div class="col-md-2">
+                                   <div class="sub-list">
+                                   <a class="text-center middle" href="{% url 'bhadata:bhadatalist' wellphases.id %}" id="bhadata"> BHA Data</a>
+                              </div>
+                              </div>
+                         </div>
+                    </div>
+                    {% endfor %}
+             </div>
+           </div>
+     </nav>
+     <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+     <script>
+     $( document ).ready(function(){
+          var currentmenu=$(".hydraulics_submenu li").find("a.active").attr('id')
+          $.ajax({
+                url: '/wells/muddata/getstorewellphase',
+                type: 'GET',
+                success: function(data){
+                    $('#well_phase').val(data.well_phase)
+                    $('#well_phases').val(data.well_phase)
+                    getphasedepth(data.well_phase,currentmenu)
+                },
+               
+            });
+     });
+     </script>
+     <script>
+     $('#well_phase').change(function(){
+          well_phase=$(this).val(); 
+          var currentmenu=$(".hydraulics_submenu li").find("a.active").attr('id')
+          getphasedepth(well_phase,currentmenu)   
+     }) 
+     function getphasedepth(well_phase,currentmenu){
+          var page_type=$('.page_type').val();
+          if(well_phase!=''){
+               $.ajax({
+                    type: "GET",
+                    data:{
+                         well_phase:well_phase,
+                    },
+                    url:"/wells/muddata/storewellphase_session",
+                    success: function(data) {
+                         if(currentmenu=='mud'){
+                              if(page_type=='create'){
+                              $('#muddata-table tbody tr:eq(0)').find('.from_depth').val(data.fromdepth);
+                              $('#muddata-table tbody tr:eq(0)').find('.to_depth').val(data.todepth);
+                              $('#muddata-table tbody tr:eq(0)').find('.fromdepth').val(data.fromdepth);
+                              $('#muddata-table tbody tr:eq(0)').find('.todepth').val(data.todepth);
+                              }
+                         }
+                         if(currentmenu=='bhadata'){
+                              $('#bhadatatable tbody tr:eq(1)').find('.cumulative-length').val(data.todepth);
+                              $('#bhadatatable tbody tr:eq(1)').find('.measured_depth').val(data.todepth);
+
+                         }
+                    
+                    }
+               });
+          }
+     }
+   
+     </script>
+
+          
+     

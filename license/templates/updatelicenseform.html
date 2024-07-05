@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+<section id="data-list-view" class="data-list-view-header">
+    <div class="row align-items-start">
+        <div class="col-md-12 p-0 create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+                <div class="overlay-bg">
+                    <div class="card card-create-user">
+                        <form method="POST" id="queries_form" name="licence_form">
+                        <input type="hidden" name="submit_type" id="submit_type" />
+                        <input type="hidden" name="license_type" id="license_type" value="{{request.user.licence_type}}">
+                
+                        {% csrf_token %}
+                        {% if not request.user.company_id %}
+                        <div class="row">
+                        <div class="col-sm-12 col-form-label required-field comp-any">
+                            <label class="project-edit-name " for="ground_elevation">Company Name</label>
+                            <input type="text" class="form-control com-pany input-width-sze" name="companyname" id="companyname" placeholder="Company Name"  >
+                        </div>
+                        <div class="col-sm-12 col-form-label required-field comp-any">
+                            <label class="project-edit-name" for="ground_elevation">Designation</label>
+                            <input type="text" class="form-control input-width-sze" name="designation" id="designation" placeholder="Designation">
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                            <div class="row">
+                                <div class="col-sm-12 col-form-label required-field">
+                                    <label class="project-edit-name pb-1" for="ground_elevation">License Type</label>
+                                    
+                                    {% if request.user.licence_type != "Enterprise" %}
+                                    {% for license_package in license_packages %}
+                                  
+                                    <div class="card lable-lic card-clr" onclick="hoverborder()">
+                                        <label class="label-type"><input type="radio"  name="choose_package" data-attr="{{license_package.no_of_users}}" value="{{ license_package.id }}" class="license_package" {% if license_package.id == license_pack.id %} checked {% endif %} ><p>No of users :{{license_package.no_of_users}}</p><p>{{license_package.amount}} $</p><p>{{license_package.subscription_type}}</p></label>
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                    
+                                   
+                                    <div class=" card lable-lic" onclick="hoverborder()">
+                                        <label class="label-type"><input type="radio" name="choose_package" value="custom" class="license_package" id="enterprise"><span>Enterprise</span></label>
+                                        <div class="col-sm-12 col-form-label required-field no_of_users_div">
+                                            <label class="project-edit-name pb-1" for="ground_elevation">No Of Users</label>
+                                            <input type="text" class="form-control input-wit" name="no_of_users" id="no_of_users" placeholder="Enter No Of Users">
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div id="changeToEnterprise"> </div>
+                            <div class="text-center">
+                                <button id="submit_license" class="btn btn-primary waves-effect waves-float waves-light detail-button">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% include "footer.html" %}
+            </div>
+        </div>
+        <!-- <div class="col-md-2">
+            {% include "userheader.html" %}
+        </div> -->
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+    var license_type = "{{request.user.licence_type}}"
+    var no_of_users = "{{no_of_users}}"
+</script>
+<script src="{% static 'js/license/updatelicenseform.js' %}"></script>
+<script src="{% static 'js/license/updatelicense.js' %}"></script>
+{%endblock%}

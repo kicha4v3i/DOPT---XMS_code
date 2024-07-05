@@ -1,0 +1,60 @@
+<nav class ="navbar side_menu master_menu">
+    <ul class ="nav navbar-nav">
+    {% if request.user.is_superuser or request.user.is_superadmin %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr" href="{% url 'mud:adminmanufacturerindex' %}"> Pump Manufacturers</a>
+    </li>
+    
+    {% endif %}
+    {% if request.user.is_superuser or request.user.is_superadmin %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr {% if request.session.master == 'pumps' %}active{% endif %}" href="{% url 'mud:adminpumpindex' %}"> Pumps</a>
+    </li>
+    {% else %}
+    <li class ="nav-item">
+    <a class ="nav-link adm-colr {% if request.session.master == 'pumps' %}active{% endif %}" href="{% url 'mud:pumpindex' %}"> Pumps</a>
+    </li>
+    {% endif %}
+    {% if request.user.is_superuser or request.user.is_superadmin %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr {% if request.session.master == 'casing' %}active{% endif %}" href="{% url 'wellphases:adminmastercasingindex' %}">Casing</a>
+    </li>
+    {% else %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr {% if request.session.master == 'casing' %}active{% endif %}" href="{% url 'wellphases:clientmastercasingindex' %}">Casing</a>
+    </li>
+    {% endif %}
+    {% if request.user.is_superuser or request.user.is_superadmin %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr {% if request.session.master == 'drill_collars' %}active{% endif %}" href="{% url 'bhadata:admindrillcollersdetails' %}">Drill Collars</a>
+    </li>
+    {% else %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr {% if request.session.master == 'drill_collars' %}active{% endif %}" href="{%url 'bhadata:drillcollersview'%}">Drill Collars</a>
+    </li>
+    {% endif %}
+    {% if request.user.is_superuser or request.user.is_superadmin %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr {% if request.session.master == 'drill_pipe' %}active{% endif %}" href="{% url 'bhadata:admindrillpipeview' %}">Drill Pipe</a>
+    </li>
+    {% else %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr {% if request.session.master == 'drill_pipe' %}active{% endif %}" href="{% url 'bhadata:drillpipeview' %}">Drill Pipe</a>
+    </li>
+    {% endif %}
+    {% if request.user.is_superuser or request.user.is_superadmin %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr {% if request.session.master == 'hwdp' %}active{% endif %}" href="{% url 'bhadata:admindrillHWDPview' %}">HWDP</a>
+    </li>
+    {% else %}
+    <li class ="nav-item">
+        <a class ="nav-link adm-colr {% if request.session.master == 'hwdp' %}active{% endif %}" href="{% url 'bhadata:drillHWDPview' %}">HWDP</a>
+    </li>
+    {% endif %}
+    </nav>
+<style>
+    .nav-link
+    {
+        padding:10px
+    }
+</style>

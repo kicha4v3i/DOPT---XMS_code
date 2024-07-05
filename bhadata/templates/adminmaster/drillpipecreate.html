@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+    <div class="row" id="">
+      <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+     
+        <div class="col-9.5">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Drill Pipe Create</h4>
+            </div>
+            <form method="post" id="drillpipeform" novalidate>
+                {% csrf_token %}              
+                <div class="row">
+                  <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-left" href="{% url 'bhadata:adminpipeimportdata' %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>
+                    <div class="col-12">
+                        <table class="table" id="drillpipetable">             
+                            <tr><th>Nominal OD</th><th>Class</th><th>Pipe OD</th><th>Weight</th><th>Pipe ID</th><th>Connection type</th><th>Upset</th><th>Tool OD</th><th>Tool ID</th><th>Box Length</th><th>Pin Length</th><th>Steel grade</th><th>ACTIONS</th></tr>
+                            <tr id="drillpiperow">
+                                <td><input id="normal_od" type="text" class="form-control" name="normal_od" placeholder="Nominal OD" ></td>
+                                <td><input id="class_type" type="text" class="form-control" name="class_type" placeholder="Type" ></td>
+                                <td><input id="pipebody_od" type="text" class="form-control" name="pipebody_od" placeholder="Pipe OD" ></td>
+                                <td><input id="weight" type="text" class="form-control" name="weight" placeholder="Weight" ></td>
+                                <td><input id="pipebody_id" type="text" class="form-control" name="pipebody_id" placeholder="Pipe ID" ></td>
+                                <td><input id="connection_type" type="text" class="form-control" name="connection_type" placeholder="Connection type" ></td>
+                                <td><input id="upset" type="text" class="form-control" name="upset" placeholder="Upset" ></td>
+                                <td><input id="tool_od" type="text" class="form-control" name="tool_od" placeholder="Tool OD" ></td>
+                                <td><input id="tool_id" type="text" class="form-control" name="tool_id" placeholder="Tool ID" ></td>
+                                <td><input id="box_length" type="text" class="form-control" name="box_length" placeholder="Box Length" ></td>
+                                <td><input id="pin_length" type="text" class="form-control" name="pin_length" placeholder="Pin Length" ></td>
+                                <td><input id="steel_grade" type="text" class="form-control" name="steel_grade" placeholder="Steel grade" ></td>
+                                <td>
+                                    <a type="button" name="add" id="iconaction" class="drillpipeaddrow iconaction"><i class="fa fa-plus"></i></a>
+                                    <a type="button" name="removerow" id="iconaction" class="drillpiperemoverows iconaction"><i class="fa fa-trash"></i></a>
+                                </td>        
+                            </tr>
+                            <tr id="drillpiperow2" style="display:none">
+                              <td><input id="normal_od" type="text" class="form-control" name="normal_od" placeholder="Nominal OD" ></td>
+                              <td><input id="class_type" type="text" class="form-control" name="class_type" placeholder="Type" ></td>
+                              <td><input id="pipebody_od" type="text" class="form-control" name="pipebody_od" placeholder="Pipe OD" ></td>
+                              <td><input id="weight" type="text" class="form-control" name="weight" placeholder="Weight" ></td>
+                              <td><input id="pipebody_id" type="text" class="form-control" name="pipebody_id" placeholder="Pipe ID" ></td>
+                              <td><input id="connection_type" type="text" class="form-control" name="connection_type" placeholder="Connection type" ></td>
+                              <td><input id="upset" type="text" class="form-control" name="upset" placeholder="Upset" ></td>
+                              <td><input id="tool_od" type="text" class="form-control" name="tool_od" placeholder="Tool OD" ></td>
+                              <td><input id="tool_id" type="text" class="form-control" name="tool_id" placeholder="Tool ID" ></td>
+                              <td><input id="box_length" type="text" class="form-control" name="box_length" placeholder="Box Length" ></td>
+                              <td><input id="pin_length" type="text" class="form-control" name="pin_length" placeholder="Pin Length" ></td>
+                              <td><input id="steel_grade" type="text" class="form-control" name="steel_grade" placeholder="Steel grade" ></td>
+                              <td>
+                                  <a type="button" name="add" id="iconaction" class="drillpipeaddrow iconaction"><i class="fa fa-plus"></i></a>
+                                  <a type="button" name="removerow" id="iconaction" class="drillpiperemoverows iconaction"><i class="fa fa-trash"></i></a>
+                              </td>        
+                          </tr>
+                            
+                        </table>
+                        <div class="col-sm-9 offset-sm-3">
+                        <button type="submit" class="btn btn-primary detail-button">submit</button>
+                        <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+          </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+      </div>
+      </div>
+
+</section>
+<style>
+  #iconaction
+{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:15px;
+  color:#7367F0;
+}
+</style>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+<script>
+  $("#drillpipeform").validate({
+    rules: {
+      normal_od:"required",
+      class_type:"required",
+      pipebody_od:"required",
+      weight:"required",
+      pipebody_id:"required",
+      connection_type:"required",
+      upset:"required",
+      tool_od:"required",
+      tool_id:"required",
+      box_length:"required",
+      pin_length:"required",
+      steel_grade:"required",
+      
+    },
+    messages: {
+      normal_od:"Please enter your Normal OD",
+      class_type:"Please enter your Class",
+      pipebody_od:"Please enter your Pipe OD",
+      weight:"Please enter your Weight",
+      pipebody_id:"Please enter your Pipe ID",
+      connection_type:"Please enter your Connection Type ",
+      upset:"Please enter your Upset",
+      tool_od:"Please enter your Tool OD",
+      tool_id:"Please enter your Tool ID",
+      box_length:"Please enter your Box Length",
+      pin_length:"Please enter your Pin Length",
+      steel_grade:"Please enter your Steel Grade"
+    }
+  });
+
+  
+</script>
+{% endblock %}

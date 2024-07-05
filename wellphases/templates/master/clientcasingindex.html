@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+<div class="container-fluid">
+      <div class="row">
+      <div class="col-md-12  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+        
+
+</div>
+  <div class="col-12 p-0">
+    <div class="card"> 
+      <div class="card-header">
+        <h4 class="card-title">Casing</h4>
+      </div>
+      <div class="table-responsive">
+        <div class="container-fluid">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link in-client active" data-toggle="tab" href="#inbuildmasters">In built Master</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link in-client" data-toggle="tab" href="#clientmasters">Client Master</a>
+            </li>
+          </ul>
+        <div class="tab-content">
+          <div id="inbuildmasters" class="container-fluid tab-pane active"><br>
+            <table class="table dataTable no-footer" id="superadmin-master">
+              <thead class="text-center">
+                  <tr>      
+                      <th>Nominal OD(in)</th>
+                      <th>Weight(ppf)</th>
+                      <th>Inside Diameter(in)</th>
+                      <th>Grade</th>
+                      <th>Connection Type</th>
+                      <th>Connection OD(in)</th>
+                      <th>Casing Range</th>
+                      <th>Drift ID</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for casing in superadmincasingvalue %}
+                  <tr>
+                      <td class="text-center">{{casing.nominal_od}}</td>
+                      <td class="text-center">{{casing.weight}}</td>
+                      <td class="text-center">{{casing.inside_diameter}}</td>
+                      <td>{{casing.grade}}</td>
+                      <td class="text-center">{{casing.connection_type}}</td>
+                      <td class="text-center">{{casing.connection_od}}</td>
+                      <td>{{casing.casing_range}}</td>
+                      <td class="common-txt-center">{{casing.drift_id}}</td>
+                    </tr>
+                    {% endfor %}
+  
+              </tbody>
+            </table>
+          </div>
+          <div id="clientmasters" class="container-fluid tab-pane fade"><br>
+            {% user_rights_permission user_rights_privilege_create request as value %}
+            {% if value %}
+            <a href="{% url 'wellphases:clientmastercasingcreate' %}" class="btn btn-primary waves-effect detail-button waves-light mb-1"><span><i class="feather icon-plus"></i> Add New</span></a>
+            {% endif %}
+            <table class="table dataTable no-footer" id="client-master">
+              <thead class="text-center">
+                  <tr>      
+                      <th>Nominal OD(in)</th>
+                      <th>Weight(ppf)</th>
+                      <th>Inside Diameter(in)</th>
+                      <th>Grade</th>
+                      <th>Connection Type</th>
+                      <th>Connection OD(in)</th>
+                      <th>Casing Range</th>
+                      <th>Drift ID</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for casing in clientcasingvalue %}
+                  <tr>
+                      <td class="text-center">{{casing.nominal_od}}</td>
+                      <td class="text-center">{{casing.weight}}</td>
+                      <td class="text-center">{{casing.inside_diameter}}</td>
+                      <td>{{casing.grade}}</td>
+                      <td class="text-center">{{casing.connection_type}}</td>
+                      <td class="text-center">{{casing.connection_od}}</td>
+                      <td>{{casing.casing_range}}</td>
+                      <td>{{casing.drift_id}}</td>
+                    </tr>
+                    {% endfor %}
+  
+              </tbody>
+            </table>
+            <div class="row" id="basic-table">
+              <div class="col-12">
+                {% user_rights_permission user_rights_privilege_edit request as value %}
+                {% if value %}
+                  <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right detail-button" href="{% url 'wellphases:clientmastercasingedit' %}"><span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                {% endif %}
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+{% include "footer.html" %}
+</div>
+</div>
+<!-- <div class="col-md-2">
+  {% include "userheader.html" %}
+</div> -->
+</div>
+</div>
+<!-- <div class="row" id="basic-table">
+  <div class="col-12">
+      <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right detail-button" href="{% url 'wellphases:clientmastercasingedit' %}"><span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+  </div>
+</div> -->
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+    <script>
+    $(function() {
+      $('#client-master').DataTable({
+        "ordering": false
+      });
+      $('#superadmin-master').DataTable({
+        "ordering": false
+      });
+
+
+    });
+    </script>
+{% endblock %}

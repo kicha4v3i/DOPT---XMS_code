@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+  <div class="container-fluid">
+    <!-- <div class="row" id="basic-table"> -->
+      <div class="row align-items-start common-row-space">
+        <div class="col-md-10 p-0 create-pg">
+          <div class="create_project_sec scroll-line">
+            {% include "header.html" %}
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title pb-1">Create Casing Maters</h4>
+            </div>
+            <form method="post" id="casingmasterform" novalidate>
+                {% csrf_token %}              
+                <div class="row">
+                 
+                  <div class="col-sm-1 col-form-label">
+                    <label class="project-edit-name c-unit" for="casing-units">Unit:</label>
+                  </div>
+
+                  <div class="col-sm-4">
+                    <select name="unit" class="form-control select2 casingmaster-unit">
+                      <option value="">Select</option>
+                      <option value="API" {% if "API" == unit %} selected {% endif %}>API</option> 
+                      <option value="SI" {% if "SI" == unit %} selected {% endif %}>SI</option> 
+                    </select>
+                  </div>
+
+                  <div class="col-7">
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right import-new detail-button" href="{% url 'wellphases:importdata' %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>
+                  </div>
+                
+
+
+                  
+                  <!-- <select name="unit" class="form-control casingmaster-unit">
+                    <option value="">Select</option>
+                    <option value="API" {% if "API" == unit %} selected {% endif %}>API</option> 
+                    <option value="SI" {% if "SI" == unit %} selected {% endif %}>SI</option> 
+                  </select> -->
+                    <div class="col-12">
+                        <table class="table table-borderless" id="casingmastertable">             
+                            <thead><tr><th>Nominal OD</th><th>Weight</th>
+                              <th><span>Inside Diameter</span> </th>
+                              <!-- <th>Grade</th> -->
+                              <th>Connection Type</th><th>Connection OD</th>
+                              <!-- <th>Range</th> -->
+                              <th>Drift ID</th>
+                              <th>Action</th></tr>
+                              </thead>
+                              <tbody>
+                                {%for casing in form%}
+                                <tr>
+                                  <input type="hidden" name="casing_id" value="{{casing.id}}">
+                                <td><input id="nominal_od" type="text" class="form-control nominal_od" name="nominal_od" placeholder="Nominal OD" value="{{casing.nominal_od}}"></td>
+                                <td><input id="weight" type="text" class="form-control weight" name="weight" placeholder="Type" value="{{casing.weight}}"></td>
+                                <td><input id="inside_diameter" type="text" class="form-control inside_diameter" name="inside_diameter" placeholder="Inside Diameter" value="{{casing.inside_diameter}}"></td>
+                                <!-- <td>
+                                  <select name="grade" class="form-control grade">
+                                    <option value="">Select</option>
+                                    {%for grade in grade_array%}
+                                      <option value="{{grade}}" {% if  grade == casing.grade %} selected {% endif %}>{{grade}}</option>
+                                    {%endfor%}
+                                  </select>
+                                </td> -->
+                                <td>
+                                  <input id="connection_type" type="text" class="form-control connection_type" name="connection_type" placeholder="Connection Type" value="{{casing.connection_type}}">
+                                </td>
+                                <td>
+                                  <input id="connection_od" type="text" class="form-control connection_od" name="connection_od" placeholder="Connection OD" value="{{casing.connection_od}}">
+                                </td>
+                                <td>
+                                  <input id="drift_id" type="text" class="form-control drift_id" name="drift_id" placeholder="Drift ID" value="{{casing.drift_id}}">
+                                </td>
+                                <!-- <td>
+                                  <select name="casing_range" class="form-control casing_range">
+                                    <option value="">Select</option>
+                                    {%for range in range_array%}
+                                      <option value="{{range}}" {% if  range == casing.casing_range %} selected {% endif %}>{{range}}</option>
+                                    {%endfor%}
+                                  </select>
+                                </td> -->
+                                <td>
+                                  <a type="button" class="casingmaster_addrow iconaction"><i class="fa fa-plus"></i></a>
+                                  <a type="button" class="casingmaster_removerow iconaction"><i class="fa fa-trash"></i></a>
+                                </td>        
+                            </tr>
+                            {%endfor%}
+                            <tr id="casingmaster_addrow" style="display:none">
+                              <input type="hidden" name="casing_id" value="">
+                              <td><input id="nominal_od" type="text" class="form-control nominal_od" name="nominal_od" placeholder="Nominal OD" ></td>
+                              <td><input id="weight" type="text" class="form-control weight" name="weight" placeholder="Type" ></td>
+                              <td><input id="inside_diameter" type="text" class="form-control inside_diameter" name="inside_diameter" placeholder="Inside Diameter" ></td>
+                              <!-- <td>
+                                <select name="grade" class="form-control grade">
+                                  <option value="">Select</option>
+                                  {%for grade in grade_array%}
+                                    <option value="{{grade}}">{{grade}}</option>
+                                  {%endfor%}
+                                </select>
+                              </td> -->
+                              <td>
+                                <input id="connection_type" type="text" class="form-control connection_type" name="connection_type" placeholder="Connection Type" >
+                              </td>
+                              <td>
+                                <input id="connection_od" type="text" class="form-control connection_od" name="connection_od" placeholder="Connection OD" >
+                              </td>
+                              <td>
+                                <input id="drift_id" type="text" class="form-control drift_id" name="drift_id" placeholder="Drift ID" >
+                              </td>
+                              <!-- <td>
+                                <select name="casing_range" class="form-control casing_range">
+                                  <option value="">Select</option>
+                                  {%for range in range_array%}
+                                    <option value="{{range}}">{{range}}</option>
+                                  {%endfor%}
+                                </select>
+                              </td> -->
+                              <td>
+                                <a type="button" class="casingmaster_addrow iconaction"><i class="fa fa-plus"></i></a>
+                                <a type="button" class="casingmaster_removerow iconaction"><i class="fa fa-trash"></i></a>
+                              </td>        
+                          </tr>
+                        </tbody>  
+                        </table>
+                        <div class="col-sm-12 pb-3">
+                        <button type="submit" class="btn btn-primary detail-button">submit</button>
+                        <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+          </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+      </div>
+      </div>
+    </div>
+</section>
+<style>
+    #iconaction
+  {
+    border:0;
+    background:transparent;
+    box-shadow:none;
+    font-size:15px;
+    color:#7367F0;
+  }
+  </style>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+{% endblock %}

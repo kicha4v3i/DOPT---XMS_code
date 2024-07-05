@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/User/list_view.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/user-rights/user_rights.css' %}">
+<section id="data-list-view" class="data-list-view-header editadduserform">
+    <div class="row align-items-start">
+        <div class="col-md-12 p-0 create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+                <div class="card card-create-user">
+                    <div class="div mt-2 px-2 d-flex new-data-title justify-content-center">
+                        <div>
+                            <h2 class="form-title table-title123" >Edit User</h2>
+                        </div>
+        
+                    </div>
+                    <form method="post" name="editclientuserform" >
+                        {% csrf_token %}
+                        <div class="data-items pb-2">
+                            <div class="data-fields px-2 mt-2">
+                                <input type="hidden" name="licence_name" value="{{request.user.licence_type}}" id="licence_name">
+                                <div class="row">
+                                    <div class="col-sm-4 data-field-col">
+                                        <label class="project-edit-name" for="data-name">Title</label>
+                                        <select name="title" class="form-control" id="gender" >
+                                            <option value="">Select</option>
+                                            <option value="Miss" {% if title == "Miss" %}selected{% endif %}>Miss</option>
+                                            <option value="Mrs" {% if title == "Mrs" %}selected{% endif %}>Mrs</option>
+                                            <option value="Mr" {% if title == "Mr" %}selected{% endif %}>Mr</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4 data-field-col">
+                                        <label class="project-edit-name" for="data-name">First Name</label>
+                                        <input type="text" class="form-control" onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)" id="name" name="name" value="{{first_name}}">
+                                    </div>
+                                    <div class="col-sm-4 data-field-col">
+                                        <label class="project-edit-name" for="data-name">Last Name</label>
+                                        <input type="hidden" class="form-control" id="id" name="id" autocomplete="off">
+                                        <input type="text" class="form-control" onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)" id="last_name" name="lastname" value="{{last_name}}">
+                                    </div>
+                                </div>
+                                <div class='row' style='margin-top:20px'>
+                                    <div class="col-sm-4 data-field-col ">
+                                        <label class="project-edit-name" for="data-name">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" autocomplete="off" value="{{email}}">
+                                    </div>
+
+                                    <div class="col-sm-4 data-field-col ">
+                                        <label class="project-edit-name" for="data-name">Designation</label>
+                                        <input type="text" class="form-control" id="designation" name="designation" autocomplete="off" value="{{designation}}">
+                                    </div> 
+                                    
+                                    {% if request.user.licence_type != 'Individual' %}
+                                    {% user_rights_permission_changeusertype 'Change User Type' request user_id as checkpermission %}
+                            
+                                    <div class="col-sm-4 data-field-col">
+                                        <label class="project-edit-name" for="data-name">Role</label>
+                                        <select class="custom-select" id="group" name="group" {% if not checkpermission %} disabled {% endif %}>
+                                            <option value="" >---Select Role---</option>
+                                            {% for val in groups %} 
+                                                <option value="{{ val.id }}" {% if group_id.id == val.id %}selected{% endif %}>{{ val.name }}</option>
+                                            {% endfor %}
+                                            <option value="new" {% if group_id.id != 1 and group_id.id != 2 and group_id.id != 3 and group_id.id != 4 %}selected{% endif %} >Custom</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 data-field-col custom_role_div">
+                                        <label class="project-edit-name" for="data-name">Custom Role</label>
+                                        <input type="text" class="form-control" id="custom_role" name="custom_role" autocomplete="off" value="{{group_id.name}}"
+                                        {% if not checkpermission %}disabled{% endif %}
+                                        >
+                                    </div> 
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="add-data-footer d-flex justify-content-around px-3">
+                            <div class="add-data-btn editadduserform_btn">
+                                <button type="submit" class="btn btn-primary  btn-inline detail-button mt-2 mb-2 waves-effect waves-light submit-btn">Submit</button>
+                                <button type="submit" class="btn btn-primary  btn-inline detail-button mt-2 mb-2 waves-effect waves-light next-btn">Next</button>
+
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+    var csrf = '{{ csrf_token }}';
+    var group_id=$('#group').val()
+
+</script>
+<script src="{% static 'js/auth/edituserform.js' %}"></script> 
+{%endblock%}

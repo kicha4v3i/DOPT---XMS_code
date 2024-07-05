@@ -1,0 +1,14 @@
+<nav class ="navbar bg-white">
+    <ul class ="nav navbar-nav">
+    {% if request.user.is_superuser or request.user.is_superadmin %}
+    <li class ="nav-item">
+    <a class ="nav-link {% if request.session.master == 'casing' %}active{% endif %}" href="{% url 'wellphases:adminmastercasingindex' %}">Casing</a>
+    </li>
+    {% else %}
+    <li class ="nav-item">
+    <a class ="nav-link {% if request.session.master == 'casing' %}active{% endif %}" href="{% url 'wellphases:clientmastercasingindex' %}">Casing</a>
+    </li>
+    {% endif %}
+    
+    </ul>
+</nav>

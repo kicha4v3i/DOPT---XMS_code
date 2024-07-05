@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section id="data-list-view" class="data-list-view-header">
+  <!-- <div class="row" id="basic-table"> -->
+    <div class="row align-items-start">
+      <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+    <div class="col-md-12">
+      {% include "welldetails_menu.html" %} 
+    </div>
+    <div class="col-12">
+      {% include "welldetailssubmenu.html" %}  
+    </div>
+    <div class="rig-det">
+      <div class="row">
+    <div class="col-2">
+      {% include "rig_menu.html" %}  
+  </div>
+    <div class="col-10">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Create Surface Pipe Data</h4>
+          </div>
+          <div class="card-body">
+            <form class="form form-horizontal" method="POST" id="surfacepipingform">
+                {% csrf_token %}
+                <input type="hidden" id="well" class="form-control" name="well" value={{well_id}}>
+
+              <div class="row">
+                <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="rating">Standpipe Pressure Rating{%display_pressureunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" id="rating" class="form-control" name="rating" placeholder="Rating">
+                      </div>
+                    </div>
+                  </div>
+                                    <div class="col-12">
+                    <table class="table" id="surfacepipeaddtable">
+                        <h4 class="card-title text-center">Surfaces Piping Data Table</h4>
+                        <tr><th>Name</th><th>Length{%display_lengthunit request.session.unit%}</th><th>ID{%display_diameterunit request.session.unit%}</th><th>ACTIONS</th></tr>
+                        {% for names in surface_names %}
+                        <tr id="surfacepipingrow">
+                          <td><input type="text" id="name" class="form-control" name="name" placeholder="Name" value="{{names.surfacepiping_name }}"></td>
+                          <td><input type="number" step="any" id="length" class="form-control" name="length" placeholder="Length"></td>
+                          <td><input type="number" step="any" id="identity" class="form-control" name="identity" placeholder="ID"></td>
+                          <td>
+                            <button type="button" name="add"  class="surfaceaddrows iconaction"/><i class="fa fa-plus"></i></button>
+                            <button type="button" name="removerow"  class="surfaceremoverows iconaction"/><i class="fa fa-trash"></i></button>
+                          </td>        
+                        </tr>
+                        {% endfor %}
+                        <tr id="surfacepipingrow2" style="display:none">
+                          <td><input type="text" id="name" class="form-control" name="name" placeholder="Name" value="{{names.surfacepiping_name }}"></td>
+                          <td><input type="number" step="any" id="length" class="form-control" name="length" placeholder="Length"></td>
+                          <td><input type="number" step="any" id="identity" class="form-control" name="identity" placeholder="ID"></td>
+                          <td>
+                            <button type="button" name="add" class="surfaceaddrows iconaction" /><i class="fa fa-plus"></i></button>
+                            <button type="button" name="removerow" class="surfaceremoverows iconaction" /><i class="fa fa-trash"></i></button>
+                          </td>        
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- <div class="col-12">
+                    <button type="button" class="btn btn-outline-secondary pull-right addsurfacepiperow">Add Row</button>
+                  </div> -->
+                  <div class="col-sm-9 offset-sm-3">
+                    
+                  <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                  <!-- <button type="reset" class="btn btn-outline-secondary waves-effect">Reset</button> -->
+                  <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+
+                
+              </div>
+            </form>
+          </div>
+          </div>
+         
+          </div>
+         
+          </div>
+         
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+          <div class="col-md-12 warning"></div>
+      </div>
+    </div>
+    </section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+.iconaction
+{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:15px;
+  color:#7367F0;
+}
+</style>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+<script>
+  $("#surfacepipingform").validate({
+    rules: {
+      rating:"required",
+      name:"required",
+      length:"required",
+      identity:"required",
+    },
+    messages: {
+      rating:"Please enter your Rating",
+      name:"please enter the  name",
+      length:"Please enter your length",
+      identity:"Please enter your identity",
+    }
+  });
+  var storedArray = JSON.parse(sessionStorage.getItem("items"));
+    var well_id='{{well_id}}'
+    if(well_id == storedArray[1]){
+      $('.warning').show();
+    }else{
+      $('.warning').hide();
+    }
+</script>
+
+{% endblock %}
+

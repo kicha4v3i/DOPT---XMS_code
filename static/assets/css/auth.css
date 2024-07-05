@@ -1,0 +1,30 @@
+div.required-field label::after { 
+    content: "*";
+    color: red;
+}
+body {
+    background-size: cover;
+    background-position: center;
+    background: #eee;
+}   
+.card {     
+    background: #fff;
+}
+.logo {
+    max-width: 300px;
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    height: 100%;
+}
+.indi-form{
+    width:100%;
+    max-width: 700px;
+}
+.comp-any{
+    margin-bottom: 15px;
+}
+
+.password-error {
+    outline: none !important;
+}

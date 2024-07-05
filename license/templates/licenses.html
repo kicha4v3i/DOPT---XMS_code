@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<section id="data-list-view" class="data-list-view-header">
+    <div class="container-fluid">
+    <div class="row align-items-start common-row-space">
+        <div class="col-md-12 p-0 create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+                <div class="table-responsive pt-1"> 
+                    <a class="btn btn-primary waves-effect waves-float waves-light detail-button add_user mb-2" href="{% url 'license:createlicense' %}">  <span class="action-edit-project"><i class="feather icon-plus-circle"></i> Add License Package</span></a> 
+                    <div class="card pt-2 pb-2">
+                    <table class="table">
+                        <caption class="table-title p-0" style="caption-side: top"><h1>license List</h1></caption>
+
+                        <thead>
+                            <tr>
+                                <th style="display: none;">S.NO</th>
+                                <th>Type</th>
+                                <th>Number Of User</th>
+                                <th>Subscription Type</th>
+                                <th class="common-txt-center">Amount</th>
+                                </tr>
+                        </thead>
+                        <tbody>
+                    
+                            {% for license_package in license_packages %}
+
+
+                            <tr>
+                                <td style="display: none;">{{forloop.counter1}}</td>
+                                <td>{{license_package.type_of_license}}</td>
+                                <td>{{license_package.no_of_users}}</td>
+                                <td>{{license_package.subscription_type}}</td>
+                                <td class="text-center">{{license_package.amount}}</td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+                {% include "footer.html" %}
+            </div>
+        </div>
+        <!-- <div class="col-md-2">
+            {% include "userheader.html" %}
+        </div> -->
+    </div> 
+</div>
+</section>
+{% endblock %}

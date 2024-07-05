@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+<div class="container-fluid">
+<div class="row align-items-start common-row-space">
+  {% getcountries countries as countries %}
+  {% include 'projectsidemenu.html' %} 
+  <div class="col-12 p-0  create-pg main-section"> 
+    <div class="create_project_sec scroll-line new-cru-well">
+      {% comment %} <div class="well-name-list">{{well.name}}</div>
+      <button class="hide-show fa fa-long-arrow-right"></button>  {% endcomment %}
+
+            {% include "projectheader.html" %}
+      <div class="col-12 p-0">
+        {% include "welldetails_menu.html" %}  
+      </div>
+      <div class="col-12 p-0">
+        {% include "welldetailssubmenu.html" %}  
+      </div>
+        <div class="col-12 p-0">
+ 
+          <div class="card well-trajectory-page">
+            
+            <div class="card-header">
+              <h4 class="card-title pb-0">Well Trajectory</h4>
+
+            </div>
+            <div class="card-body">
+            <div class="">
+              <table class="table trajectory_table">
+                <thead>
+                  <tr>
+                    {% if request.session.welltype == 'ACTUAL' %}
+                    <th>Date</th>
+                    {%endif%}
+                    <th>
+                      <span class="font-weight-bold">MD ({%display_depthunit request.session.unit%})</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Inclination (°)</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Azimuth (°)</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">TVD({%display_depthunit request.session.unit%})</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">DLS{%display_dlsunit request.session.unit%}</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Vertical Section({%display_lengthunit request.session.unit%})</span>
+                    </th>
+                  </tr>            
+                </thead>
+                <tbody>
+                  
+                  {% comment %} {% for data in welltrajectory_details %}
+                  {{data}}
+                  <tr>
+                  {% if request.session.welltype == 'ACTUAL' %}
+                  <td class="text-center">
+                    {{ data.date|date:'d-m-Y'}}
+                  </td>
+                  {%endif%}
+                  
+                  <td class="text-center">
+                    
+                  {{ data.measured_depth|floatformat:2 }}
+                  </td>
+                  
+                  <td class="text-center">
+                  {{ data.inclination|floatformat:2 }}°
+                  </td>
+                  <td class="text-center">
+                  {{ data.azimuth|floatformat:2 }}°
+                  </td>
+                  <td class="text-center">
+                  {{ data.true_vertical_depth|floatformat:2 }}
+                    </td>
+                  <td class="text-center">
+                  {{ data.dls|floatformat:5 }}
+                  </td>
+                  <td class="text-center">
+                    {{data.vertical_section|floatformat:2 }}
+                    </td>
+                  </tr>  
+                  {% endfor %}
+           {% endcomment %}
+                </tbody>
+              </table>
+
+              <div class="row" id="basic-table">
+  
+                <div class="col-sm-12 p-0">
+                  
+                    <a onclick="confirmation(event)" class="btn btn-primary  waves-effect detail-button" href="{% url 'welltrajectory:delete' well_id %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+                    {% user_rights_permission 'Edit Data' request as checkrights %}
+                    {% if checkrights %}
+                      <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'welltrajectory:edit' well_id %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                    {% endif %}
+
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'welltrajectory:importdata' well_id %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>
+                    <a class="btn btn-primary detail-button ml-1" id="view-welltrajectory" href="#">View</a>
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+        
+                  </div>
+                </div>
+        
+              
+               <!-- <div class="card">
+              <div class="card-header">
+              <div class="card-title" >
+                {% if welltrajectory.has_other_pages %}
+                <ul class="pagination asdf">
+                  {% if welltrajectory.has_previous %}
+                    <li><a href="?page={{ welltrajectory.previous_page_number }}">&laquo;</a></li>
+                  {% else %}
+                    <li class="disabled"><span>&laquo;</span></li>
+                  {% endif %}
+                  {% for i in welltrajectory.paginator.page_range %}
+                    {% if welltrajectory.number == i %}
+                      <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                    {% else %}&nbsp;&nbsp;
+                      <li><a href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                  {% endfor %}&nbsp;&nbsp;
+                  {% if welltrajectory.has_next %}
+                    <li><a href="?page={{ welltrajectory.next_page_number }}">&raquo;</a></li>
+                  {% else %}
+                    <li class="disabled"><span>&raquo;</span></li>
+                  {% endif %}
+                </ul>
+              {% endif %}
+            </div>
+            </div>
+              </div>  -->
+
+
+              <!--graph-->
+              <div class="graphics-design">
+                <div class="row">
+                  <div class="col-sm-12 graphics-card">
+                    <div class="col-sm-6 gra-img1">
+                      <figure class="highcharts-figure">
+                        <div id="welltractory-tvd-vs" style="width: 100%; ";></div>
+                      </figure> 
+                    </div>
+                    <div class="col-sm-6 gra-img1">
+                      <figure class="highcharts-figure">
+                        <div id="welltractory-container" style="width: 100%; ";></div>
+                      </figure>
+                    </div>
+                  </div>
+                </div>
+                </div>
+
+            </div>
+            </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+      </div>
+      <!-- <div class="row" id="basic-table">
+  
+        <div class="col-sm-9 offset-sm-3">
+            <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect detail-button" href="{% url 'welltrajectory:delete' well_id %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+
+            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'welltrajectory:edit' well_id %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+
+            
+            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'welltrajectory:importdata' well_id %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>
+            <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+            <a class="btn btn-primary pull-right detail-button" id="view-welltrajectory" href="#">View</a>
+
+          </div>
+        </div> -->
+
+        <div class="modal fade welltrajectory-popup" id="welltrajectory-popup">
+          <div class="modal-dialog">
+            <div class="modal-content">
+            
+              <!-- Modal Header -->
+              <div class="modal-header">
+                <h4 class="modal-title">Well Trajectory</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              
+              <!-- Modal body -->
+              <div class="modal-body">
+                <a class="btn btn-primary pull-right detail-button mb-1" href="{% url 'welltrajectory:download_welltrajectory' well_id %}">Download</a>
+                <div class="">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Measured Depth({%display_depthunit request.session.unit%})</th>
+                        <th>Inclination(°)</th>
+                        <th>Azimuth(°)</th>
+                        <th>TVD({%display_depthunit request.session.unit%})</th>
+                        <th>DLS{%display_dlsunit request.session.unit%}</th>
+                        <!-- <th>ΔE</th>
+                        <th>ΔN</th> -->
+                        <th>East</th>
+                        <th>North</th>
+                        <!-- <th>Easting(mE)</th>
+                        <th>Northing(mN)</th> -->
+                        <th>Vertical Section({%display_lengthunit request.session.unit%})</th>
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% comment %} {% for data in welltrajectory_details %}
+                   
+                        <tr>
+                          <td>{{data.measured_depth|floatformat:2}}</td>
+                          <td>{{data.inclination|floatformat:2}}°</td>
+                          <td>{{data.azimuth|floatformat:2}}°</td>
+                          <td>{{data.true_vertical_depth|floatformat:2}}</td>
+                          <td>{{data.dls|floatformat:4}}</td>
+                          <!-- <td>{{data.delta_e|floatformat:2}}</td>
+                          <td>{{data.delta_n|floatformat:2}}</td> -->
+                          <td>{{data.east|floatformat:2}}</td>
+                          <td>{{data.north|floatformat:2}}</td>
+                          <!-- <td>{{data.easting|floatformat:2}}</td>
+                          <td>{{data.northing|floatformat:2}} </td> -->
+                          <td>{{data.vertical_section|floatformat:2}}</td>
+                        </tr>
+                      {% endfor %} {% endcomment %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="modal-close">Close</button>
+              </div>
+              
+            </div>
+          </div>
+         
+          </div>
+          
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+        <script> 
+var unit='{%display_depthunit request.session.unit%}';
+Highcharts.chart('welltractory-container', {  
+    credits: {
+      enabled: false
+      },
+      title: {
+        text: ''
+    },
+      chart: {
+        inverted: false,
+    //    marginTop: 25
+    },
+    yAxis: {
+      reversed: false,
+      opposite: false,
+      labels: {
+        formatter: function () {
+            return (this.value > 0 ? ' ' : '') + this.value ;
+        }
+    },
+  //    align: 'top',
+        title: {
+            text: 'North(mN)'
+        }    
+    },
+    xAxis: {
+      categories: [],
+      opposite : true,
+      tickInterval : 1000 ,
+      title: {
+            text: 'East(mE)'
+    },
+ //     align: 'top',
+        accessibility : {
+            rangeDescription: ''
+        }
+    }, 
+    title: {
+            text: 'Plan View'
+    },  
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+    },
+    colors: [
+    '#4572A7', 
+    '#DB843D'
+    ],
+    plotOptions: {
+        series: {
+            label: [],                
+        }
+    }, 
+    series: [{
+        name: '',
+        data: {{chartdata | safe }},
+        tooltip: {
+            valueSuffix: '(mN)'
+        },
+    }]
+});
+
+// chart for tvd and vertical sections
+Highcharts.chart('welltractory-tvd-vs', {  
+    
+    credits: {
+      enabled: false
+      },
+      title: {
+        text: ''
+    },
+      chart: {
+        inverted: false,
+    //    marginTop: 25
+    },
+    yAxis: {
+      reversed: true,
+      opposite: false,
+      labels: {
+        formatter: function () {
+            return (this.value > 0 ? ' ' : '') + this.value ;
+        }
+    },
+      tickInterval : 2000, 
+  //    align: 'top',
+        title: {
+            text: 'TVD'+unit,
+        }   
+         
+    },
+    
+    xAxis: {
+      categories: [],
+      opposite : true,
+      tickInterval : 1000, 
+      title: {
+            text: 'Vertical Section'+unit,
+    },  
+ //     align: 'top',
+        accessibility : {
+            rangeDescription: 'Elevation View'
+        }
+    }, 
+       title: {
+            text: 'Elevation View'
+    }, 
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+    },
+    colors: [
+    '#4572A7', 
+    '#DB843D'
+    ],
+    plotOptions: {
+        series: {
+            label: [] ,                
+        }
+    },
+    series: [{
+        name: '',
+        data: {{chartdata_tvd_vs | safe}},
+        tooltip: {
+            valueSuffix: unit
+        },
+    }]
+});
+
+$("#view-welltrajectory").click(function () { 
+  $('.welltrajectory-popup').modal('show');
+});
+$(document).on('click','#modal-close',function() {
+  $('.welltrajectory-popup').modal('hide');
+});
+
+var storedArray = JSON.parse(sessionStorage.getItem("items"));
+    var well_id='{{well_id}}'
+    if(well_id == storedArray[1]){
+      $('.warning').show();
+    }else{
+      $('.warning').hide();
+    }
+</script>
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script>
+  var well_id = '{{well.id}}'
+
+ 
+</script>
+<script src="{% static 'js/welltrajectory/view.js' %}"></script>
+
+
+{%endblock%}

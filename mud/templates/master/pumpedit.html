@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+
+  
+<section>
+  <div class="container-fluid">
+    <!-- <div class="row" id="basic-table"> -->
+      <div class="row align-items-start common-row-space" id="">
+        <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+        <div class="col-12">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Pump Edit</h4>
+            </div>
+            <form method="post" novalidate>
+              {% csrf_token %}
+              <!-- {% for hidden_field in form.hidden_fields %}
+              {{ hidden_field }}
+              {% endfor %}
+              {% for field in form.visible_fields %}
+              <div class="form-group">
+                  {{ field.label_tag }}
+                  {% render_field field class="form-control" %}
+                  {% if field.help_text %}
+                  <small class="form-text text-muted">{{ field.help_text }}</small>
+                  {% endif %}
+              </div>
+              {% endfor %} -->
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="pump_manufacturer">Pump manufacturer:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <select class="form-control" id="pump_manufacturer" name="pump_manufacturer" >
+                          <option value="">------</option>
+                          {% for pump_manufacturer in pumpmanufacture %}                           
+                            <!-- <option value="{{ pumpmanufacturer.id }}">{{ pumpmanufacturer.name }}</option> -->
+                            <option value="{{pump_manufacturer.id}}" {% if pump_manufacturer.id == form.pump_manufacturer.value %} selected {% endif %}>{{pump_manufacturer.name}}</option>
+                          {% endfor %}
+                        </select>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="name">Name:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="name" class="form-control" name="name" value="{{form.name.value}}">
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="type">Type:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <select class="form-control" id="types" name="type">
+                          <option value="">--Choose Type--</option>
+                          <option value="Triplex" {% if "Triplex" == form.type.value %}selected {% endif %}>Triplex</option>
+                          <option value="Duplex" {% if "Duplex" == form.type.value %}selected {% endif %}>Duplex</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="unit">Units:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <select class="form-control" id="unit" name="unit">
+                          <option value="">--Unit--</option>
+                          <option value="API" {% if "API" == form.unit.value %}selected {% endif %}>API</option>
+                          <option value="SI" {% if "SI" == form.unit.value %}selected {% endif %}>SI</option>  
+                          <option value="MIXED" {% if "MIXED" == form.unit.value %}selected {% endif %}>MIXED</option> 
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 roddiameter">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="roddiameter">Rod Diameter:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="roddiameter" class="form-control" name="roddiameter" value="{{form.roddiameter.value}}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 stroke_length">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="stroke_length">Stroke length:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="stroke_length" class="form-control" name="stroke_length" value="{{form.stroke_length.value}}">
+                  </div>
+                </div>
+              </div>
+
+
+
+              <div class="col-12">
+                <table class="table mudpumpdata">
+                  <h4 class="card-title text-center table-title">Mud Pump Data Table</h4>
+                    <tr  class="linearsize"><th>Liner Size{%display_diameterunit form.unit.value%}</th>
+                        {% for obj in pump.mudpumpmasterdata_set.all %}
+
+                        <td><input type="number" class="form-control linear_size" name="linear_size" value="{{obj.linear_size}}"></td>
+                        {% endfor %}
+
+                    </tr>
+                    <tr class="pressure"><th>Max Discharge Pressure{%display_pressureunit form.unit.value%}</th>
+                        {% for obj in pump.mudpumpmasterdata_set.all %}
+
+                        <td><input type="number" class="form-control" name="max_discharge_pressure" value="{{obj.max_discharge_pressure}}"></td>
+                        {% endfor %}
+
+                    </tr>
+                </table>
+              </div>
+
+            <div class="col-12">
+                <table class="table mudpumptable" id="mudpumptable">
+                    <tr><th>Pump Speed(SPM)</th><th colspan=4 class="flowrateth text-center">Flowrate {%display_flowrateunit form.unit.value%}</tr>
+                        {% for speed in pump.mudpumpmasterspeed_set.all %}
+
+                    <tr class="flowrate"><th><input type="number" class="form-control pump_speed" name="pump_speed" value="{{speed.pump_speed}}"></th>
+                        {% for flowrateobj in speed.mudpumpmasterflowrate_set.all %}
+
+                        <td><input type="number" class="form-control" name="flowrate" value="{{flowrateobj.flowrate}}"></td>
+                        {% endfor %}
+
+                    </tr>
+                        {% endfor %}
+
+                    </table>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary detail-button">submit</button>
+              <button type="button" class="btn btn-outline-primary pull-right removemudpumpcolumn-master">Remove Column</button>
+              <button type="button" class="btn btn-outline-primary pull-right removemudpumprow-master mr-2">Remove Row</button>
+              <button type="button" class="btn btn-outline-primary pull-right addmudpumpcolumn mr-2">Add Column</button>
+              <button type="button" class="btn btn-outline-primary pull-right addmudpumprow mr-2">Add Row</button>
+              </div>
+          </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+        </div>
+      </div>
+    </div>
+    
+      
+    </section>
+
+{% endblock %}

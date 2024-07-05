@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+<div class="container-fluid">
+<div class="row align-items-start">
+
+  <div class="col-md-12  create-pg">
+    <div class="create_project_sec scroll-line">
+      {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}
+      </div>
+      <div class="col-12 p-0">
+
+        <div class="card">
+
+          <div class="card-header">
+            <h4 class="card-title">Pump Manufacturer</h4>
+          </div>
+
+          <div class="table-responsive ">
+            <br>
+
+            <div class="container-fluid">
+              <!-- Nav tabs -->
+              <div class="top">
+                <ul class="nav nav-tabs" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link in-client active" data-toggle="tab"
+                      href="#staticmaster">Inbuilt Master</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link in-client" data-toggle="tab"
+                      href="#dynamicmaster">Client Master</a>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Tab panes -->
+              <div class="tab-content">
+
+                <div id="staticmaster"
+                  class="container-fluid all-table tab-pane active"><br>
+                  <table class="table" id="statictable">
+
+                    <thead class="text-center">
+                      <tr><th>Name</th></tr>
+                    </thead>
+                    <tbody>
+                      {% for obj in staticmanufactureres %}
+                      <tr>
+                        <td>{{obj.name}}</td>
+                        <td class="text-center">
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div id="dynamicmaster"
+                  class="container-fluid tab-pane all-table fade"><br>
+                  {% user_rights_permission 'Create Master' request as value %}
+                  {% if value %}
+                  <a type="button"
+                    class="btn btn-primary pull-right detail-button mb-2"
+                    href="{% url 'mud:pumpcreate'%}">Add Pump</a>
+                  {% endif %}
+
+                  <table class="table master-data-list-view"
+                    id="dynamictable">
+                    <thead class="text-center">
+                      <tr>
+                        <th class="text-left">Name</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for obj in manufactureres %}
+                      <tr>
+                        <td>{{obj.name}}</td>
+                        <td class="text-center">
+                          <a href="{% url 'mud:manufactureredit' pk=obj.id %}">
+                            <span class="action-edit"><i
+                                class="feather icon-edit"></i></span>
+                          </a>
+                          <a onclick="confirmation(event)"
+                            href="{% url 'mud:manufacturerdelete' pk=obj.id %}">
+                            <span class="action-edit"><i
+                                class="feather icon-trash-2"></i></span>
+                          </a>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% include "footer.html" %}
+    </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}

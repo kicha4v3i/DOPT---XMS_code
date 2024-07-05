@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/user-rights/user_rights.css' %}">
+
+<section id="data-list-view" class="data-list-view-header user_rights_pg">
+    <div class="container-fluid">
+        <div class="back-clr-user-rights scroll-line new-cru-well">
+
+            {% include "header.html" %}
+            <form action="" method="POST" name="userrights_form">
+                {% csrf_token %}
+            <input type="hidden" name="type" value="{% getcreateedit company %}">
+            <div class="card">
+            <div class="table-responsive ">
+               
+                <div class="table-title" style="caption-side: top"><h1 class="table-common text-center pt-2">User Rights</h1></div>
+                <div class="users-list">
+                 
+                <table class="table">
+                    <!-- <caption class="table-title" style="caption-side: top"><h1 class="table-common">User Rights</h1></caption> -->
+                    
+                     <!-- <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button " href="{% url 'custom_auth:usercreate'%}">  <span class="action-edit-project"><i class="feather icon-plus-circle"></i> Add user</span></a>  -->
+                    
+ 
+                
+                    <thead>
+                        
+                        <tr>
+                            <th>Privilege</th>
+                            {% for val in user_rights %}
+                            <th>
+                            {{val.name}}
+                            </th>
+                            {% endfor %}
+                        </tr>
+  
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>Select All</td>
+                            {% for val in user_rights %}
+                            <td>
+                            <span class="round">
+                                <input type="checkbox" class="user_rights" name="{{val.name}}" value="{{val.id}}">
+                                <label for="checkbox" class="rou-label"></label>
+                                </span>
+                            </td>
+                            {% endfor %}
+
+
+                        </tr> 
+
+                       {% for value in user_modules %}
+                        <tr>
+
+                         <td>{{value.name}}</td>
+                         {% for val in user_rights %}
+
+                         {% getuserrights value.id val.id company.id as user_check %}
+                          <td>
+                            <span class="round">
+                            <input type="checkbox" class="{{val.name}} user_rights" name="{{val.name}}_{{value.id}}" value="{{val.id}}" {% if user_check is not None %} checked {% endif %} >
+                            <label for="checkbox" class="rou-label"></label>
+                        </span>
+                        </td>
+                         
+                         {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    
+
+                    </tbody>
+                
+                </table>
+               <!-- <div class="user-rights-btn">
+                 <button type="submit" class="btn btn-primary  btn-inline detail-button">Submit</button>
+                </div> -->
+
+                </div>
+
+                <div class="user-rights-btn pb-2">
+                    <button type="submit" class="btn btn-primary  btn-inline detail-button mt-2 mb-2">Submit</button>
+                   </div>
+
+                </div>
+            
+            </form>
+        </div>
+            </div>
+
+        </div>
+        {% include "footer.html" %}
+    </div>
+</section>
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/user_rights.js' %}"></script>
+
+
+{%endblock%}

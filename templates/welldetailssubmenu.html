@@ -1,0 +1,57 @@
+{% load static %}
+{% load app_filters %}
+<div class="well-sub-menu ws-menu">
+<div class="container">
+<div class="row">
+    {% if request.session.welltype == 'PLAN' %}
+    <div class ="col-3">
+     
+        <div class="sub-list {% if request.session.submenu == 'rig_details' %}active{% endif %}">
+            {% check_useraccess 'well' request.session.well_id request as access %}
+            
+            <a class="" {% if access %} href="{% url 'rig:alldetails' request.session.well_id %} {% endif %} ">Rig Details</a>    
+       
+    </div>
+    </div>
+    
+    <div class ="col-3">
+        <div class="sub-list {% if request.session.submenu == 'welltrajectory' %}active{% endif %}">
+        {% check_useraccess 'well' request.session.well_id request as access %}
+        <a class="" href="{% url 'welltrajectory:detail' request.session.well_id %}"> Well Trajectory</a>
+    </div>
+    </div>
+   <div class ="col-3">
+    <div class="sub-list {% if request.session.submenu == 'wellphases' %}active{% endif %}">
+        {% check_useraccess 'well' request.session.well_id request as access %}
+        <a class="" {% if access %} href="{% url 'wellphases:detail' request.session.well_id %} {% endif %} "> Well Phases </a>
+        </div>
+   </div>
+
+   <div class ="col-3">
+    <div class="sub-list {% if request.session.submenu == 'pressure' %}active{% endif %}">
+        {% check_useraccess 'well' request.session.well_id request as access %}
+        <a class="" {% if access %} href="{% url 'pressure:detail' request.session.well_id %} {% endif %} "> Pore Pressure & Fracture Pressure </a>
+        </div>
+   </div>
+   {%endif%}
+   {% if request.session.welltype == 'ACTUAL' %}
+   <div class ="col-3">
+    <div class="sub-list {% if request.session.submenu == 'rig_details' %}active{% endif %}">
+    <a class="" href="{% url 'wellphases:wellphasesummary' request.session.well_id %}">Well Information</a>
+    </div>
+    </div>
+    <div class ="col-3">
+        <div class="sub-list {% if request.session.submenu == 'welltrajectory' %}active{% endif %}">
+        <a class="" href="{% url 'welltrajectory:detail' request.session.well_id %}"> Well Trajectory</a>
+    </div>
+    </div>
+    <div class ="col-3">
+    <div class="sub-list {% if request.session.submenu == 'pressure' %}active{% endif %}">
+        <a class="" href="{% url 'pressure:detail' request.session.well_id %}"> Pore Pressure & Fracture Pressure </a>
+        </div>
+    </div>
+   {%endif%}
+
+</div>
+</div>
+</div>

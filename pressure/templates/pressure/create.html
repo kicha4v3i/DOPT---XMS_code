@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section id="data-list-view" class="data-list-view-header">
+  <!-- <div class="row" id="basic-table"> -->
+    <div class="container-fluid">
+  <div class="row align-items-start common-row-space">
+    {% getcountries countries as countries %}
+    {% include 'projectsidemenu.html' %}
+    <div class="col-12 p-0  create-pg main-section">
+      <div class="create_project_sec_well scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+        <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+        {% include "projectheader.html" %}
+        <div class="col-12 p-0">
+          {% include "welldetails_menu.html" %}
+        </div>
+        <div class="col-12 p-0">
+          {% include "welldetailssubmenu.html" %}
+        </div>
+        <div class="col-12 p-0">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title">Create Pore Pressure and Fracture Pressure Profile</h4>
+            </div>
+
+            <div class="card-body">
+              <form class="form form-horizontal" method="POST" id="pressureform">
+                {% csrf_token %}
+                <input type="hidden" id="well" class="form-control" name="well"
+                  value="{{well_id}}">
+
+                <div class="row">
+
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-2 col-form-label">
+                        <label class="project-edit-name" for="well_phase">Pressure
+                          Unit</label>
+                      </div>
+                      <div class="col-sm-4">
+                        <select name="pressure_unit"
+                          class="form-control pressure-vlubox" id="pressureunit">
+                          {% if request.session.unit == "SI" %}
+                          <option value="g/cc">g/cc</option>
+                          <option value="kPa">kPa</option>
+                          <option value="kPa/m">kPa/m</option>
+
+                          {% elif request.session.unit == "API" %}
+                          <option value="ppg">ppg</option>
+                          <option value="psi">psi</option>
+                          <option value="psi/ft">psi/ft</option>
+
+                          {% else %}
+                          <option value="g/cc">g/cc</option>
+                          <option value="kPa">kPa</option>
+                          <option value="kPa/m">kPa/m</option>
+                          <option value="ppg">ppg</option>
+                          <option value="psi">psi</option>
+                          <option value="psi/ft">psi/ft</option>
+
+                          {% endif %}
+                        </select>
+                      </div>
+
+                      <div class="col-sm-3 col-form-label">
+
+                      </div>
+
+                      <div class="col-sm-3 col-form-label common-txt-right">
+                        <a
+                          class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button"
+                          href="{% url 'pressure:importpressure' well_id %}">
+                          <span class="action-create-well"><i class="feather "></i>Import</span></a>
+                      </div>
+
+                    </div>
+                    <table class="table table-borderless" id="pressureaddtable">
+                      <!-- <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-left" href="{% url 'pressure:importpressure' well_id %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a> -->
+                      <!-- <div class="col-12">
+                      <div class="form-group row">
+                        <div class="col-sm-3 col-form-label">
+                          <label for="email-id">Units</label>
+                        </div>
+                        <div class="col-sm-3">
+                          <select class="form-control" id="pressure_unit" >
+                              <option value="">-- Units --</option>
+                              <option value="ppg" >ppg</option>
+                              <option value="psi" >psi</option>
+                              <option value="psift" >psi/ft</option>
+                          </select></div>
+                      </div>
+                    </div> -->
+
+                      <tr><th>MD({%display_depthunit request.session.unit%})</th><th>TVD({%display_depthunit request.session.unit%})</th>
+                        <th>Pore Pressure<span class="pressureunit"></span>
+                          <!-- {%display_pressureunit request.session.unit%} -->
+                        </th>
+                        <th>Fracture Pressure<span class="pressureunit"></span>
+                          <!-- {%display_pressureunit request.session.unit%} -->
+                        </th>
+                        <th>Comments</th><th>Action</th></tr>
+                      {%for i in max%}
+                      <tr id="pressurerow">
+                        <td><input type="number" step="any"
+                            onkeydown="return event.keyCode !== 69"
+                            id="measured_depth"
+                            class="form-control measured_depth"
+                            name="measured_depth" placeholder="MD"><span
+                            class="md_error"></span></td>
+                        <td><input type="number" step="any"
+                            onkeydown="return event.keyCode !== 69"
+                            id="true_vertical_depth" class="form-control tvd"
+                            name="true_vertical_depth" placeholder="TVD"><span
+                            class="tvd_error"></span></td>
+                        <td><input type="number" step="any"
+                            onkeydown="return event.keyCode !== 69"
+                            id="pore_pressure"
+                            class="form-control pore_pressure"
+                            name="pore_pressure" placeholder="Pore Pressure"><span
+                            class="pore_pressure_error"></span></td>
+                        <td><input type="number" step="any"
+                            onkeydown="return event.keyCode !== 69"
+                            id="fracture_pressure"
+                            class="form-control fracture_pressure"
+                            name="fracture_pressure"
+                            placeholder="Fracture Pressure" value=><span
+                            class="fracture_pressure_error"></span></td>
+                        <td><input type="text" id="comments"
+                            class="form-control" name="comments"
+                            placeholder="Comments"></td>
+
+                        <td>
+                          <button type="button" name="add"
+                            class="pressureaddrows iconaction"><i
+                              class="fa fa-plus"></i></button>
+                          <button type="button" name="add"
+                            class="pressureremoverows iconaction"><i
+                              class="fa fa-trash"></i></button>
+                        </td>
+
+                      </tr>
+                      {%endfor%}
+                      <tr id="pressurerow2" style="display:none">
+                        <td><input type="number" step="any"
+                            onkeydown="return event.keyCode !== 69"
+                            id="measured_depth"
+                            class="form-control measured_depth"
+                            name="measured_depth" placeholder="MD"
+                            value="{{data.measured_depth}}"><span
+                            class="md_error"></span></td>
+                        <td><input type="number" step="any"
+                            onkeydown="return event.keyCode !== 69"
+                            id="true_vertical_depth" class="form-control tvd"
+                            name="true_vertical_depth" placeholder="TVD"
+                            value="{{data.true_vertical_depth}}"><span
+                            class="tvd_error"></span></td>
+                        <td><input type="number" step="any"
+                            onkeydown="return event.keyCode !== 69"
+                            id="pore_pressure"
+                            class="form-control pore_pressure"
+                            name="pore_pressure" placeholder="Pore Pressure"
+                            value="{{data.pore_pressure}}"><span
+                            class="pore_pressure_error"></span></td>
+                        <td><input type="number" step="any"
+                            onkeydown="return event.keyCode !== 69"
+                            id="fracture_pressure"
+                            class="form-control fracture_pressure"
+                            name="fracture_pressure"
+                            placeholder="Fracture Pressure"
+                            value="{{data.fracture_pressure}}"><span
+                            class="fracture_pressure_error"></span></td>
+                        <td><input type="text" id="comments"
+                            class="form-control" name="comments"
+                            placeholder="Comments" value="{{data.comments}}"></td>
+
+                        <td>
+                          <button type="button" name="add"
+                            class="pressureaddrows iconaction"><i
+                              class="fa fa-plus"></i></button>
+                          <button type="button" name="add"
+                            class="pressureremoverows iconaction"><i
+                              class="fa fa-trash"></i></button>
+                        </td>
+
+                      </tr>
+
+                    </table>
+                  </div>
+
+                  <!-- <div class="col-12">
+                    <button type="button" class="btn btn-outline-secondary pull-right addpressurerow">Add Row</button>
+                  </div> -->
+                  <div class="col-sm-12 common-txt-center">
+                    <button type="submit"
+                    class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button pressure_submit">Submit</button>
+                  </Tdiv>
+                  <div class="col-sm-12">
+                    <a class="btn btn-primary pull-right detail-button"
+                      href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                    <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+                  </div>
+
+
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+.iconaction
+{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:15px;
+  /* color:#7367F0; */
+  color:#7c0201;
+}
+</style>
+
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+<script>
+$(document).on("blur", ".measured_depth" , function() {  
+  measured_depth = $(this).val();
+  var current_element=$(this);
+  var well_id="{{well_id}}";
+  $.ajax({
+      type: "GET",
+      url:"/wells/wellphases/getmdtvd",
+      data: {
+        data : measured_depth,
+        well_id:well_id,
+        type :"md"
+      },
+      success: function(data) { 
+        current_element.closest('tr').find('.tvd').val(data);
+      }
+  });
+  });
+
+$(document).on("blur", ".tvd" , function() {  
+  true_vertical_depth = $(this).val();
+  var current_element=$(this);
+  var well_id="{{well_id}}"
+  $.ajax({
+      type: "GET",
+      url:"/wells/wellphases/getmdtvd",
+      data: {
+        data : true_vertical_depth,
+        well_id:well_id,
+        type :"tvd"
+      },
+      success: function(data) { 
+        current_element.closest('tr').find('.measured_depth').val(data);
+      }
+  });
+  
+  });
+ 
+  $(document).ready(function(){
+    $(".pressureunit").html("("+$("#pressureunit").val()+")");
+
+  });
+  var storedArray = JSON.parse(sessionStorage.getItem("items"));
+    var well_id='{{well_id}}'
+    if(well_id == storedArray[1]){
+      $('.warning').show();
+    }else{
+      $('.warning').hide();
+    }
+</script>
+<link rel="stylesheet" type="text/css"
+  href="{% static 'assets/css/navigation.css' %}">
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+{% endblock %}

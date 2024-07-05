@@ -1,0 +1,88 @@
+{% load app_filters %}
+<!DOCTYPE html>
+<html>
+<body>
+    <header>
+        <div style="text-align: center; font-weight: bold;">
+            Pressure loss
+        </div>
+    </header>
+    <footer>
+        <div style="text-align: center; font-weight: bold;">
+           
+        </div>
+    </footer>
+    <div style="padding-top: 2cm;">
+
+        <!-- <img class="log-img-login" src="/media/{{image_name}}"> -->
+        <div class="logo" style="background-image: url('/media/{{image_name}}')";>
+                
+        </div>
+  
+        <table>
+            <thead>
+                <tr>
+                    {% if chart_type == 'pressureloss' %}
+                        <th>Pressure loss ({%display_pressureunit request.session.unit%})</th>
+                        <th>MD ({%display_depthunit request.session.unit%})</th>
+                    {%elif chart_type == 'ecdalonghole' or  chart_type == 'ecdbitdepth' %}
+                        <th>ECD ({%display_densityunit request.session.unit%})</th>
+                        <th>MD ({%display_depthunit request.session.unit%})</th>
+                    {%elif chart_type == 'slip_velocity' or  chart_type == 'annular_velocity' %}
+                        <th>Velocity(ft/min)</th>
+                        <th>MD ({%display_depthunit request.session.unit%})</th>
+                    {%elif chart_type == 'cuttings_concentration' or  chart_type == 'transport_ratio' %}
+                        <th>Percentage(%)</th>
+                        <th>MD ({%display_depthunit request.session.unit%})</th>
+                    {%elif chart_type == 'cci' %}
+                        <th>CCI</th>
+                        <th>MD ({%display_depthunit request.session.unit%})</th>
+                    {%elif chart_type == 'mudweight_pressure' %}
+                        <th>Mudweight</th>
+                        <th>Pressureloss</th>
+                    {%elif chart_type == 'tfa_pressure' %}
+                        <th>TFA</th>
+                        <th>Pressureloss</th>
+                    {%elif chart_type == 'yieldpoint_pressure' %}
+                        <th>Yieldpoint</th>
+                        <th>Pressureloss</th>
+                    {%elif chart_type == 'flowrate_pressure' %}
+                        <th>Flowrate</th>
+                        <th>Pressureloss</th>
+                    {%elif chart_type == 'tfa_pressure' %}
+                        <th>TFA</th>
+                        <th>Pressureloss</th>
+                    {% endif  %}
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if chart_type == 'cs_ecdwith' or chart_type == 'cd_ecdwith' or chart_type == 'rop_ecdwith'  %}
+                {% for chartdata in data.ecd_without %}
+                <tr>
+                    <td>{% format_number chartdata.x %}</td>
+                    <td>{{chartdata.y}}</td>
+                </tr>
+                {% endfor %}
+                {% for chartdata in data.ecd_with %}
+                <tr>
+                    <td>{% format_number chartdata.x %}</td>
+                    <td>{{chartdata.y}}</td>
+                </tr>
+                {% endfor %}
+
+                {% else %}
+                
+                {% for chartdata in data %}
+                <tr>
+                    <td>{% format_number chartdata.x %}</td>
+                    <td>{{chartdata.y}}</td>
+                </tr>
+                {%endfor%}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+

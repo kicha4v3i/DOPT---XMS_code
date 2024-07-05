@@ -1,0 +1,122 @@
+/* .userrights-table {
+    border: 1px solid #dfdfdf !important;
+    margin: 0px auto;
+} */
+
+/* .userrights-table th, td {
+    border: 1px solid #dfdfdf !important;
+    padding: 10px 10px !important;
+    text-align: center;
+} */
+
+.userrights-table td:nth-child(1) {
+    text-align: start !important;
+}
+
+/*********************** Hari CSS user rights *******************************/
+.round .rou-label:after {
+    /* left: 2px;
+    top: 4px; */
+}
+
+
+
+.user_rights_pg .users-list {
+    height: 650px;
+    overflow-y: scroll;
+}
+
+.user_rights_pg .users-list::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
+
+.user_rights_pg .users-list::-webkit-scrollbar {
+    width: 6px;
+    background-color: #F5F5F5;
+    border-radius: 20px;
+}
+
+.user_rights_pg .users-list::-webkit-scrollbar-thumb {
+    background-color: #bbb6b6;
+    border-radius: 20px;
+}
+
+.user-rights-btn {
+    text-align: center;
+}
+
+.round {
+    position: relative;
+    z-index: 0;
+}
+
+.round .rou-label {
+    background-color: #fff;
+    border: 2px solid #9c1b3d;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 20px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 20px;
+    z-index: -1;
+}
+
+.round .rou-label:after {
+    border: 2px solid #fff;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 6px;
+    left: 2px;
+    opacity: 0;
+    position: absolute;
+    top: 4px;
+    transform: rotate(-45deg);
+    width: 12px;
+}
+
+/* .round input[type="checkbox"] {
+    visibility: hidden;
+  } */
+
+.round input[type="checkbox"]:checked+label {
+    /* background-color: #007f83;
+    border-color: #007f83; */
+    background-color: #7c0201;
+    border-color: #7c0201;
+}
+
+.round input[type="checkbox"]:checked+label:after {
+    opacity: 1;
+}
+
+.user_rights {
+    opacity: 0;
+    margin-right: 6px;
+    cursor: pointer;
+}
+.back-clr-user-rights
+{
+    background-color: #fff;
+    z-index: 0;
+    position: relative;
+    height: 100vh;
+}
+.table-2 td:nth-child(1) {
+    color: #7c0201;
+    font-weight: 600;
+    font-size: 20px !important;
+}
+.table-1 td:nth-child(1) {
+    color: #7c0201;
+    font-weight: 600;
+    font-size: 20px !important;
+}
+.table-common
+{
+    padding: 20px 0px !important;
+    margin: 0 !important;
+}

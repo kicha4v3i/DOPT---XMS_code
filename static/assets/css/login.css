@@ -1,0 +1,262 @@
+/******************** 28-07-2023 NEW Login CSS ********************/
+.form-wid {
+    width: 50%;
+    margin: auto;
+    padding-bottom: 1.5em;
+    border-radius: 5px !important;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+}
+
+.sign-in {
+    background-image: linear-gradient(181deg, rgb(124, 2, 1), rgb(187, 17, 17));
+    font-size: 30px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.form-input {
+    padding: 10px 50px;
+}
+
+.form-input input {
+    padding-left: 30px;
+    /* border-radius: 25px; */
+}
+
+.icon-pos .fa-envelope {
+    position: absolute;
+    top: 11px;
+    font-size: 15px;
+    color: #8c0605;
+    left: 10px;
+}
+
+.icon-pos .fa-lock {
+    position: absolute;
+    top: 11px;
+    font-size: 15px;
+    color: #8c0605;
+    left: 10px;
+}
+
+.icon-pos .fa-eye {
+    position: absolute !important;
+    /* top: 8px; */
+    top: 11px !important;
+    font-size: 15px !important;
+    color: #8c0605 !important;
+    right: 10px !important;
+}
+
+.icon-pos .fa-eye-slash {
+    position: absolute !important;
+    /* top: 8px; */
+    top: 11px !important;
+    font-size: 15px !important;
+    color: #8c0605 !important;
+    right: 10px !important;
+}
+
+.login-btn {
+    padding: 13px 25px;
+    background-image: linear-gradient(182deg, #7c0201, #bb1111);
+    color: white;
+    border-color: #7c0201;
+    font-weight: 600;
+}
+
+.login-btn a {
+    color: white;
+}
+
+.login-btn:hover {
+    color: #fff;
+    /* box-shadow: 0 8px 25px -8px #7c0201; */
+    box-shadow: 0 10px 10px #8c06055e;
+}
+
+.forgot-pass {
+    text-align: center;
+    padding: 25px 0px;
+}
+
+.forgot-pass a {
+    color: #7e0201;
+}
+
+.plan-link {
+    text-align: center;
+}
+
+.plan-link a {
+    padding: 0px 5px;
+    color: #7c0201;
+}
+
+.stick {
+    position: relative;
+}
+
+.stick::before {
+    position: absolute;
+    content: "";
+    width: 2px;
+    height: 15px;
+    background-color: #7c0201;
+    left: -1px;
+    top: 1px;
+}
+
+.stick::after {
+    position: absolute;
+    content: "";
+    width: 2px;
+    height: 15px;
+    background-color: #7c0201;
+    right: -2px;
+    top: 1px;
+}
+
+.error {
+    color: #000;
+    font-weight: 600;
+}
+/******************** NEW Login CSS ********************/
+
+
+
+
+/******************** Admin Login CSS ********************/
+.adminlogin-wid {
+    width: 50%;
+    margin: auto;
+    padding-bottom: 0em;
+    border-radius: 5px !important;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+}
+
+.adminlogin-signin {
+    background-image: linear-gradient(181deg, rgb(124, 2, 1), rgb(187, 17, 17));
+    font-size: 30px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.adminlogin-form-input {
+    padding: 10px 50px;
+}
+
+.adminlogin-form-input input {
+    padding-left: 30px;
+}
+
+.icon-pos .fa-user {
+    position: absolute;
+    top: 11px;
+    font-size: 15px;
+    color: #8c0605;
+    left: 10px;
+}
+
+.vs-icon.icon-check {
+    background-color: #7c0201;    
+    color: #fff;
+    font-weight: 600;
+}
+
+.vs-checkbox-primary input:checked ~ .vs-checkbox .vs-checkbox--check {
+    background-color: #7c0201 !important;    
+}
+
+.remember {
+    color: #7c0201;
+    font-weight: 600;
+}
+
+.adminlogin-btn {
+    padding: 13px 25px;
+    background-image: linear-gradient(182deg, #7c0201, #bb1111);
+    color: white;
+    font-weight: 600;
+    border-color: #7c0201;
+}
+
+.adminlogin-btn a {
+    color: white;
+}
+
+.adminlogin-btn:hover {
+    color: #fff;
+    /* box-shadow: 0 8px 25px -8px #7c0201; */
+    box-shadow: 0 10px 10px #8c06055e;
+}
+
+.adminforgot-pass {
+    text-align: center;
+    padding: 25px 0px 10px;
+}
+
+.adminforgot-pass a {
+    color: #7e0201;
+}
+/******************** Admin Login CSS ********************/
+
+
+
+
+
+/******************** password_reset CSS ********************/
+.password-reset-recover {
+    background-image: linear-gradient(181deg, rgb(124, 2, 1), rgb(187, 17, 17));
+    font-size: 30px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.p-text {
+    padding: 0px 100px;
+}
+
+.pb-card {
+    padding-bottom: 1em;
+    margin-bottom: 0px;
+}
+
+.password-reset-form-input {
+    padding: 10px 100px;
+}
+
+.password-reset-form-input input {
+    padding-left: 30px;
+}
+
+.recover-btns {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.recover-btn {
+    padding: 13px 25px;
+    background-image: linear-gradient(182deg, #7c0201, #bb1111);
+    color: white;
+    font-weight: 600;
+    border-color: #7c0201;
+}
+
+.recover-btn a {
+    color: #fff;
+}
+.recover-btn:hover {
+    color: #fff;
+    box-shadow: 0 10px 10px #8c06055e;
+}
+/******************** password_reset CSS ********************/

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<div class="row">
+  <div class="col-md-10  create-pg"> 
+    <div class="create_project_sec scroll-line">
+      {% include "header.html" %}
+    <div class="card create-project ">
+    <div class="col-12">
+      <form class="form form-horizontal" method="POST" id="commonpermission_form">
+        {% csrf_token %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Create</th>
+              <th>Edit</th>
+              <th>Delete</th>
+              <th>View</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for module in modules %}
+              <tr>
+                <th>{{module.name}}</th>
+                <td>
+                  {% checkpermisson userid module.id 'create' as create %}
+                  <input type="checkbox" name="{{module.name}}_create" value="1" {% if create == "checked" %}checked{%endif%}>
+                </td>
+                <td>
+                  {% checkpermisson userid module.id 'edit' as edit %}
+                  <input type="checkbox" name="{{module.name}}_edit" value="1" {% if edit == "checked" %}checked{%endif%}>
+                </td>
+                <td>
+                  {% checkpermisson userid module.id 'delete' as delete %}
+                  <input type="checkbox" name="{{module.name}}_delete" value="1" {% if delete == "checked" %}checked{%endif%}>
+                </td>
+                <td>
+                  {% checkpermisson userid module.id 'view' as view %}
+                  <input type="checkbox" name="{{module.name}}_view" value="1" {% if view == "checked" %}checked{%endif%}> </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="col-sm-9 offset-sm-3 ">
+          <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+      </div>
+      </form>
+    </div>
+    </div>
+    {% include "footer.html" %}
+    </div>
+  </div>
+  <div class="col-md-2">
+    {% include "userheader.html" %}
+  </div>
+</div>
+{% endblock %}
+

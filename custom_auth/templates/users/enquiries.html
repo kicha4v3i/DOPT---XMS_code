@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/super_Admin/enquiries/enquiries.css' %}">
+<section id="data-list-view" class="data-list-view-header">
+    <div class="container-fluid">
+    <div class="row align-items-start common-row-space">
+        <div class="col-md-12 p-0  create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+                <div class="table-responsive ">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title pt-0">Enquiries List</h4>
+                        </div>
+                        {% comment %} <caption class="table-title" style="caption-side: top"><h1>Enquiries List</h1></caption> {% endcomment %}
+                    <table class="table enquiry-table">
+                        
+                        <thead>
+                            <tr>
+                                <th style="display: none;">S.NO</th>
+                                <th>Title</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th> Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/auth/enquiries.js' %}"></script>
+{%endblock%}

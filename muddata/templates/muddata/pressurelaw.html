@@ -1,0 +1,194 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section>
+  <div class="row">
+    <div class="col-12">
+      {% include "welldetails_menu.html" %} 
+    </div>
+    <div class="col-12">
+      <div class="sample-sub-menu">
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+            <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+          </div>
+        </div>
+        <!-- <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'rheogram' %}active{% endif %}">
+                <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+              </div>
+        </div> -->
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+            <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+            <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+          </div>
+        </div>
+        <div class="col-md-3">
+            <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                <a href="{% url 'muddata:pressurelawcalculation' wellphase_id %}" id="bhadata">Bore Pressure Loss</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div> <!--row end -->
+<div class="row">
+   <div class='col-10'>
+    <div id="pressurelawdata" class="pressurelawdiv">
+      <div class="flex">
+        <input type="text" name="flowrate" class="form-control flowrate pressurelawinput" placeholder="Flowrate">
+        <input type="text" name="rpm" class="form-control rpm pressurelawinput" placeholder="RPM">
+      </div>
+      <div class="pressurelaw"></div>
+    </div>
+   </div> 
+   <div class="col-2">
+    <h4 class="model-caption">Well Phases</h4>
+    {% for wellphase in wellphases %}
+    <div class="row">
+        <div class="col-12">
+            <nav class="navbar bg-white phase-sidemenu">
+            <ul class="nav navbar-nav">
+                <li class="nav-item {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                <a class="nav-link" href="{% url 'bhadata:bhadatalist' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                </li>
+            </ul>
+            </nav>
+        </div>
+    </div>
+    {% endfor %}
+   </div>
+</div>
+</section>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script>
+var wellphase_id="{{wellphase_id}}";
+$(document).on("keyup", ".flowrate" , function() {
+    var flowrate=$(this).val();
+    var rpm=$(this).closest('div').find('.rpm').val()
+    if(flowrate!='' && rpm!=''){
+        getpressurelaw(rpm,flowrate)
+    }
+});
+$(document).on("keyup", ".rpm" , function() {
+    var rpm=$(this).val();
+    var flowrate=$(this).closest('div').find('.flowrate').val()
+    if(flowrate!='' && rpm!=''){
+        getpressurelaw(rpm,flowrate)
+    }  
+});
+function getpressurelaw(rpm,flowrate){
+    $.ajax({
+        type: "GET",
+        url:"/wells/muddata/getpressurelaw",
+        data:{
+            rpm:rpm,
+            flowrate:flowrate,
+            wellphase_id:wellphase_id
+        },
+        success: function(data) {
+          var html=''
+          const keys = Object.keys(data);
+          keys.forEach((key, index) => {
+            html +='<h1>'+key+'</h1>'
+            for(var i=0;i<data[key].length;i++){
+              html +='<table><tbody>';
+              html +='<tr><td>Type</td><td>'+data[key][i].type+'</td></tr>';
+              html +='<tr><td>Viscocity</td><td>'+data[key][i].viscocity+'</td></tr>';
+              html +='<tr><td>Flow Rate</td><td>'+data[key][i].flowrate+' cu.m/sec </td></tr>';
+              html +='<tr><td>Mud Weight</td><td>'+data[key][i].mudweight+' kg/m3</td></tr>';
+              html +='<tr><td>ID</td><td>'+data[key][i].ID+' m</td></tr>';
+              html +='<tr><td>Length of Element</td><td>'+data[key][i].length+' m</td></tr>';
+              html +='<tr><td>Velocity</td><td>'+data[key][i].velocity+' m/sec</td></tr>';
+              html +='<tr><td>Reynolds Number</td><td>'+data[key][i].reynolds+'</td></tr>';
+              html +='<tr><td>Flow Regime</td><td>'+data[key][i].flowregime+'</td></tr>';
+              html +='<tr><td>Friction Factor</td><td>'+data[key][i].frictionpressure+'</td></tr>';
+              html +='<tr><td>Pressure Loss</td><td>'+data[key][i].pressureloss+' psi</td></tr>';
+              html +='</tbody></table>';
+
+            }
+          });
+          $('.pressurelaw').html(html)
+
+        }     
+    });
+}
+// function getpressurelaw(rpm,flowrate){
+//     $.ajax({
+//         type: "GET",
+//         url:"/wells/muddata/getpressurelaw",
+//         data:{
+//             rpm:rpm,
+//             flowrate:flowrate,
+//             wellphase_id:wellphase_id
+//         },
+//         success: function(data) {
+//           html=''
+//           for(var i=0;i<data.length;i++){
+//             if(Array.isArray(data[i])){
+//               for(var j=0;j<data[i].length;j++){
+//                 console.log(data[i][j])
+//                 html +='<table><tbody>';
+//                 html +='<tr><td>sectionname</td><td>'+data[i][j].sectionname+'</td></tr>';
+//                 html +='<tr><td>Type Name</td><td>'+data[i][j].type_name+'</td></tr>';
+//                 html +='<tr><td>Viscocity</td><td>'+data[i][j].viscocity+'</td></tr>';
+//                 html +='<tr><td>Flow Rate</td><td>'+data[i][j].flowrate_si+' cu.m/sec </td></tr>';
+//                 html +='<tr><td>Mud Weight</td><td>'+data[i][j].mudweight_si+' kg/m3</td></tr>';
+//                 html +='<tr><td>ID</td><td>'+data[i][j].ID+' m</td></tr>';
+//                 html +='<tr><td>Length of Element</td><td>'+data[i][j].length+' m</td></tr>';
+//                 html +='<tr><td>Velocity</td><td>'+data[i][j].velocity+' m/sec</td></tr>';
+//                 html +='<tr><td>Reynolds Number</td><td>'+data[i][j].Re+'</td></tr>';
+//                 html +='<tr><td>Flow Regime</td><td>'+data[i][j].flowregime+'</td></tr>';
+//                 html +='<tr><td>Friction Factor</td><td>'+data[i][j].f+'</td></tr>';
+//                 html +='<tr><td>Pressure Loss</td><td>'+data[i][j].pressureloss+' psi</td></tr>';
+//                 // html +='<tr><td>flowrate</td><td>'+data[i][j].flowrate+' psi</td></tr>';
+//                 // html +='<tr><td>identity</td><td>'+data[i][j].identity+' psi</td></tr>';
+//                 // html +='<tr><td>mudweight</td><td>'+data[i][j].mudweight+' psi</td></tr>';
+//                 // html +='<tr><td>originallength</td><td>'+data[i][j].originallength+' psi</td></tr>';
+//                 // html +='<tr><td>originalviscocity</td><td>'+data[i][j].originalviscocity+' psi</td></tr>';
+//                 // html +='<tr><td>DP</td><td>'+data[i][j].dP+' psi</td></tr>';
+//                 html +='</tbody></table>';
+//               }
+//             }else{
+//                 html +='<table><tbody>';
+//                 html +='<tr><td>sectionname</td><td>'+data[i].sectionname+'</td></tr>';
+//                 html +='<tr><td>Type Name</td><td>'+data[i].type_name+'</td></tr>';
+//                 html +='<tr><td>Viscocity</td><td>'+data[i].viscocity+'</td></tr>';
+//                 html +='<tr><td>Flow Rate</td><td>'+data[i].flowrate_si+' cu.m/sec </td></tr>';
+//                 html +='<tr><td>Mud Weight</td><td>'+data[i].mudweight_si+' kg/m3</td></tr>';
+//                 html +='<tr><td>ID</td><td>'+data[i].ID+' m</td></tr>';
+//                 html +='<tr><td>Length of Element</td><td>'+data[i].length+' m</td></tr>';
+//                 html +='<tr><td>Velocity</td><td>'+data[i].velocity+' m/sec</td></tr>';
+//                 html +='<tr><td>Reynolds Number</td><td>'+data[i].Re+'</td></tr>';
+//                 html +='<tr><td>Flow Regime</td><td>'+data[i].flowregime+'</td></tr>';
+//                 html +='<tr><td>Friction Factor</td><td>'+data[i].f+'</td></tr>';
+//                 html +='<tr><td>Pressure Loss</td><td>'+data[i].pressureloss+' psi</td></tr>';
+//                 // html +='<tr><td>flowrate</td><td>'+data[i].flowrate+' psi</td></tr>';
+//                 // html +='<tr><td>identity</td><td>'+data[i].identity+' psi</td></tr>';
+//                 // html +='<tr><td>mudweight</td><td>'+data[i].mudweight+' psi</td></tr>';
+//                 // html +='<tr><td>originallength</td><td>'+data[i].originallength+' psi</td></tr>';
+//                 // html +='<tr><td>originalviscocity</td><td>'+data[i].originalviscocity+' psi</td></tr>';
+//                 // html +='<tr><td>DP</td><td>'+data[i].dP+' psi</td></tr>';
+
+//                 html +='</tbody></table>';
+//             }
+//           }
+//           $('.pressurelaw').html(html)
+//         }     
+//     });
+// }
+
+</script>
+{% endblock %}
+
+
+
+      
+

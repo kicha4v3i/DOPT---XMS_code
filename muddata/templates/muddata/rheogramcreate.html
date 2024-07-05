@@ -1,0 +1,395 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section>
+  <div class="row">
+    <div class="col-12">
+      {% include "welldetails_menu.html" %} 
+    </div>
+    
+      <div class="col-12">
+        <div class="sample-sub-menu">
+      <div class="col-md-3">
+        <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+              <a href="{% url 'muddata:list' wellphase_id %}" id="mud"> Mud Data </a>
+            </div>
+      </div>
+      <div class="col-md-3">
+              <div class="sub-list {% if request.session.submenu == 'rheogram' %}active{% endif %}">
+              <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+            </div>
+      </div>
+      <div class="col-md-3">
+              <div class="sub-list {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+              <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+            </div>
+      </div>
+      <div class="col-md-3">
+               <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+              <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+            </div>
+      </div>
+    
+    </div>
+    </div>
+  </div>
+    <div class="row">
+      <div class="col-2">
+        {% for wellphase in wellphases %}
+        <div class="row">
+          <div class="col-12">
+        <nav class="navbar bg-white phase-sidemenu">
+          <ul class="nav navbar-nav">
+            <li class="nav-item {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+              <a class="nav-link" href="{% url 'muddata:rheogramlist' wellphase.id %}"> {{wellphase.phase_name}}</a>
+            </li>
+          </ul>
+
+        </nav>
+        </div>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- <div class="col-2">
+        {% for wellphase in wellphases %}
+          <div class="row">
+            <div class="col-12">
+              <a href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+            </div>
+          </div>       
+        {% endfor %}
+      </div> -->
+        <div class="col-10">
+          <!-- <div class="sample-sub-menu">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="sub-list active">
+                      <a href="{% url 'muddata:list' wellphase_id %}" id="mud"> Mud Data </a>
+                      </div>
+              </div>
+              <div class="col-md-3">
+                <div class="sub-list">
+                      <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+                      </div>
+              </div>
+              <div class="col-md-3">
+                <div class="sub-list active">
+                      <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                      </div>
+              </div>
+              <div class="col-md-3">
+                <div class="sub-list active">
+                      <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                      </div>
+              </div>
+            </div>
+            </div> -->
+            <div>
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Create Rheogram</h4>
+                </div>
+                <div class="card-body">
+                  <form class="form form-horizontal" method="POST" id="rheogramform">
+                    {% csrf_token %}
+                    <input type="hidden" id="well" class="form-control" name="well" value="{{well_id}}"}>
+                    <input type="hidden" name="well_phase" id="well_phases">
+                    <input type="hidden" id="rheo_fromdepth" value="{{fromdepth}}">
+                    <input type="hidden" id="rheo_todepth" value="{{todepth}}">
+                    <!-- <div class="col-12">
+                      <div class="form-group row">
+                        <div class="col-sm-3 col-form-label">
+                          <label class="project-edit-name" for="well_phase">WellPhases</label>
+                        </div>
+                        <div class="col-sm-9">
+                          <select class="form-control" id="well_phase" name="well_phase">
+                            <option value="">--  Well Phases --</option>
+                            {% for wellphases in wellphase %}                           
+                              <option value="{{ wellphases.id }}">{{ wellphases.phase_name }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                  </div> -->
+    
+                    {%if welltype == 'ACTUAL'%}
+                    <div class="col-12">
+                      <div class="form-group row">
+                        <div class="col-sm-3 col-form-label">
+                          <label for="date">Date</label>
+                        </div>
+                        <div class="col-sm-9">
+                          <input type="text" id="basicDate" class="form-control flatpickr-basic flatpickr-input active rheogram_date" name="date" placeholder="Date">
+                      </div>
+                      </div>
+                    </div>
+                    {%endif%}
+                    <div class="text-right">
+                      <button type="button" name="add" class="addrheogram_sections iconaction">
+                        Add Section <i class="fa fa-plus"></i>
+                      </button>
+                    </div>
+                    <div class="row">
+                      <div class="col-4">
+                        <div class="nav flex-column nav-pills" id="section-tab" role="tablist" aria-orientation="vertical">
+                          {% for section in sections %}
+                            <a class="nav-link " id="section{{forloop.counter0 }}-tab" data-toggle="pill" href="#section{{forloop.counter0}}" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                              <div class="row">
+                                <div class="col-md-2 ">
+                                  <button type="button" name="remove" data-id="{{forloop.counter0}}" class="rheogramremove-tab iconaction"><i class="fa fa-trash"></i></button>
+                                </div>
+                                <div class="col-md-3">
+                                  <input type="text" name="section" class="form-control" value="{{section.section_name}}">
+                                </div>
+                                <div class="col-md-3">
+                                  <input type="text" class="form-control" name="from_depth{{ forloop.counter0 }}" value="{{section.from_depth}}">
+                                </div>
+                                <div class="col-md-3">
+                                  <input type="text" class="form-control" name="todepth{{ forloop.counter0 }}" value="{{section.todepth}}">
+                                </div>
+                              </div>
+                            </a>
+                          {% endfor %}
+                        </div>
+                      </div>
+                      <div class="col-8">
+                        <div class="tab-content" id="section-content">
+                          {% for section in sections %}
+                            <div class="tab-pane fade" id="section{{forloop.counter0}}" role="tabpanel" aria-labelledby="{{section.section_name}}-tab">
+                              {% if section|checkmuddata:section.section_name == ''%}
+                              <select data-id="{{section.section_name}}" tab-index={{forloop.counter0}} wellphase-id={{wellphase_id}} class="modalselect" name="selected_model">
+                                <option value="">Select</option>
+                                <option value="1">Newtonian</option>
+                                <option value="2">Bingham</option>
+                                <option value="3">Power Law</option>
+                                <option value="4">Hershel Bulkley</option>
+                              </select>
+                              {%endif%}
+                              {% if section|checkmuddata:section.section_name != ''%}
+                              <table id="rheogram-table{{forloop.counter0}}">
+                                <thead>
+                                  <tr>
+                                    <th>RPM</th>
+                                    <th>Dial</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <!-- <input type="hidden" name="viscocity" class="viscocity" value="{{section|getviscocity:section.section_name}}"> -->
+                                  {% for rpm in rheogram_rpm %}
+                                  <tr class="{{mud.section}}">
+                                    <td><input type="text" id="rpm" class="form-control rpm" name="rpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                    <td><input type="text" id="dial" class="form-control dial" name="dial{{forloop.parentloop.counter0}}" placeholder="Dial" value="">
+                                    <!-- <input type="hidden" name="calculateddial{{forloop.parentloop.counter0}}" class="calculateddial"> -->
+                                    </td>
+                                    <td>
+                                  <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                  <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                  </td>        
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                              {%else%}
+                              <table id="newtonian-table{{forloop.counter0}}" class="modal-tables">
+                                <thead>
+                                  <tr>
+                                    <th>RPM</th>
+                                    <th>Dial</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for rpm in rheogram_rpm %}
+                                  <tr class="{{mud.section}}">
+                                    <td><input type="text" id="rpm" class="form-control rpm" name="newtonianrpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                    <td><input type="text" id="dial" class="form-control dial" name="newtoniandial{{forloop.parentloop.counter0}}" placeholder="Dial" value="{% getcalculateddial rpm.rheogram_rpm section 'newtonian' %}">
+                                    </td>
+                                    <td>
+                                  <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                  <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                  </td>        
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+
+                              <table id="bingham-table{{forloop.counter0}}" class="modal-tables">
+                                <thead>
+                                  <tr>
+                                    <th>RPM</th>
+                                    <th>Dial</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for rpm in rheogram_rpm %}
+                                  <tr class="{{mud.section}}">
+                                    <td><input type="text" id="rpm" class="form-control rpm" name="binghamrpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                    <td><input type="text" id="dial" class="form-control dial" name="binghamdial{{forloop.parentloop.counter0}}" placeholder="Dial" value="{% getcalculateddial rpm.rheogram_rpm section 'bingham' %}">
+                                    </td>
+                                    <td>
+                                  <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                  <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                  </td>        
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+
+                              <table id="powerlaw-table{{forloop.counter0}}" class="modal-tables">
+                                <thead>
+                                  <tr>
+                                    <th>RPM</th>
+                                    <th>Dial</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for rpm in rheogram_rpm %}
+                                  <tr class="{{mud.section}}">
+                                    <td><input type="text" id="rpm" class="form-control rpm" name="powerlawrpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                    <td><input type="text" id="dial" class="form-control dial" name="powerlawdial{{forloop.parentloop.counter0}}" placeholder="Dial" value="{% getcalculateddial rpm.rheogram_rpm section 'powerlaw' %}">
+                                    </td>
+                                    <td>
+                                  <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                  <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                  </td>        
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+
+                              <table id="hershel-table{{forloop.counter0}}" class="modal-tables">
+                                <thead>
+                                  <tr>
+                                    <th>RPM</th>
+                                    <th>Dial</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for rpm in rheogram_rpm %}
+                                  <tr class="{{mud.section}}">
+                                    <td><input type="text" id="rpm" class="form-control rpm" name="hershelrpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                    <td><input type="text" id="dial" class="form-control dial" name="hersheldial{{forloop.parentloop.counter0}}" placeholder="Dial" value="{% getcalculateddial rpm.rheogram_rpm section 'hershel' %}">
+                                    </td>
+                                    <td>
+                                  <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                  <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                  </td>        
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                              <figure>
+                                <div id="seperate_rheogramchart{{forloop.counter0}}" class="gra-pore" ></div>
+                            </figure>
+                              {%endif%}
+                            </div>
+                          {% endfor %}
+                        </div>
+                        </div>
+                      </div>
+                      
+                  <!-- <div class="row">
+                    <div class="col-12">
+                        <div class="text-right">
+                          <button type="button" name="add" class="addrheogram_sections iconaction">
+                            Add Section <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                       
+    
+                        <table class="table" id="rheogramtable">
+                          <thead>
+                            <tr>
+                              <th>Rpm</th>
+                              <th>Dial</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          {% for mud in muddata %}
+                          <tbody id="{{mud.section}}">
+                                <tr class="{{mud.section}}">
+                                  <td><input type="text" name="section" class="form-control section" value="{{mud.section}}"></td>
+                                  <td><input type="text" name="from_depth{{ forloop.counter0 }}" class="form-control from_depth" value="{{mud.from_depth}}"></td>
+                                  <td><input type="text" name="todepth{{ forloop.counter0 }}" class="form-control todepth" value="{{mud.todepth}}"></td>
+                                  <td>
+                                <button type="button" name="add" class="addrheogram_sections iconaction"><i class="fa fa-plus"></i></button> 
+                                    <button type="button" name="remove" class="rheogramremove_sections iconaction"><i class="fa fa-trash"></i></button>
+                                  </td>
+                                </tr>
+                                {% for rpm in rheogram_rpm %}
+                                <tr class="{{mud.section}}">
+                                  <td><input type="text" id="rpm" class="form-control" name="rpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                  <td><input type="text" id="dial" class="form-control" name="dial{{forloop.parentloop.counter0}}" placeholder="Dial" value=""></td>
+                                  <td>
+                                <button type="button" name="add" class="addrheogram iconaction"><i class="fa fa-plus"></i></button>
+                                <button type="button" name="remove" class="rheogramremove iconaction"><i class="fa fa-trash"></i></button>
+                                </td>        
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            {% endfor %}
+                        </table>
+                    </div> -->
+    
+                    <!-- <div class="col-12">
+                        <button type="button" class="btn btn-outline-secondary pull-right addwellphasesrow">Add Row</button>
+                        
+                      </div> -->
+                      <div class="col-sm-9 offset-sm-3">
+                      <button type="submit" id="submit"class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                      <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+                      <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                    </div>
+                  </div>
+                </form>
+                </div>
+              </div>
+
+            </div>
+            
+        </div>
+    </div>
+</section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+} 
+.iconaction
+{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:15px;
+  /* color:#7367F0; */
+  color:#7c0201;
+}
+</style>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+<script>
+  $('.modal-tables').hide();
+  $("#rheogramform").validate({
+    rules: {
+      well_phase:"required",
+      rpm:"required",
+      dial:"required",
+    },
+    messages: {
+      well_phase:"Please select Well Phase",
+      rpm:"Please enter Rpm",
+      dial:"please enter Dial",
+          }
+  });
+
+  $("input").filter(function () {
+  return $.trim($(this).val()).length == 0
+}).length == 0;
+
+</script>
+{% endblock %}
+
+      
+

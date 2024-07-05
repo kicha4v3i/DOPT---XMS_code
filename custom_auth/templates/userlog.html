@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/user_log/userlog.css' %}">
+
+<div class="row align-items-start">
+  <div class="col-md-12  create-pg">
+    <div class="create_project_sec scroll-line userlog-div">
+      {% include "header.html" %}
+      <div class="row px-2">
+        <div class="col-3">
+          <input type="text" id="startdate" class="filter_dates form-control">
+        </div>
+        <div class="col-3">
+          <input type="text" id="enddate" class="filter_dates form-control">
+        </div>
+        <div class="col-3">
+          <button type="button" id="submit_search" class="btn btn-primary  btn-inline detail-button waves-effect waves-light">Search</button>
+        </div>
+
+
+      </div>
+
+      <table class="table userlog_table userlogactivity-table">             
+          <thead>
+              <tr>
+                  <th>User Name</th>
+                  <th>Name</th>
+                  <th>Message</th>
+                  <th>Time</th>
+              </tr>
+          </thead>
+          <tbody>  
+           
+          </tbody>
+      </table>
+      {% include "footer.html" %}
+    </div>
+  </div>
+  <!-- <div class="col-md-2">
+    {% include "userheader.html" %}
+  </div> -->
+</div>
+
+{%endblock%}
+{% block scripts %}
+{{block.super}} 
+<script>
+  var activity = '{{activity}}';
+  var well_id = '{{well_id}}';
+  var user_id = '{{user_id}}';
+</script>
+<script src="{% static 'js/auth/userlog.js' %}"></script>
+
+
+{%endblock%}

@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load humanize %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+<div class="container-fluid">
+<div class="row align-items-start common-row-space">
+  {% getcountries countries as countries %}
+  {% include "projectsidemenu.html" %}
+<div class="p-0  create-pg main-section col-md-12"> 
+  <div class="create_project_sec_well scroll-line new-cru-well">
+    {% comment %} <div class="well-name-list">{{well.name}}</div> {% endcomment %}
+    {% comment %} <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+
+    {% include "projectheader.html" %}  
+      <div class="col-12 p-0">
+        {% include "welldetails_menu.html" %}  
+      </div>
+      <div class="col-12 p-0">
+        {% include "welldetailssubmenu.html" %}  
+      </div>
+      <div class="col-12 p-0">
+        <div class="card">
+          <div class="card-header ">
+            <h4 class="card-title">Well Details</h4>
+          </div>
+          <div class="table-responsive card-body ">
+            <table class="table table_align">
+              <tbody>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Project Name</span>
+                  </th>
+                  <td>{{well.project.project_name}}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Well Name</span>
+                  </th>
+                  <td>{{well.name}}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Well Type</span>
+                  </th>
+                  <td>{{well.well_type}}</td>
+                </tr>
+                {% if well.plan_well_list != None %}
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Plan Well List</span>
+                  </th>
+                  <td>{{well.plan_well_list}}</td>
+                </tr>
+                {%endif%}
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Datum</span>
+                  </th>
+                  <td>{{well.datum}}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Environment</span>
+                  </th>
+                  <td>{{well.environment}}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Environment Sub Type</span>
+                  </th>
+                  <td>{{well.environment_sub_type}}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Coordinate System</span>
+                  </th>
+                  <td>{{well.coordinate_system.name}}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Projection</span>
+                  </th>
+                  <td>{{well.projection.name}}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Location Surface Co-ordinates LONGITUDE</span>
+                  </th>
+                  <td>{{well.longtitude}}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Location Surface Co-ordinates LATITUDE</span>
+                  </th>
+                  <td>{{well.latitude}}</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Northing(mN)</span>
+                  </th>
+                  <td>{{well.northing|intcomma|default_if_none:'-' }} mN</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Easting(mE)</span>
+                  </th>
+                  <td>{{well.easting|intcomma|default_if_none:'-' }} mE</td>
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Zone</span>
+                  </th>
+                  {%if well.zone != "None"%}
+                  <td>{{well.zone}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                {% comment %} <tr>
+                  <th>
+                    <span class="font-weight-bold">Water Depth {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.water_depth != "None"%}
+                  <td>{{well.water_depth|default_if_none:'-'|depthunit:well.project.unit}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr> {% endcomment %}
+                {% comment %} Onshore and standalone {% endcomment %}
+                {% if well.environment == 'Onshore'  %} 
+                
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Ground Elevation {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.ground_elevation != "None"%}
+                  <td>{{well.ground_elevation|default:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr> 
+                {% endif %}
+                {% if well.environment == 'Offshore' or well.environment == 'Swamp' %} 
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Water Depth {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.water_depth != "None"%}
+                  <td>{{well.water_depth|default_if_none:'-'|depthunit:well.project.unit}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                {% endif %}
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">AirGap {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.air_gap != "None"%}
+                  <td>{{well.air_gap|depthunit:well.project.unit|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                 
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Wellhead To Datum {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.wellhead_to_datum != "None"%}
+                  <td>{{well.wellhead_to_datum|depthunit:well.project.unit|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                 
+
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">RKB to Wellhead {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.rkb_wellhead != "None"%}
+                  <td>{{well.rkb_wellhead|depthunit:well.project.unit|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">RKB to Datum {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.rkb_datum != "None"%}
+                  <td>{{well.rkb_datum|depthunit:well.project.unit|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+          
+               {% if well.environment == 'Swamp'  %}
+               <tr>
+                <th>
+                  <span class="font-weight-bold">Pad Name</span>
+                </th>
+                {%if well.pad_name != "None"%}
+                <td>{{ well.pad_name|default_if_none:"-" }}
+                {%else%}
+                <td>-</td>
+                {%endif%}
+                </td>
+              </tr>
+               {% endif %}
+
+
+                {% comment %} Onshore and Padtype {% endcomment %}
+                {% if well.environment == 'Onshore' and well.environment_sub_type == 'padtype' %}
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Pad Name</span>
+                  </th>
+                  {%if well.pad_name != "None"%}
+                  <td>{{ well.pad_name|default_if_none:"-" }}
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                  </td>
+                </tr>
+      
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Number of Well Slots in Pad</span>
+                  </th>
+                  {%if well.number_of_well_slots_in_pad != "None"%}
+                  <td>{{well.number_of_well_slots_in_pad|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr> 
+              
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Well Slot No or Name</span>
+                  </th>
+                  {%if well.well_slot_no_or_name != "None"%}
+                  <td>{{well.well_slot_no_or_name|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%} 
+
+
+                </tr>
+                {% endif %} 
+                {% if well.environment == 'Offshore' and well.environment_sub_type == 'platform' %}
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Platform Name</span>
+                  </th>
+                  {%if well.platform_name != "None"%}
+                  <td>{{well.platform_name|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Number of Slots in Platform</span>
+                  </th>
+                  {%if well.number_of_slots_in_platform != "None"%}
+                  <td>{{well.number_of_slots_in_platform|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Slot No</span>
+                  </th>
+                  {%if well.slot_no != "None"%}
+                  <td>{{well.slot_no|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr> 
+
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Slot Latitude</span>
+                  </th>
+                  {%if well.slot_latitude != "None"%}
+                  <td>{{well.slot_latitude|default_if_none:''}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Slot Longitude</span>
+                  </th>
+                  {%if well.slot_longtitude != "None"%}
+                  <td>{{well.slot_longtitude|default_if_none:''}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                {% endif %}
+
+                {% if well.environment == 'Offshore' and well.environment_sub_type == 'subsea' %}
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Cluster Name</span>
+                  </th>
+                  {%if well.cluster_name != "None"%}
+                  <td>{{well.cluster_name|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                {% endif %}
+                {% comment %} {%if well.air_gap != None%} 
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">AirGap {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.air_gap != "None"%}
+                  <td>{{well.air_gap|depthunit:well.project.unit|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                {%endif%} {% endcomment %}
+                {% comment %} {%if well.wellhead_to_datum != None%}
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">Wellhead To Datum {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.wellhead_to_datum != "None"%}
+                  <td>{{well.wellhead_to_datum|depthunit:well.project.unit|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                {%endif%} {% endcomment %}
+                {% comment %} {%if well.rkb_wellhead != None%}
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">RKB to Wellhead {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.rkb_wellhead != "None"%}
+                  <td>{{well.rkb_wellhead|depthunit:well.project.unit|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                {%endif%} {% endcomment %}
+                {% comment %} {%if well.rkb_datum != None%}
+                <tr>
+                  <th>
+                    <span class="font-weight-bold">RKB to Datum {%display_lengthunit request.session.unit%}</span>
+                  </th>
+                  {%if well.rkb_datum != "None"%}
+                  <td>{{well.rkb_datum|depthunit:well.project.unit|default_if_none:'-'}}</td>
+                  {%else%}
+                  <td>-</td>
+                  {%endif%}
+                </tr>
+                {%endif%} {% endcomment %}
+                  <!-- <tr>
+                    <th>
+                    <span class="font-weight-bold">Well Engineer</span>
+                  </th>
+                  <td>
+                        <div class="demo-inline-spacing">
+                          {% for wellengineer in wellengineers%}
+
+                          <div class="badge badge-primary">
+                            <i data-feather="trash" class="mr-25"></i>
+                            <span>{{wellengineer.user.name}}
+                          </span>
+                          </div>
+                          {% endfor %}
+
+                          </div>
+                  </td>
+                </tr> -->
+                <!-- <tr>
+                  <th>
+                    <span class="font-weight-bold">Well Viewers</span>
+                  </th>
+                  <td>
+
+                      <div class="demo-inline-spacing">
+                          {% for welluser in wellusers%}
+
+                          <div class="badge badge-primary">
+                            <i data-feather="trash" class="mr-25"></i>
+                            <span>{{welluser.user.name}}
+                          </span>
+                          </div>
+                          {% endfor %}
+
+                          </div>
+              
+                      
+                  </td>
+                </tr> -->
+              </tbody>
+            </table>
+            <div class="row well-view" id="basic-table">
+              <div class="col-sm-12 p-0">
+                <a onclick="confirmation(event)" class="btn btn-outline-danger  waves-effect detail-button" href="{% url 'wells:delete' well.pk %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+                  <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'wells:edit' well.pk %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                  {% if request.user.licence_type != 'Individual' %}
+                  <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'wells:createwellusers' well.pk %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Add Viewers</span></a>
+                  {% endif %}
+                  <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% include "footer.html" %}
+    </div>
+  </div>
+  <!-- <div class="col-md-2">
+      {% include "userheader.html" %}
+      <div class="col-md-12 warning"></div>
+  </div> -->
+</div>
+</div>
+
+<script>
+var storedArray = JSON.parse(sessionStorage.getItem("items"));
+var well_id='{{well.id}}'
+if(well_id == storedArray[1]){
+    $('.warning').show();
+}else{
+    $('.warning').hide();
+}
+
+</script>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/menuactive.js' %}"></script>
+
+{%endblock%}

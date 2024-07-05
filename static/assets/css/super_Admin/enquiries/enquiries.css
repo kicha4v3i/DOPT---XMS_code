@@ -1,0 +1,19 @@
+/******************** Enquiries 31-07-2023********************/
+.enquiry-table {
+    width: 100% !important;
+}
+
+.enquiry-table th {
+    text-align: center !important;
+}
+/* .enquiry-table th,td {
+    border: 1px solid #dfdfdf !important;
+    padding: 10px !important;
+} */
+.eye-icon-enq {
+    text-align: center;
+}
+.enq-msg p {
+    margin: 0px;
+}
+/******************** Enquiries ********************/

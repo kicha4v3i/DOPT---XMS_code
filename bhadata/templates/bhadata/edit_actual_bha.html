@@ -1,0 +1,516 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section>
+  <div class="row align-items-start">
+    <!--col-2 start-->
+    {% getcountries countries as countries %}
+    {% include 'projectsidemenu.html' %} 
+    <!--col-2 end-->
+    
+    <!--col-8 start-->
+    <div class="col-md-8 p-0  create-pg main-section col-md-10">
+      <div class="create_project_sec scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+        <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+        {% include "projectheader.html" %}
+        <div class="col-12">
+            {% include "welldetails_menu.html" %} 
+        </div>
+        <div class="col-12">
+          <div class="sample-sub-menu">
+            <div class="container">
+              <div class="row menu-button menu-types">
+                <div class="col-md-3">
+                    <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+                        <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+                    </div>
+                </div>
+                <div class="col-md-3 data-drill">
+                  <div class="sub-list drill-data2 {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                      <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                  </div>
+                </div>
+                <div class="col-md-3 data-drill">
+                    <div class="sub-list drill-data {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+                        <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                    </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-12">
+          <form class="form form-horizontal" method="POST" id="bhadataform">
+          {% csrf_token %}
+          <input type="hidden" name="type" id="type" value="edit">
+          <input type="hidden" name="well" id="well" value="{{well_id}}">
+          <input type="hidden" class="unit" name="unit" value="{{request.session.unit}}">
+
+          <div class="container">
+            <div class="row">
+              <!-- <div class="col-3">
+                <h6 class="tit-head-mud">Date</h6>
+              </div>
+              <div class="col-3">
+                <h6 class="tit-head-mud">Time</h6>
+              </div> -->
+              <div class="col-3">
+                <h6 class="tit-head-mud">Depth</h6>
+              </div>
+              <div class="col-3">
+                <h6 class="tit-head-mud">BHA Name</h6>
+              </div>
+              <div class="col-3">
+              </div>
+            </div>
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          {% for bha in data %}
+          <div class="panel panel-default">
+            <div class="panel-heading bottom-spa-pad" role="tab" id="headingOne">
+              <div class="row">
+                <input type="hidden" name="bha_id" class="bha_id" value="{{bha.id}}">
+                <div class="col-3">
+                  <input type="text" class="form-control depth" name="depth" id="depth{{forloop.counter0}}" data-id="{{forloop.counter0}}" value="{{bha.depth}}"><span class="depth_error"></span>
+                </div>
+                <div class="col-3">
+                  <input type="text" class="form-control bhaname" name="bhaname" id="bhaname{{forloop.counter0}}" data-id="{{forloop.counter0}}" value="{{bha.bhaname}}"><span class="bhaname_error"></span>
+                </div>
+                <div class="col-3 padd-expand-top">
+                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{forloop.counter0}}" aria-expanded="true" aria-controls="collapseOne" class="clr-expand expand-btn">
+                    <i class="fa fa-plus-circle plus-icons-expand" aria-hidden="true"></i>Expand
+                  </a>  
+                  <a role="button" class="remove_bha">
+                    <i class="fa fa-minus-circle mins-icons-expand" aria-hidden="true"></i>
+                  </a>  
+                </div>
+              </div>
+            
+            </div>
+            <div id="collapseOne{{forloop.counter0}}" class="panel-collapse collapse in box-bor-bha-line" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body">
+                <table class="table bhadatatable edit-act-bhadt" id="bhadatatable{{forloop.counter0}}">
+                  <thead>
+                    <tr id="header">
+                      <th>Type</th>
+                      <th>BHA Element</th>
+                      <th>OD{%display_diameterunit request.session.unit%}</th>
+                      <th>ID{%display_diameterunit request.session.unit%}</th>
+                      <th>Length({%display_lengthunit request.session.unit%})</th>
+                      <th>Cumulative Length({%display_depthunit request.session.unit%})</th>
+                      <th>Action</th>
+                    </tr>       
+                  </thead>
+                  <tbody>
+                    {% with md=bha.id|getmd:bha %}
+                    {% for bhaelement in bha|getbhaelement:bha %}
+                      <tr>
+                        <td>
+                          <input type="hidden" name="bhaelement_id{{forloop.parentloop.counter0}}" data-id="actual_type_name" class="bhaelement_id" value="{{bhaelement.id}}">
+                          <select class="form-control type_name" data-id="actual_type_name" id="type_name" name="type_name{{forloop.parentloop.counter0}}" placeholder="Type" dataid="{{forloop.parentloop.counter0}}">
+                            <option value="">-- Type --</option>
+                            <option value="Bit" {%if "Bit" == bhaelement.type_name %} selected {%endif%}>Bit</option>
+                            <option value="MWD" {%if "MWD" == bhaelement.type_name %} selected {%endif%}>MWD</option>
+                            <option value="LWD" {%if "LWD" == bhaelement.type_name %} selected {%endif%}>LWD</option>
+                            <option value="Jar" {%if "Jar" == bhaelement.type_name %} selected {%endif%}>Jar</option>
+                            <option value="RSS" {%if "RSS" == bhaelement.type_name %} selected {%endif%}>RSS</option>
+                            <option value="Mud Motor" {%if "Mud Motor" == bhaelement.type_name %} selected {%endif%}>Mud Motor</option>
+                            <option value="Stabilizer" {%if "Stabilizer" == bhaelement.type_name %} selected {%endif%}>Stabilizer</option>
+                            <option value="Drill Collar" {%if "Drill Collar" == bhaelement.type_name %} selected {%endif%}>Drill Collar</option>
+                            <option value="NMDC" {%if "NMDC" == bhaelement.type_name %} selected {%endif%}>NMDC</option>
+                            <option value="Heavy Weight Drill Pipe" {%if "Heavy Weight Drill Pipe" == bhaelement.type_name %} selected {%endif%}>Heavy Weight Drill Pipe</option>
+                            <option value="Drill Pipe" {% if "Drill Pipe" == bhaelement.type_name %} selected {% endif %}>Drill Pipe</option>
+                            <option value="Others" {% if "Others" == element.type_name %} selected {% endif %}>Others</option>
+                          </select>
+                          {% if bhaelement.type_name == "RSS" or bhaelement.type_name == "MWD" or bhaelement.type_name == "LWD" or bhaelement.type_name == "Others" %}
+                          <input type="button" class="empirical_popup_button" value="+" bhaelement_id="{{bhaelement.id}}" dataid="{{forloop.parentloop.counter0}}">
+                          {% endif %}
+                          {% if bhaelement.type_name == "Mud Motor"%}
+                          <input type="button" class="mudmotor_popup_button" value="+" bhaelement_id="{{bhaelement.id}}" dataid="{{forloop.parentloop.counter0}}">
+                          {% endif %}
+                          <input type="button" class="rss_button" value="+" dataid="{{forloop.parentloop.counter0}}"/>
+                          <input type="button" class="mudmotor_button" value="+" dataid="{{forloop.parentloop.counter0}}"/>
+                          <input type="hidden" name="calculation_type" class="calculation_type" value="{{bhaelement.calculation_type}}">
+                          <span class="type_name_error"></span>
+                        </td>
+                        <td><input type="text" data-id="actual_element" id="element" class="form-control element" name="element{{forloop.parentloop.counter0}}" placeholder="BHA Element" value="{{bhaelement.element}}"><span class="element_error"></span></td>
+                        <td><input type="number" data-id="actual_od" step="any" id="od" class="form-control od" name="od{{forloop.parentloop.counter0}}" placeholder="OD" dataid="{{forloop.parentloop.counter0}}" value="{{bhaelement.od}}"><span class="od_error"></span></td>
+                        <td>
+                          <input type="hidden" id="database_od" class="form-control database_od" name="database_od" value="">
+                          <input type="hidden" id="weight" class="form-control coll_weight" name="weight{{forloop.parentloop.counter0}}" placeholder="Weight" value="{{bhaelement.weight|default_if_none:''}}" >
+                          <input type="hidden"  id="pipe_type" class="form-control pipe_type" name="pipe_type{{forloop.parentloop.counter0}}" placeholder="Pipe Type" value="{{bhaelement.pipe_type|default_if_none:''}}">
+                          <input type="hidden"  id="connection_type" class="form-control connection_type" name="connection_type{{forloop.parentloop.counter0}}" value="{{bhaelement.connection_type|default_if_none:''}}">
+                          <input type="hidden"  id="tool_od" class="form-control tool_od" name="tool_od{{forloop.parentloop.counter0}}" value="{{bhaelement.tool_od|default_if_none:''}}">
+                          <input type="hidden"  id="tool_id" class="form-control tool_id" name="tool_id{{forloop.parentloop.counter0}}" value="{{bhaelement.tool_id|default_if_none:''}}">
+                          <input type="hidden"  id="classtype" class="form-control classtype" name="classtype{{forloop.parentloop.counter0}}" value="{{bhaelement.class_element|default_if_none:''}}">
+                          <input type="hidden"  id="grade" class="form-control grade" name="grade{{forloop.parentloop.counter0}}" value="{{bhaelement.grade|default_if_none:''}}">
+                          <input type="hidden"  id="onejoint_length" class="form-control onejoint_length" name="onejoint_length{{forloop.parentloop.counter0}}" value="{{bhaelement.onejoint_length|default_if_none:''}}">
+                          <input type="hidden"  id="box_tj_length" class="form-control box_tj_length" name="box_tj_length{{forloop.parentloop.counter0}}" value="{{bhaelement.box_tj_length|default_if_none:''}}">
+                          <input type="hidden"  id="pin_tj_length" class="form-control pin_tj_length" name="pin_tj_length{{forloop.parentloop.counter0}}" value="{{bhaelement.pin_tj_length|default_if_none:''}}">
+                          {% if bhaelement.identity == '' %}
+                          <input type="hidden" step="any" id="identity" class="form-control identity" name="identity{{forloop.parentloop.counter0}}" placeholder="ID" value="{{bhaelement.identity}}">
+                          {%else%}
+                          <input type="number" step="any" id="identity" class="form-control identity" name="identity{{forloop.parentloop.counter0}}" placeholder="ID" value="{{bhaelement.identity}}"data-id="actual_identity"><span class="identity_error"></span>
+                          {% endif %}
+                        </td>
+                        <td>
+                          <input type="number" step="any" data-id="actual_length" id="length" class="form-control actual_length" name="length{{forloop.parentloop.counter0}}" placeholder="Length" dataid="{{forloop.parentloop.counter0}}" value="{{bhaelement.length}}">
+                          <span class="length_error"></span>
+                        </td>
+                        <td>
+                          <input type="hidden" class="form-control measured_depth" value="{{md}}">
+                          <input type="number" step="any" data-id="actual_length_onejoint" id="length_onejoint" class="form-control cumulative-length" name="length_onejoint{{forloop.parentloop.counter0}}" placeholder="Cumulative Length" value="{{bhaelement.length_onejoint}}">
+                          <span class="length_onejoint_error"></span>
+                        </td>
+                        <td class="same-line-bha-btn">
+                          <button type="button" name="add" class="addbhadatarows iconaction plus-btn-no-bor" dataid="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                          <button type="button" name="remove"  class="deletebhadatarow iconaction plus-btn-no-bor" dataid="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                        </td>
+                      </tr>
+                    {%endfor%}
+                    {% endwith %}
+                    <tr id="bhadatarow1" style="display:none">
+                      <td>
+                        <input type="hidden" name="bhaelement_id" class="bhaelement_id">
+                        <select class="form-control type_name" id="type_name" data-id="actual_type_name" name="type_name" placeholder="Type">
+                          <option value="">-- Type --</option>
+                          <option value="Bit" >Bit</option>
+                          <option value="MWD" >MWD</option>
+                          <option value="LWD" >LWD</option>
+                          <option value="jar" >jar</option>
+                          <option value="RSS" >RSS</option>
+                          <option value="Mud Motor" >Mud Motor</option>
+                          <option value="Stabilizer" >Stabilizer</option>
+                          <option value="Drill Collar" >Drill Collar</option>
+                          <option value="NMDC" >NMDC</option>
+                          <option value="Heavy Weight Drill Pipe" >Heavy Weight Drill Pipe</option>
+                          <option value="Drill Pipe" >Drill Pipe</option>
+                          <option value="Others" >Others</option>
+                        </select>
+                        <input type="button" class="rss_button" value="+"/>
+                        <input type="button" class="mudmotor_button" value="+"/>
+                        <span class="type_name_error"></span>
+                        <!-- <input type="text" id="type_name" class="form-control" name="type_name" placeholder="Type"> -->
+                      </td>
+                      <!-- <td><input type="button" class="rss_button" value="+"/></td>    -->
+                      <td><input type="text" id="element" data-id="actual_element" class="form-control" name="element" placeholder="BHA Element"><span class="element_error"></span></td>
+                      <td><input type="number" step="any" id="od" class="form-control od" name="od" placeholder="OD" data-id="actual_od" dataid="{{forloop.parentloop.counter0}}"><span class="od_error"></span></td>
+                      <!-- <td><input type="hidden" step="any" id="weight" class="form-control coll_weight" name="weight" placeholder="Weight" ></td>
+                      <td><input type="hidden" step="any" id="pipe_type" class="form-control pipe_type" name="pipe_type" placeholder="Pipe Type" ></td>
+                      <td><input type="hidden" step="any" id="connection_type" class="form-control connection_type" name="connection_type" ></td>
+                      <td><input type="hidden" step="any" id="tool_od" class="form-control tool_od" name="tool_od"  ></td> -->
+                      <td>
+                        <input type="hidden" id="database_od" class="form-control database_od" name="database_od" value="">
+                        <input type="hidden" id="weight" class="form-control coll_weight" name="weight" placeholder="Weight" value="" >
+                        <input type="hidden"  id="pipe_type" class="form-control pipe_type" name="pipe_type" placeholder="Pipe Type" >
+                        <input type="hidden"  id="connection_type" class="form-control connection_type" name="connection_type" >
+                        <input type="hidden"  id="tool_od" class="form-control tool_od" name="tool_od"  >
+                        <input type="hidden"  id="tool_id" class="form-control tool_id" name="tool_id"  >
+                        <input type="hidden"  id="classtype" class="form-control classtype" name="classtype"  >
+                        <input type="hidden"  id="grade" class="form-control grade" name="grade">
+                        <input type="hidden"  id="onejoint_length" class="form-control onejoint_length" name="onejoint_length">
+                        <input type="hidden"  id="box_tj_length" class="form-control box_tj_length" name="box_tj_length">
+                        <input type="hidden"  id="pin_tj_length" class="form-control pin_tj_length" name="pin_tj_length">
+                        <input type="number" step="any" id="identity" class="form-control identity" name="identity" placeholder="ID" data-id="actual_identity"><span class="identity_error"></span>
+                      </td>
+                      <td><input type="number" step="any" id="length" class="form-control length" name="length" placeholder="Length" data-id="actual_length"><span class="length_error"></span></td>
+                      <td><input type="number" step="any" id="length_onejoint" class="form-control cumulative-length" name="length_onejoint" data-id="actual_length_onejoint" placeholder="Length One Joint" ><span class="length_onejoint_error"></span></td>
+                      <td class="sme-line-box">
+                        <button type="button" name="add" class="addbhadatarows iconaction box-remove-line"><i class="fa fa-plus"></i></button>
+                        <button type="button" name="remove" class="deletebhadatarow iconaction box-remove-line"><i class="fa fa-trash"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {%endfor%}
+          </div>
+          <div class="row">
+            <div class="col-3"></div>
+            <div class="col-3"></div>
+            <div class="col-3"></div>
+            <div class="col-3 expand-mid-btn">
+              <a role="button" id="add_bha" class="clr-expand">
+                <i class="fa fa-plus-circle plus-icons-expand" aria-hidden="true"></i>Add
+              </a>  
+            </div>
+          </div>
+          <div id="flowratemodal"></div>
+          <div id="mud_motor"></div>
+          <input type="hidden" name="test" value="test">
+          <div class="row">
+            <div class="col-9">
+            <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button submit-exp actual_bha_submit">Submit</button>
+            </div>
+            <div class="col-3">
+            <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+            </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </form>
+      </div>
+      </div>
+    </div>
+    <!--col-8 end-->
+
+
+        <!--modal popup code start-->
+    <!--drill collars code start -->
+    <div class="modal fade myModal1234" id="myModal1234">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Drill Collars11</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <!-- Modal body -->
+          <table class="table">
+            <thead class="text-center">
+              <tr>      
+                  <h4 class="modal-heading">Select Values</h4>
+              </tr>
+            </thead>
+            <tr>
+              <th id='nominal_head'>Nominal OD</th>
+              <th id='weight_head'style="display: none;">Nominal weight</th>
+              <th id='pipe_head' style="display: none;">Pipe Type</th>
+              <th id='connect_head' style="display: none;">Connection Type</th>
+              <th id='tj_head' style="display: none;">Tool Joint OD</th>
+              <th id='one_joint_head' style="display: none;">One Joint Length</th>
+            </tr>
+            <tbody>
+              <tr>
+                <td>
+                  <ul class="nominal_od_val pop-up-hand" >
+                    {% for drillcollar in drillcollars %}
+                    <li databasevalue="{{drillcollar.databasevalue}}" nominal_val="{{drillcollar.normal_od}}">{{drillcollar.normal_od}}</li>
+                    {% endfor %}
+                  </ul>
+                </td>
+                <td>
+                  <ul class='weight_val pop-up-hand'>
+                  </ul>
+                </td>
+                <td>
+                  <ul class='pipetype_val pop-up-hand'></ul>
+                </td>
+                <td>
+                  <ul class='connectiontype_val pop-up-hand'></ul>
+                </td>
+                <td>
+                  <ul class='tool_od_val pop-up-hand'></ul>
+                </td>
+                <td>
+                  <input type="text" class="form-control one_joint_length" style="display: none;" id="one_joint_length" name="one_joint_length" placeholder="One Joint length"> 
+              </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="modal-close" >Close</button>
+          </div> 
+        </div>
+      </div>
+    </div>
+    <!--drill collars code end-->
+   
+    <!-- DrillPipe modal start  -->
+    <div class="modal fade drillpipebha" id="drillpipebha">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">DrillPipe</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table class="table">
+                <!-- <thead class="text-center"> -->
+                  <tr>      
+                      <h4 class="modal-heading">Select Values</h4>
+                  </tr>
+                <!-- </thead> -->
+                <thead class="drill-pipe-popup">
+                <tr>
+                  <th id="pipe_nominal_head">Nominal OD</th>
+                  <th id="pipe_weight_head" style="display: none;">Nominal Weight</th>
+                  <th id="pipe_grade_head" style="display: none;">Grade</th>
+                  <th id="pipe_type_head" style="display: none;">Tool Joint Type</th>
+                  <th id="pipe_od_head" style="display: none;">Tool Joint OD</th>
+                  <th id="pipe_class_head" style="display: none;">Class</th>
+                  <th id="pipe_joint_head" style="display: none;">One Joint Length</th>
+                </tr>
+              </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <ul class="drillpipe_nod pop-up-hand">
+                        {% for drillpipe in drillpipes %}
+                        <li databasevalue="{{drillpipe.databasevalue}}" drillpipe_nod="{{drillpipe.normal_od}}">{{drillpipe.normal_od}}</li>
+                        {% endfor %}
+      
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="drillpipe_weight pop-up-hand">
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="drillpipe_grade pop-up-hand">
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="drillpipe_jointtype pop-up-hand">
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="drillpipe_jointod pop-up-hand">
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="drillpipe_class pop-up-hand" >
+                        <li drillpipe_class="Class1">Class1</li>
+                        <li drillpipe_class="Premium">Premium</li>
+                        <li drillpipe_class="Class2">Class2</li>
+                      </ul>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control drillpipe_onejoint_length" id="drillpipe_onejoint_length" name="drillpipe_onejoint_length" placeholder="One Joint length" style="display: none;">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="modal-close" >Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- DrillPipe modal end  -->
+
+    <!-- HWDP model start -->
+    <div class="modal fade drillpipehwdp" id="drillpipehwdp">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">HWDP</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table class="table">
+                <!-- <thead class="text-center"> -->
+                  <tr>      
+                    <h4 class="modal-heading">Select Values</h4>
+                  </tr>
+                <!-- </thead> -->
+                <thead class="new-popup">
+                <tr>
+                  <th>Nominal OD</th>
+                  <th id='hwdp_weight_head' style="display: none;">Nominal Weight</th>
+                  <th id='hwdp_type_head' style="display: none;">Tool Joint Type</th>
+                  <th id='hwdp_jointod_head' style="display: none;">Tool Joint OD</th>
+                  <th id='hwdp_class_head' style="display: none;">Class</th>
+                  <th id='hwdp_one_joint_head' style="display: none;">One Joint Length</th>
+                </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <ul class="hwdp_nod pop-up-hand">
+                        {% for drillpipeshwdps in drillpipeshwdp %}
+                        <li databasevalue="{{drillpipeshwdps.databasevalue}}" hwdp_nominal="{{drillpipeshwdps.nominal_od}}">{{drillpipeshwdps.nominal_od}}</li>
+                        {% endfor %}
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="hwdp_weight pop-up-hand">
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="hwdp_jointtype pop-up-hand">
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="hwdp_jointod pop-up-hand">
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="hwdp_class pop-up-hand">
+                        <li classtype="Class1">Class1</li>
+                      </ul>
+                    </td>
+                    <td>
+                      <input type="text" name="hwdp_one_joint_length" style="display: none;" class="form-control hwdp_one_joint_length" id="hwdp_one_joint_length" placeholder="One Joint length">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="modal-close" >Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- hwdp model end -->
+
+    <!--modal popup code end-->
+
+    <!--col-2 start-->
+    <div class="col-2">
+      {% include "userheader.html" %}
+      <h4 class="model-caption">Well Phases</h4>
+      {% for wellphase in wellphases %}
+      <div class="row">
+        <div class="col-12">
+          <nav class="navbar bg-white phase-sidemenu">
+            <ul class="nav navbar-nav">
+              <li class="nav-item phs-list {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                <!-- <ul class="myDIV nav navbar-nav custom_active_list pressure-sidemenu  {% if wellphase_id == wellphase.id %}show{% endif %}">
+                  {% getsectionbywellphase_id wellphase.id as sections %}
+                  {% for section in sections %}
+                  <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="wellphase_sidemenu remove-line">{{section.section_name | depthunit:request.session.unit}}</li>
+                  {% endfor %}
+              </ul> -->
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="col-md-12 warning"></div>
+    </div>
+    <!--col-2 end-->
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+  var well_id='{{well_id}}';
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/bhadata.js' %}"></script>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+
+
+{%endblock%}
+      
+

@@ -1,0 +1,311 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section>
+  <div class="row align-items-start">
+    <!--col-2 start-->
+    {% getcountries countries as countries %}
+    {% include 'projectsidemenu.html' %} 
+    <!--col-2 end-->
+    
+    <!--col-8 start-->
+    <div class="col-md-8 p-0  create-pg main-section col-md-10">
+      <div class="create_project_sec scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+        <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+        {% include "projectheader.html" %}
+        <div class="col-12">
+            {% include "welldetails_menu.html" %} 
+        </div>
+        <div class="col-12">
+          <div class="sample-sub-menu">
+            <div class="container">
+              <div class="row menu-button menu-types">
+                <div class="col-md-3">
+                    <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+                        <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+                    </div>
+                </div>
+                <div class="col-md-3 data-drill">
+                  <div class="sub-list drill-data2 {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                      <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                  </div>
+                </div>
+                <div class="col-md-3 data-drill">
+                    <div class="sub-list drill-data {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+                        <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                    </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="container">
+          <div class="row">
+            <div class="col-3 bot-border-line">
+              <h6 class="list-head-exp">Depth</h6>
+            </div>
+            <div class="col-3 bot-border-line">
+              <h6 class="list-head-exp"> BHA Name</h6>
+            </div>
+            <div class="col-3 bot-border-line">
+            </div>
+          </div>
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          {% for bha in data %}
+          <div class="panel panel-default">
+            <div class="panel-heading lin-boto-space" role="tab" id="headingOne">
+              <div class="row">
+
+                <div class="col-3 bot-border-line2">
+                  <div><p class="data-dril-val-cen">{{bha.depth}}</p></div>
+                </div>
+                <div class="col-3 bot-border-line2">
+                  <div><p class="data-dril-val-cen">{{bha.bhaname}}</p></div>
+                </div>
+                <div class="col-3 bot-border-line2">
+                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{forloop.counter0}}" aria-expanded="true" aria-controls="collapseOne" class="clr-expand">
+                    <i class="fa fa-plus-circle plus-icons-expand" aria-hidden="true"></i>Expand
+                  </a>  
+                </div>
+              </div>
+            
+            </div>
+            <div id="collapseOne{{forloop.counter0}}" class="panel-collapse collapse in new-border-box-deg" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body">
+                <table class="table bhadatatable head-center-tle" id="bhadatatable{{forloop.counter0}}">
+                  <thead>
+                    <tr id="header">
+                      <th>Type</th>
+                      <th>BHA Element</th>
+                      <th>OD{%display_diameterunit request.session.unit%}</th>
+                      <th>ID{%display_diameterunit request.session.unit%}</th>
+                      <th>Length({%display_lengthunit request.session.unit%})</th>
+                      <th>Cumulative Length({%display_depthunit request.session.unit%})</th>
+                      <th>Action</th>
+                    </tr>       
+                  </thead>
+                  <tbody>
+                    {% for bhaelement in bha|getbhaelement:bha %}
+                      <tr>
+                        <td>{{bhaelement.type_name}}</td>
+                        <td>{{bhaelement.element}}</td>
+                        <td>{{bhaelement.od}}</td>
+                        <td>{{bhaelement.identity}}</td>
+                        <td>{{bhaelement.length}}</td>
+                        <td>{{bhaelement.length_onejoint}}</td>
+                        <td>
+                          {% if bhaelement.type_name == 'RSS' or bhaelement.type_name == 'MWD' or  bhaelement.type_name == 'LWD' or bhaelement.type_name == 'Others' %}
+                          <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#details{{bhaelement.id}}">Details</button>
+                          {% endif %}
+                          {%if bhaelement.type_name == 'Mud Motor'%}
+                          <button type="button" class="btn btn-info mud_motor_button" data-toggle="collapse" data-target="#details{{bhaelement.id}}">Details</button>
+                          {% endif %}
+                        </td>
+                      </tr>
+                      {% if bhaelement.type_name == 'RSS' or bhaelement.type_name == 'MWD' or  bhaelement.type_name == 'LWD' or bhaelement.type_name == 'Others' %} 
+                      <tr>
+                        <td colspan="7">
+                          <div id="details{{bhaelement.id}}" class="collapse flex_table rss-value">
+                            {% getflowtestspecifications bhaelement.id bhaelement.bhadata_id as specification %}
+                            <table class="rss-tbl">
+                              <tr>
+                                <td colspan="3">
+                                  <tr>
+                                    <th>Name:</th>
+                                    <td>{{specification.name}}</td>
+                                  </tr>
+                                  <tr>
+                                    <th>OD {%display_diameterunit request.session.unit%}:</th>
+                                    <td>{{specification.specification_od}} in</td>
+                                  </tr>
+                                  <tr>
+                                    <th>ID {%display_diameterunit request.session.unit%}:</th>
+                                    <td>{{specification.specification_id}} in</td>
+                                  </tr>
+                                  <tr>
+                                    <th>Length {%display_depthunit request.session.unit%}:</th>
+                                    <td>{{specification.specification_length}} ft</td>
+                                  </tr>
+                                  <tr>
+                                    <th>Minimum Flowrate {%display_flowrateunit request.session.unit%}:</th>
+                                    <td>{{specification.minimum_flowrate}} gpm</td>
+                                  </tr>
+                                  <tr>
+                                    <th>Maximum Flowrate {%display_flowrateunit request.session.unit%}:</th>
+                                    <td>{{specification.maximum_flowrate}} gpm</td>
+                                  </tr>
+                                </td>
+                              </tr>
+                            </table>
+                            {% if bhaelement.calculation_type == 1 %}
+                              <table class="rss-tbl">
+                                <tr>
+                                  {% getflowtestpressuredrop bhaelement.id bhaelement.bhadata_id as pressuredrop %}
+                                  <tr>
+                                    <th>Flowrate</th>
+                                    <th>Pressure Drop</th>
+                                  </tr>
+                                  {% for pressure in pressuredrop %}
+                                  <tr>
+                                    <td>{{pressure.flowrate}} gpm</td>
+                                    <td>{{pressure.pressure_drop}} psi</td>
+                                  </tr>
+                                  {%endfor%}
+                                </tr>
+                              </table >
+                            {%endif%}
+                            {% if bhaelement.calculation_type == 2 %}
+                            <table class="rss-tbl">
+                              <tr>
+                                <td>
+                                  {% getempirical bhaelement.id bhaelement.bhadata_id as empirical %}
+                                  {{ empirical.formula_python_text|safe }}
+                                </td>
+                              </tr>
+                            </table>
+                          {%endif%}
+                          </div>
+                        </td>
+                      </tr>
+                      {%endif%}
+                      {% if bhaelement.type_name == 'Mud Motor'%}
+                      <tr>
+                      <td colspan="7">
+                        <div id="details{{bhaelement.id}}" class=" collapse flex_table rss-value">
+                          {% getflowtestspecifications bhaelement.id bhaelement.bhadata_id as specification %}
+                          <table class="rss-tbl">
+                            <tr>
+                              <td>
+                                <tr>
+                                  <th>Name:</th>
+                                  <td>{{specification.name}}</td>
+                                </tr>
+                                <tr>
+                                  <th>Maximum Flowrate {%display_flowrateunit request.session.unit%}:</th>
+                                  <td>{{specification.maximum_flowrate}} gpm</td>
+                                </tr>
+                                <tr>
+                                  <th>Minimum Flowrate {%display_flowrateunit request.session.unit%}:</th>
+                                  <td>{{specification.minimum_flowrate}} gpm</td>
+                                </tr>
+                                <tr>
+                                  <th>Maximum RPM:</th>
+                                  <td>{{specification.maximum_rpm}} rpm</td>
+                                </tr>
+                                <tr>
+                                  <th>Minimum RPM:</th>
+                                  <td>{{specification.minimum_rpm}} rpm</td>
+                                </tr>
+                                <tr>
+                                  <th>No Load Differential Pressure {%display_pressureunit request.session.unit%}:</th>
+                                  <td>{{specification.no_load_diff_pressure}} psi</td>
+                                </tr>
+                                <tr>
+                                  <th>Maximum DP {%display_pressureunit request.session.unit%}:</th>
+                                  <td>{{specification.max_dp}} psi</td>
+                                </tr>
+                                <tr>
+                                  <th>Recom DP {%display_pressureunit request.session.unit%}:</th>
+                                  <td>{{specification.recom_dp}} psi</td>
+                                </tr>
+                                <tr>
+                                  <th>Max WOB:</th>
+                                  <td>{{specification.max_wob}} lbf</td>
+                                </tr>
+                              </td>
+                            </tr>
+                          </table> 
+                          <table class="rss-tbl">
+                            {% getdiff_pressure bhaelement.id bhaelement.bhadata_id as differential_pressure %}
+                            <tr>
+                              <th>Torque</th>
+                              <th>Differential Pressure</th>
+                            </tr>
+                            {% for pressure in differential_pressure %}
+                            <tr>
+                              <td>{{pressure.torque}} ft-lbf</td>
+                              <td>{{pressure.diff_pressure}} psi</td>
+                            </tr>
+                            {%endfor%}
+                          </table>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endif %}
+
+                    {%endfor%}
+
+                  
+        
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {%endfor%}
+          </div>
+          <div class="row">
+            <div class="col-9">
+            <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'bhadata:editbha_actual'%}?wellphase={{wellphase_id}}"><span class="action-edit-well"><i class="feather icon-edit"></i>Edit</a>
+              <a onclick="confirmation(event)" class="btn btn-outline-primary ml-1 waves-effect delete" href="{% url 'bhadata:deletebha_actual' wellphase_id %}"> <span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>
+              
+            </div>
+            <div class="col-3">
+            <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+            </div>
+          </div>
+
+        </div>
+        {% include "footer.html" %}
+      </div>
+      </div>
+    </div>
+    <!--col-8 end-->
+
+    <!--col-2 start-->
+    <div class="col-2">
+      {% include "userheader.html" %}
+      <h4 class="model-caption">Well Phases</h4>
+      {% for wellphase in wellphases %}
+      <div class="row">
+        <div class="col-12">
+          <nav class="navbar bg-white phase-sidemenu">
+            <ul class="nav navbar-nav">
+              <li class="nav-item phs-list {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                <!-- <ul class="myDIV nav navbar-nav custom_active_list pressure-sidemenu  {% if wellphase_id == wellphase.id %}show{% endif %}">
+                  {% getsectionbywellphase_id wellphase.id as sections %}
+                  {% for section in sections %}
+                  <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="wellphase_sidemenu remove-line">{{section.section_name | depthunit:request.session.unit}}</li>
+                  {% endfor %}
+              </ul> -->
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="col-md-12 warning"></div>
+    </div>
+    <!--col-2 end-->
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+  var well_id='{{well_id}}';
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/bhadata.js' %}"></script>
+
+
+{%endblock%}
+      
+

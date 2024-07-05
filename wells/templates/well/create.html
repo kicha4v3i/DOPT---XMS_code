@@ -1,0 +1,745 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load humanize %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/project/addwell/create_well.css' %}">
+<section id="data-list-view" class="data-list-view-header">
+  <form class="form form-horizontal" method="POST" name="wellcreateform" id="wellcreateform">
+    <div class="container-fluid">
+    <div class="row align-items-start">
+     <div class="col-md-12  create-pg"> 
+        <div class="create_project_sec scroll-line">
+        {% include "header.html" %}
+        <div class="row">
+        <div class="col-md-12">
+        <div class="card ">
+        <div class="row">
+        <div class="col-md-9">
+          <div class="card-header pl-0 m-0">
+            <h4 class="card-title project-title">
+              <a class="bck-button" href="{{request.META.HTTP_REFERER}}"><img class="img-size" src="../../../static/images/left.png"></a>
+              Create a New Well </h4>
+          </div>
+          <div class="card-body">
+           
+                {% csrf_token %}
+              <div class="row common-row-space">
+                <div class="col-8 pl-0">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="email-id">Project Name<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-sm-9">
+                      <select class="form-control proj-edit-inp"  name="project" id="projectwell">
+                          <option value="">-- Project name --</option>
+                          {% for project in projects %}
+                          <option value="{{project.id}}"  {% if project.id == project_id %} selected {% endif %}>{{project.project_name}}</option>
+                          {% endfor %}
+                      </select></div>
+
+                  </div>
+                </div>
+                
+                <div class="col-8 pl-0">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-block-name" for="block">Block Name<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-sm-9">
+                      <select class="form-control proj-edit-inp"  name="block" id="block">
+                          <option value="">-- Block name --</option>
+                          {% for block in blocks %}
+                            <option value="{{block.id}}">{{block.block_name}}</option>
+                          {% endfor %}
+                     
+                      </select></div>
+
+                  </div>
+                </div>
+
+                <div class="col-8 pl-0">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-field-name" for="field">Field Name<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-sm-9">
+                      <select class="form-control proj-edit-inp"  name="field" id="field">
+                          <option value="">-- Field name --</option>
+                        
+                      </select></div>
+
+                  </div>
+                </div>
+
+                <div class="row well_fields">
+                <input type='hidden' name="unit" id="unit">
+                <div class="col-8">
+                  <div class="form-group row text-center default_units">  
+                        
+                        <input type="radio" id="plan" class="well_types" name="well_type" value="PLAN">
+                        <label for="plan">PLAN</label>
+                        <input type="radio" id="actual" class="well_types" name="well_type" value="ACTUAL">
+                        <label for="actual">ACTUAL</label>
+                        <input type="radio" id="offset" class="well_types" name="well_type" value="OFFSET">
+                        <label for="offset" >OFFSET</label>
+                </div>
+                  
+                </div>
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="well-name">Well Name<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-sm-6 col-form-label">
+                      <input type="text" id="well-name" class="form-control proj-edit-inp" name="name" placeholder="Well Name">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 listplanwell">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="plan_well_list">Plan Well List<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-sm-9">                 
+                        <select class="form-control proj-edit-inp" id="plan_well_list" name="plan_well_list">
+                          <option value="">-- Plan Well List --</option>
+                          {% for planwell in planwells %}   
+                            <option value="{{ planwell.id }}">{{ planwell.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                  </div>
+                </div>
+                
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="email-id">Coordinate System<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-control proj-edit-inp"  name="coordinate_system" id="coordinate_system">
+                            <option value="">-- Coordinate System --</option>
+                            {% for coordinate_system in coordinate_systems %}
+                            <option value="{{coordinate_system.id}}">{{coordinate_system.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                  </div>
+                </div>
+               
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="email-id">Datum<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-6">
+                        <select class="form-control proj-edit-inp" id="datum" name="datum">
+                            <option value="">-- Datum --</option>
+                            <option value="MSL">MSL</option>
+                            <option value="Ground Level" >Ground Level</option>
+                        </select></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="email-id">Projection<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-control projection proj-edit-inp" id="projection" name="projection">
+                            <option value="">-- Projection --</option>
+                            {% for projection in projections %}
+                            <option value="{{projection.id}}">{{projection.name}}</option>
+
+                            {% endfor %}
+
+                        </select></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="email-id">Environment<span style="color: red;">*</span></label>
+                    </div>
+                  </div>
+                    <div class="col-12 pl-0">
+                      <div class="form-group row text-center default_units">                          
+                            <input type="radio" id="Onshore" name="environment" class="environment" value="Onshore">
+                            <label for="Onshore" >Onshore</label>
+                            <input type="radio" id="Offshore" name="environment" class="environment" value="Offshore">
+                            <label for="Offshore">Offshore</label>
+                            <input type="radio" id="Swamp" name="environment" class="environment" value="Swamp">
+                            <label for="Swamp">Swamp</label>
+                            <span class="environments_error"></span>
+                    </div>
+                      
+                    </div>
+                    <!-- <div class="col-sm-9">
+                        <select class="form-control " id="environment" name="environment">
+                            <option value="">-- Environment --</option>
+                            <option value="Onshore" >Onshore</option>
+                            <option value="Offshore" >Offshore</option>
+                        </select></div> -->
+                  </div>
+                  <div class="col-6">
+                    <div class="col-12 p-0">
+                      <div class="col-sm-12 p-0 col-form-label">
+                        <label class="project-edit-name" for="email-id">Well Coordinates<span style="color: red;">*</span></label>
+                      </div>
+                      <div class="form-group row top-space-wellcoor">
+                        
+                        <div class="col-sm-3 col-form-label">
+                          <label class="project-edit-name-well" for="longtitude">LONGITUDE </label>
+                        </div>
+                        <div class="col-sm-9">
+                          <div class="cords_text_box">
+                            <!-- <input type="coords" id="longtitude" class="form-control longtitude" name="longtitude" placeholder="Longtitude"> -->
+                            <div class="coords-container  ">
+                              <input type="number" step="any" data-coords-type="degrees" name="longtitude_coords_degrees" class="coords-input coords-degrees"><span class="coords-indicator coords-degrees">°</span>
+                              <input type="number" step="any" data-coords-type="minutes" name="longtitude_coords_minutes" class="coords-input coords-minutes"><span class="coords-indicator coords-minutes">'</span>
+                              <input type="number" step="any" data-coords-type="seconds" name="longtitude_coords_seconds" class="coords-input coords-seconds"><span class="coords-indicator coords-seconds">"</span>
+                              <select name="longtitude_compass" class="coords-select coords-compass" data-coords-type="compass"><option value=""></option><option value="E">E</option><option value="W">W</option></select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 p-0">
+                      <div class="form-group row">
+                        
+                        <div class="col-sm-3 col-form-label">
+                          <label class="project-edit-name-well" for="latitude">LATITUDE</label>
+                        </div>
+                        <div class="col-sm-9">
+                          <!-- <input type="text" id="latitude" class="form-control latitude" name="latitude" placeholder="Latitude"> -->
+                          <div class="coords-container  ">
+                            <input type="number" step="any" data-coords-type="degrees" name="latitude_coords_degrees" class="coords-input coords-degrees"><span class="coords-indicator coords-degrees">°</span>
+                            <input type="number" step="any" data-coords-type="minutes" name="latitude_coords_minutes" class="coords-input coords-minutes"><span class="coords-indicator coords-minutes">'</span>
+                            <input type="number" step="any" data-coords-type="seconds" name="latitude_coords_seconds" class="coords-input coords-seconds"><span class="coords-indicator coords-seconds">"</span>
+                            <select name="latitude_compass" class="coords-select coords-compass" data-coords-type="compass"><option value=""></option><option value="N">N</option><option value="S">S</option></select>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                    <div class="col-12 offshore-platform sub-environment-fields">
+                      <div class="form-group row">
+                        <div class="col-sm-3 col-form-label pl-0">
+                          <label class="project-edit-name" for="slot_latitude">Slot Latitude</label>
+                        </div>
+                        <div class="col-sm-9">
+                          <div class="coords-container  ">
+                            <input type="number" step="any" data-coords-type="degrees" name="slot_latitude_coords_degrees" class="coords-input coords-degrees"><span class="coords-indicator coords-degrees">°</span>
+                            <input type="number" step="any" data-coords-type="minutes" name="slot_latitude_coords_minutes" class="coords-input coords-minutes"><span class="coords-indicator coords-minutes">'</span>
+                            <input type="number" step="any" data-coords-type="seconds" name="slot_latitude_coords_seconds" class="coords-input coords-seconds"><span class="coords-indicator coords-seconds">"</span>
+                            <select name="slot_latitude_compass" class="coords-select coords-compass" data-coords-type="compass"><option value=""></option><option value="E">E</option><option value="W">W</option></select>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 offshore-platform sub-environment-fields">
+                      <div class="form-group row">
+                        <div class="col-sm-3 col-form-label pl-0">
+                          <label class="project-edit-name" for="slot_longtitude">Slot Longitude</label>
+                        </div>
+                        <div class="col-sm-9">
+                          <div class="coords-container  ">
+                            <input type="number" step="any" data-coords-type="degrees" name="slot_longtitude_coords_degrees" class="coords-input coords-degrees"><span class="coords-indicator coords-degrees">°</span>
+                            <input type="number" step="any" data-coords-type="minutes" name="slot_longtitude_coords_minutes" class="coords-input coords-minutes"><span class="coords-indicator coords-minutes">'</span>
+                            <input type="number" step="any" data-coords-type="seconds" name="slot_longtitude_coords_seconds" class="coords-input coords-seconds"><span class="coords-indicator coords-seconds">"</span>
+                            <select name="slot_longtitude_compass" class="coords-select coords-compass" data-coords-type="compass"><option value=""></option><option value="N">N</option><option value="S">S</option></select>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="form-group row" id="zone">
+                        <div class="col-sm-3 col-form-label">
+                          <label class="project-edit-name" for="zone">Zone</label>
+                        </div>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" name="zone" placeholder="Zone">
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="col-12 north-same-line">   
+                          <div class="col-sm-3 pl-0">
+                            <input type="number" step="any" id="northing"  class="form-control northing" name="northing" placeholder="Northing">
+                          </div>
+                          <div class="col-sm-3">
+                            <input type="number" step="any" id="easting"  class="form-control easting" name="easting" placeholder="Easting">
+                          </div>
+                      </div>
+                      <!-- <div class="col-12">
+                          <div class="col-sm-3">
+                            <input type="text" id="easting"  class="form-control easting" name="easting" placeholder="Easting">
+                          </div>
+                      </div> -->
+                  </div>
+                  </div>
+                  
+
+                  <input type="hidden" class="form-control" id="environment_sub_type" name="environment_sub_type"></input>
+                  <!-- <div class="col-12 welltype">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="email-id">Well Type</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="welltype" name="well_type">
+                            <option value="">-- Well Type --</option>
+                            <option value="PLAN" >PLAN</option>
+                            <option value="ACTUAL" >ACTUAL</option>
+                            <option value="OFFSET" >OFFSET</option>
+                        </select></div>
+                  </div>
+                </div> -->
+                  <!-- <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="email-id">Environment Sub Type</label>
+                      </div>
+                      <div class="col-sm-9">
+                          <select class="form-control" id="environment_sub_type" name="environment_sub_type">
+                              <option value="">-- Environment Sub Type --</option>
+                          </select></div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-12">
+                    <div class="form-group row" id="zone">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="zone">Zone</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" name="zone" placeholder="Zone">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 onshore environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="ground_elevation">Ground Elevation {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="ground_elevation" class="form-control" name="ground_elevation" placeholder="Ground Elevation">
+                      </div>
+                    </div>
+                  </div>
+
+                <div class="col-12 offshore environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="water_depth">Water Depth{%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="water_depth" class="form-control" name="water_depth" placeholder="Water Depth">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 onshore-pad sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="pad_name">Pad Name</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="pad_name" class="form-control" name="pad_name" placeholder="Pad Name">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 onshore-pad sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="number_of_well_pads">Number of Well Pads</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="number_of_well_pads" class="form-control" name="number_of_well_pads" placeholder="Number of Well Pads">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 onshore-pad sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="number_of_well_slots_in_pad">Number of Well Slots in Pad</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="number_of_well_slots_in_pad" class="form-control" name="number_of_well_slots_in_pad" placeholder="Number of Well Slots in Pad">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 onshore-pad  sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="well_slot_no_or_name">Well Slot No or Name</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="well_slot_no_or_name" class="form-control" name="well_slot_no_or_name" placeholder="Well Slot No or Name">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 offshore-platform offshore-swamp  sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="platform_name">Platform Name</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="platform_name" class="form-control" name="platform_name" placeholder="Platform Name">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 offshore-platform sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="number_of_slots_in_platform">Number of Slots in Platform</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="number_of_slots_in_platform" class="form-control" name="number_of_slots_in_platform" placeholder="Number of Slots in Platform">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 offshore-platform sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="slot_no">Slot No</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="slot_no" class="form-control" name="slot_no" placeholder="Slot No">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 offshore-subsea sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="cluster_name">Cluster Name</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="cluster_name" class="form-control" name="cluster_name" placeholder="Cluster Name">
+                      </div>
+                    </div>
+                  </div>       
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="air_gap" id="airgap" >AirGap {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-3">
+                        <input type="number" step="any" id="air_gap" class="form-control" name="air_gap" placeholder="Air Gap">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="wellhead_to_datum" id="wellheadtodatum">Wellhead To Datum {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-3">
+                        <input type="number" step="any" id="wellhead_to_datum" class="form-control" name="wellhead_to_datum" placeholder="Wellhead To Datum">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="rkb_wellhead" id="rkbwellhead">RKB to Wellhead {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-3">
+                        <input type="number" step="any" id="rkb_wellhead" class="form-control" name="rkb_wellhead" placeholder="RKB to Wellhead">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="rkb_datum" id="rkbdatum">RKB to Datum {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-3">
+                        <input type="number" step="any" id="rkb_datum" class="form-control" name="rkb_datum" placeholder="RKB to Datum">
+                      </div>
+                    </div>
+                  </div> -->
+
+                  <div class="col-sm-12 offset-sm-9 ml-0 text-center mt-2 mb-2">
+                    <a class="btn pull-right " href=""></a>
+
+                    <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button well_submit">Submit</button>
+                  
+                  <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+                </div>
+            
+          </div>
+        </div>
+        
+        </div>
+          <div>
+       
+      </div>
+    </div>
+    <div class="col-md-3 pr-3 pl-1">
+        {% include "footer.html" %}
+      </div>
+      </div>
+      
+       <div class="col-md-3 pr-3 pl-1">
+
+        
+      <div>
+                <div id="onshore_elements" class="sub_env" style="display: none;">
+                
+                </div>
+          </div>
+       </div>
+     
+  </div>
+</div>
+        {% include "footer.html" %}
+      </div>
+      </div>
+      
+      
+      </div>
+    </div>
+    </form>
+</section>
+    {% endblock %}
+    {% block scripts %}
+    {{block.super}}
+    <script>
+      var length_unit='{%display_lengthunit request.session.unit%}'
+    </script>
+    <script src="{% static 'js/allvalidation.js' %}"></script>
+    <script src="{% static 'js/wells/wells.js' %}"></script>
+    <script>
+      // $("#wellcreateform").validate({
+      //   rules: {
+      //     northing:"required",
+      //     easting:"required"
+          
+      //   },
+      //   messages: {
+      //     northing:"Please enter your Northing",
+      //     easting:"please enter the  Easting"
+          
+      //   }
+      // });
+    
+      // $("#wellcreateform").validate({
+      //   rules: {
+      //     project:"required",
+      //     name:"required",
+      //     well_type:"required",
+      //     datum:"required",
+      //     environment:"required",
+      //     environment_sub_type:"required",
+      //     coordinate_system:"required",
+      //     projection:"required",
+      //     longtitude:"required",
+      //     latitude:"required",
+      //     northing:"required",
+      //     easting:"required",
+      //     zone:"required",
+      //     air_gap:"required",
+      //     wellhead_to_datum:"required",
+      //     rkb_wellhead:"required",
+      //     rkb_datum:"required",
+      //     rig_name:"required",
+      //     rig_contractor:"required",
+      //     rig_type:"required",
+      //     well_engineer:"required"
+      //   },
+      //   messages: {
+      //     project:"Please enter your Project name",
+      //     name:"Please enter your Well Name ",
+      //     well_type:"Please select a Well Type",
+      //     datum:"Please select a Datum",
+      //     environment:"Please select a Environment",
+      //     environment_sub_type:"Please select a Environment Sub Type",
+      //     coordinate_system:"Please select a Coordinate System",
+      //     projection:"Please select a Projection",
+      //     northing:"Please enter your Northing",
+      //     easting:"Please enter your Easting",
+      //     zone:"Please enter your Zone",
+      //     air_gap:"Please enter your AirGap",
+      //     wellhead_to_datum:"Please enter your Wellhead To Datum",
+      //     rkb_wellhead:"Please enter your RKB to Wellhead",
+      //     rkb_datum :"Please enter your RKB to Datum ",
+      //     rig_name:"Please enter your Rig Name",
+      //     rig_contractor:"Please enter your Rig Contractor",
+      //     rig_type:"Please enter your Rig Typee",
+      //     well_engineer:"Please select a Well Engineer",
+      //   }
+      // });
+      $('#projectwell').change(function(){
+        var project_id=$(this).val();
+        $.ajax({ 
+          type: "GET",                      
+          url: "/wells/getprojectblock",                    
+          data: {
+            project_id:project_id,
+          },
+          success: function (data) { 
+            var html=''
+            $.each(data.blocks,function(index,value){
+              html +='<option value="'+value.id+'">'+value.block_name+'</option>'
+    
+            })
+            $("#block option").remove();
+            $('#block').append(html)
+          }
+        })
+      })
+      $('#block').click(function(){
+        var block_id=$(this).val();
+        var project_id=$('#projectwell').val()
+        $.ajax({ 
+          type: "GET",                      
+          url: "/wells/getblockfield",                    
+          data: {
+            project_id:project_id,
+            block_id:block_id
+          },
+          success: function (data) { 
+            var html=''
+            $.each(data.fields,function(index,value){
+              html +='<option value="'+value.id+'">'+value.field_name+'</option>'
+    
+            })  
+            $("#field option").remove();
+            $('#field').append(html)
+    
+          }
+        })
+      })
+     $('#plan_well_list').change(function(){
+       var well_id=$(this).val();
+       $.ajax({ 
+          type: "GET",                      
+          url: "/wells/getwelldetailsbyid",                    
+          data: {
+            well_id:well_id,
+          },
+          dataType: "json",
+          success: function (data) { 
+          console.log(data);
+           $('#datum').val(data[0][0].datum)
+           $('#environment').val(data[0][0].environment)
+           if(data[0][0].environment=='Onshore'){
+            $('input[type="radio"][id="Onshore"]').click();
+           }else if (data[0][0].environment=='Offshore') {
+            $('input[type="radio"][id="Offshore"]').click();
+           }else{
+            $('input[type="radio"][id="Swamp"]').click();
+           }
+          //  $('input[type="radio"][name="environment"]:checked').val(data[0][0].environment);
+          $('#environment_sub_type').val(data[0][0].environment_sub_type)
+           $('#coordinate_system').val(data[0][0].coordinate_system_id)
+           $('#coordinate_system').trigger('change');
+           $('#projection').val(data[0][0].projection_id)
+           $('#projection').trigger('change');
+           $('#northing').val(data[0][0].northing)
+           $('#easting').val(data[0][0].easting)
+           $('#air_gap').val(data[0][0].air_gap)
+           $('#rkb_wellhead').val(data[0][0].rkb_wellhead)
+           $('#rkb_datum').val(data[0][0].rkb_datum)
+           $('#wellhead_to_datum').val(data[0][0].wellhead_to_datum)
+           const latitude_array = data[0][0].latitude.split(" ");
+           console.log(latitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""))
+           $("input[name=latitude_coords_degrees]").val(latitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("input[name=latitude_coords_minutes]").val(latitude_array[1].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("input[name=latitude_coords_seconds]").val(latitude_array[2].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("select[name=latitude_compass]").val(latitude_array[3]);
+           const longtitude_array = data[0][0].longtitude.split(" ");
+           $("input[name=longtitude_coords_degrees]").val(longtitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("input[name=longtitude_coords_minutes]").val(longtitude_array[1].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("input[name=longtitude_coords_seconds]").val(longtitude_array[2].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("select[name=longtitude_compass]").val(longtitude_array[3]);
+           $('#wellengineer').val(data[0][1].user_id)
+           
+           const slot_latitude_array = data[0][0].slot_latitude.split(" ");
+           console.log(slot_latitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""))
+           $("input[name=slot_latitude_coords_degrees]").val(slot_latitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("input[name=slot_latitude_coords_minutes]").val(slot_latitude_array[1].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("input[name=slot_latitude_coords_seconds]").val(slot_latitude_array[2].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("select[name=slot_latitude_compass]").val(slot_latitude_array[3]);
+           const slot_longtitude_array = data[0][0].slot_longtitude.split(" ");
+           $("input[name=slot_longtitude_coords_degrees]").val(slot_longtitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("input[name=slot_longtitude_coords_minutes]").val(slot_longtitude_array[1].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("input[name=slot_longtitude_coords_seconds]").val(slot_longtitude_array[2].replace(/[^a-zA-Z0-9 ]/g, ""));
+           $("select[name=slot_longtitude_compass]").val(slot_longtitude_array[3]);
+           if(data[0][0].environment=="Onshore")
+          {
+        $(".onshore").show(); 
+    
+        $('#environment_sub_type').append("<option value='standalone'>STANDALONE</option>","<option value='padtype'>PADTYPE</option>");
+      }
+      else if(data[0][0].environment=="Offshore")
+      {
+        $(".offshore").show(); 
+    
+        $('#environment_sub_type').append("<option value='standalone'>STANDALONE</option>","<option value='platform'>PLATFORM</option>","<option value='subsea'>SUBSEA</option>","<option value='swamp'>SWAMP</option>");
+      }
+      $('#environment_sub_type').val(data[0][0].environment_sub_type)
+          }
+      });
+     })
+     $('.northing').mask("00000.00", {reverse: true});
+      $('.easting').mask("00000.00", {reverse: true});
+    
+      var block_value = localStorage.getItem('block')
+      var field_value = localStorage.getItem('field')
+    
+      $( document ).ready(function() {
+        var project_val = $('#projectwell').val();
+        var project_id=project_val;
+        $('#block').val(block_value);
+        $.ajax({ 
+          type: "GET",                      
+          url: "/wells/getblockfield",                    
+          data: {
+            project_id:project_id,
+            block_id:block_value
+          },
+          success: function (data) { 
+            var html=''
+            $.each(data.fields,function(index,value){
+              html +='<option value="'+value.id+'">'+value.field_name+'</option>'
+            })
+            $('#field').append(html);
+            $('#field').val(field_value);
+          }
+        })
+    });
+    </script>
+   
+
+
+    {% endblock %}
+
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+.cords_text_box input{
+  width: 100px;
+}
+.cords_text_box input:first-child{
+  margin-right: 10px;
+}
+.sub_env {
+  background: #ffffff;
+    padding: 1em 2em;
+    border-radius: 20px;
+    margin: 0px auto;
+    width: 90%;
+}
+</style>
+
+
+
+

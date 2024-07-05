@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<div class="container-fluid">
+      <div class="row">
+      <div class="col-md-12 create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Drill Collars Details</h4>
+            </div>
+            
+            <div class="table-responsive pb-4">
+              <div class="container-fluid">
+                <ul class="nav nav-tabs" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link in-client active" data-toggle="tab" href="#staticmaster">Inbuilt Master</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link in-client" data-toggle="tab" href="#dynamicmaster">Client Master</a>
+                  </li>            
+                </ul>
+                <div class="tab-content">
+                  
+              
+                <div id="staticmaster" class="container-fluid tab-pane active"><br>
+                  <table class="table dataTable no-footer" id="superadmin-master">
+                    <thead>
+                      <tr>
+                        <th class="common-txt-center">
+                          <span class="font-weight-bold">Nominal OD(in)</span>
+                        </th>
+                        <th class="common-txt-center">
+                          <span class="font-weight-bold">Nominal ID(in)</span>
+                        </th>
+                        <th class="common-txt-center">
+                          <span class="font-weight-bold">Weight(ppf)</span>
+                        </th>
+                        <th class="common-txt-center">
+                          <span class="font-weight-bold">Type</span>
+                        </th>
+                        <th class="common-txt-center">
+                          <span class="font-weight-bold">Connection Type</span>
+                        </th>
+                        <th class="common-txt-center">
+                          <span class="font-weight-bold">OD(in)</span>
+                        </th>
+                        <th class="common-txt-center">
+                          <span class="font-weight-bold">ID(in)</span>
+                        </th>
+                        
+                      </tr>            
+                    </thead>
+                    <tbody>
+                      {% for admindrillcollar in admincollers %}
+                      <tr>
+                        <td class="text-center">
+                          {{ admindrillcollar.normal_od  }} in
+                        </td>
+                        <td class="text-center">
+                          {{ admindrillcollar.normal_id}} in 
+                        </td>
+                        <td class="text-center">
+                          {{ admindrillcollar.weight}} ppf
+                        </td>
+                        <td>
+                          {{ admindrillcollar.pipe_type }} 
+                        </td>
+                        <td>
+                          {{ admindrillcollar.connection_type}}
+                        </td>
+                        <td class="text-center">
+                          {{ admindrillcollar.tool_od}} in
+                        </td>
+                        <td class="text-center">
+                          {{ admindrillcollar.tool_id }} in 
+                        </td>
+                        
+                      </tr>  
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                  </div>
+                  <div id="dynamicmaster" class="container-fluid tab-pane "><br>
+                    {% user_rights_permission 'Create Master' request as value %}
+                    {% if value %}
+                    <a href="/wells/bhadata/drillcollers/create"><button type="button" class="btn btn-primary detail-button mb-1"><span><i class="feather icon-plus"></i> Add New</span></button></a>
+                    {% endif %}
+                    <table class="table  dataTable no-footer" id="client-master">
+                      <thead>
+                        
+                        <tr>
+                          <th>
+                            <span class="font-weight-bold">Nominal OD(in)</span>
+                          </th>
+                          <th>
+                            <span class="font-weight-bold">Nominal ID(in)</span>
+                          </th>
+                          <th>
+                            <span class="font-weight-bold">Weight(ppf)</span>
+                          </th>
+                          <th>
+                            <span class="font-weight-bold">Type</span>
+                          </th>
+                          <th>
+                            <span class="font-weight-bold">Connection Type</span>
+                          </th>
+                          <th>
+                            <span class="font-weight-bold">OD(in)</span>
+                          </th>
+                          <th>
+                            <span class="font-weight-bold">ID(in)</span>
+                          </th>
+                          
+                        </tr>            
+                      </thead>
+                      <tbody>
+                        {% for drill in collers %}
+                        <tr>
+                          <td class="text-center">
+                            {{ drill.normal_od }} in
+                          </td>
+                          <td class="text-center">
+                            {{ drill.normal_id}} in
+                          </td>
+                          <td class="text-center">
+                            {{ drill.weight}} ppf
+                          </td>
+                          <td>
+                            {{ drill.pipe_type }} 
+                          </td>
+                          <td>
+                            {{ drill.connection_type}}
+                          </td>
+                          <td class="text-center">
+                            {{ drill.tool_od}} in
+                          </td>
+                          <td class="text-center">
+                            {{ drill.tool_id }} in
+                          </td>
+                  
+                        </tr>  
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                    <div class="row" id="basic-table">
+                      <div class="col-sm-12">
+                         <a onclick="confirmation(event)" class="btn btn-primary  waves-effect detail-button" href="{% url 'bhadata:drillcollersdelete'  %}" > <span class="action-delete-well delete"><i class="feather icon-trash delete"></i> Delete</span></a>
+
+                         {% user_rights_permission 'Edit Master' request as value %}
+                         {% if value %}
+                         <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'bhadata:drillcollersedit'  %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                         {% endif %}
+                         <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                       </div>
+                   </div> 
+                 
+                </div>
+                </div>
+              </div>
+              <!-- <a class="btn btn-primary pull-right" href="{{request.META.HTTP_REFERER}}">Go Back</a> -->
+              <!-- <div class="card">
+                <div class="card-header">
+                <div class="card-title">
+                  {% if collers.has_other_pages %}
+                  <ul class="pagination">
+                    {% if collers.has_previous %}
+                      <li><a href="?page={{ collers.previous_page_number }}">&laquo;</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in collers.paginator.page_range %}
+                      {% if collers.number == i %}
+                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                      {% else %}&nbsp;&nbsp;
+                        <li><a href="?page={{ i }}">{{ i }}</a></li>
+                      {% endif %}
+                    {% endfor %}&nbsp;&nbsp;
+                    {% if collers.has_next %}
+                      <li><a href="?page={{ collers.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                  </ul>
+                {% endif %}
+              </div>
+              </div>
+                </div> -->
+
+            </div>
+          </div>
+          
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <!-- <div class="col-md-2">
+          {% include "userheader.html" %}
+        </div> -->
+      </div>
+    </div>
+      
+    <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+    <script>
+    $(function() {
+      $('#client-master').DataTable({
+        "ordering": false
+      });
+      $('#superadmin-master').DataTable({
+        "ordering": false
+      });
+
+
+    });
+    </script>
+{% endblock %}

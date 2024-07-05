@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+  <div class="container-fluid">
+  <div class="row common-row-space">
+    <div class="col-md-10  create-pg p-0">
+    <div class="create_project_sec scroll-line">
+      {% include "header.html" %}
+    <div class="col-12">
+        {% include "masters_menu.html" %}  
+</div>
+  <div class="col-12 p-0">
+    <div class="card"> 
+      <div class="card-header">
+        <h4 class="card-title pt-0">Casing</h4>
+      </div>
+      <div class="card-body">
+      <div class=" table-responsive">
+        <table class="table  dataTable no-footer" id="casing-master">
+          <thead class="text-center">
+              <tr>      
+                  <th>Nominal OD</th>
+                  <th>Weight</th>
+                  <th>Inside Diameter</th>
+                  <th>Grade</th>
+                  <th>Connection Type</th>
+                  <th>Connection OD</th>
+                  <th>Casing Range</th>
+                  <th>Drift ID</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for casing in clientcasingvalue %}
+              <tr>
+                  <td class="common-txt-center">{{casing.nominal_od}}</td>
+                  <td class="common-txt-center">{{casing.weight}}</td>
+                  <td class="common-txt-center">{{casing.inside_diameter}}</td>
+                  <td class="common-txt-center">{{casing.grade}}</td>
+                  <td class="common-txt-center">{{casing.connection_type}}</td>
+                  <td class="common-txt-center">{{casing.connection_od}}</td>
+                  <td class="common-txt-center">{{casing.casing_range}}</td>
+                  <td class="common-txt-center">{{casing.drift_id}}</td>
+                </tr>
+                {% endfor %}
+
+          </tbody>
+        </table>
+        <div class="row" id="basic-table">
+          <div class="col-12">
+              <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right detail-button" href="{% url 'wellphases:adminmastercasingedit' %}"><span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+        </div>
+    </div>
+    {% include "footer.html" %}
+    </div>
+    </div>
+    <div class="col-md-2">
+      {% include "userheader.html" %}
+  </div>
+  </div>
+</div>
+</section>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+    <script>
+    $(function() {
+      $('#casing-master').DataTable({
+        "ordering": false
+      });
+    });
+</script>
+{% endblock %}

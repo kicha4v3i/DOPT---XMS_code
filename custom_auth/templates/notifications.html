@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+{% load app_filters %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/pages/app-user.css' %}">
+
+<div class="row">
+    <!-- account start -->
+    <div class="col-12">
+        <div class="card notification_pg" style="margin-left:40px">
+            <div class="card-header">
+                <h4 class="card-title">Notifications</h4>
+            </div>
+            <div>
+                <a class="btn btn-primary detail-button" href="{% url 'custom_auth:markallread' %}">Mark All Read</a>
+            </div>
+            <div class="col-12 text-right">
+                <a class="btn detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+              </div>
+            <div class="card-body p-0">
+                 <div class="row"> 
+                    <div class="col-12 tab-bt-line">
+                        <table class="table notification-data-list-view " id="notify-table" style="width: 100%;">
+                            <thead style="display: none;">
+                                <tr>
+                                    <th>data1</th>
+                                    <th>data2</th>
+
+                                </tr>
+                            </thead>
+                            <tbody class="noti-txt">
+                                {% for notification in notifications %}
+                                <tr class="{% if notification.unread == 1 %}unreadnotifications{% endif %}">
+                                    <td>
+                                        {% geturlname notification.data.extra_data as dataurl %}
+                                        <a class="d-flex justify-content-between" href="{{dataurl}}?msgid={{notification.id}}">
+                                            <div class="media d-flex align-items-start">
+                                                <div class="media-body">
+                                                    <h6 class="{{notification.level}} media-heading">{{notification.verb}}</h6>
+                                                    <small class="notification-text">{{notification.description}}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </td>
+                                   
+                                    <td>
+                                        {% geturlname notification.data.extra_data as dataurl %}
+                                        <a class="d-flex justify-content-between" href="{{dataurl}}?msgid={{notification.id}}">
+                                            <div class="media d-flex align-items-start">
+                                                <small>
+                                                    <span class="time-meta">{{notification.timestamp}}</span>
+                                                </small>
+                                            </div>
+                                        </a>
+                                    </td>
+                                </tr>
+                            
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/auth/notifications.js' %}"></script>
+{%endblock%}

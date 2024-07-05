@@ -1,0 +1,14 @@
+/******************** 29-07-2023 license_details ********************/
+.user-log {
+    margin: 10px auto 0px 10px;
+}
+
+.upg-btns {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 0px;
+}
+.user-profile-card {
+    padding: 15px 10px;
+}
+/******************** license_details ********************/

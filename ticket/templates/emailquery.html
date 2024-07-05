@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/ticket.css' %}">
+<section id="data-list-view" class="data-list-view-header">
+    <div class="container-fluid">
+    <div class="row align-items-start common-row-space">
+        <div class="col-12 p-0 create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+                <div class="overlay-bg">
+                    <div class="card card-create-user">
+                        <form method="post" id="queries_form" name="queries_form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="row">
+                                <div class="col-sm-12 pb-0 col-form-label required-field">
+                                    <label class="project-edit-name pb-1" for="ground_elevation">License Type</label>
+                                    <select name="license_type" class="form-control" id="license_type">
+                                        <option value="Individual">Individual</option>
+                                        <option value="CompanyPlan">CompanyPlan</option>
+                                        <option value="Enterprise">Enterprise</option>
+                                    </select>   
+                                </div>
+                                <div class="col-sm-12 pb-0 col-form-label required-field">
+                                    <label class="project-edit-name pb-1" for="ground_elevation">Title</label>
+                                    <input type="text" class="form-control" name="title" id="title" placeholder="Enter Title">
+                                </div>
+                                <div class="col-sm-12  col-form-label required-field">
+                                    <label class="project-edit-name pb-1" for="ground_elevation">Message</label>
+                                    <textarea id="ticket_message" name="ticket_message" class="form-control" placeholder="Enter Message"></textarea>
+
+                                </div>
+                                <div class="col-sm-12 col-form-label required-field">
+                                    <table id="attacment-table">
+                                        <tr>
+                                            <td>
+                                                <input type="file" name="attachment">
+                                            </td>
+                                            <td>
+                                                <button id="add_file" class="btn add-btn add-remove-btn back-clr" type="button" dataid="2" value="add"><i class="fa fa-add"></i>
+                                                </button> <button id="remove_file" class="btn remove-btn add-remove-btn back-clr" type="button" dataid="2" value="minus"><i class="fa fa-minus"></i></button>
+                                            </td>
+                                        </tr>
+                                       
+
+                                    </table>
+                                </div>
+
+
+                            </div>
+                           <div class="common-txt-center">
+                            <button type="submit" class="btn btn-primary waves-effect mt-1 waves-float waves-light detail-button">Submit</button>
+                           </div>
+                        </form>
+                        <div class="add-row-div">
+                            <table id="append-table">
+                                <tr>
+                                    <td>
+                                        <input type="file" name="attachment">
+                                    </td>
+                                    <td>
+                                        <button id="add_file" class="btn add-btn add-remove-btn" type="button" dataid="2" value="add"><i class="fa fa-add"></i>
+                                        </button> <button id="remove_file" class="btn remove-btn add-remove-btn" type="button" dataid="2" value="minus"><i class="fa fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/auth/user.js' %}"></script>
+<script src="{% static 'js/create_ticket.js' %}"></script>
+
+{%endblock%}

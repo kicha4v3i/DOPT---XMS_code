@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/project/viewproject/add_user.css' %}">
+
+<section id="data-list-view" class="data-list-view-header">
+  <div class="container-fluid">
+  <div class="row align-items-start common-row-space">
+    <div class="col-md-12  create-pg p-0">
+      <div class="create_project_sec scroll-line">
+        {% include "header.html" %}
+        <div class="card card-create-user">
+          <div class="card-header">
+            <h4 class="card-title pb-1 ">Add Users</h4>
+          </div>
+          <div class="card-body">
+            <form class="form form-horizontal " method="POST">
+              {% csrf_token %}
+
+              <div class="row">
+                <input type="hidden" name="project" value="{{project_id}}" id="project_id">
+                <input type="hidden" name="role" value="4">
+
+                <div class="col-12">
+                  <div class="form-group row">
+                    <div class="col-sm-2 col-form-label user-label">
+                      <label class="project-edit-name" for="email-id">User</label>
+                    </div>
+                    <div class="col-sm-10" id="select-data">
+
+                      <select class="form-control" id="wellmanager" name="user" multiple="multiple">
+                        <option value="">-- User Name --</option>
+
+                        {% for user in users %}
+                        {% if user.id in current_selected_user %}
+                        <option value="{{ user.id }}" selected>{{ user.name }} {{user.lastname}}</option>
+                        {% else %}
+                        <option value="{{ user.id }}">{{ user.name }} {{user.lastname}}</option>
+                        {% endif %}
+
+                        {% endfor %}
+
+                      </select>
+                    </div>
+                    {% comment %} <div class="col-sm-2"></div> {% endcomment %}
+                  </div>
+                </div>
+
+                <div class="col-sm-12 text-center">
+                  <button type="submit"
+                    class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                  <button type="reset" class="btn btn-primary waves-effect detail-button-reset detail-button">Reset</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+</section>
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+
+<script src="{% static 'js/projects/projectusercreate.js' %}"></script>
+
+{%endblock%}

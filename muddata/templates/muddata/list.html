@@ -1,0 +1,204 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section>
+  <div class="row align-items-start">
+    <div class="col-md-10  create-pg">
+      <div class="create_project_sec scroll-line new-cru-well">
+      <div class="col-12">
+        {% include "welldetails_menu.html" %} 
+      </div>
+      
+        <div class="col-12">
+          <div class="sample-sub-menu">
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+                <a href="{% url 'muddata:list' wellphase_id %}" id="mud"> Mud Data </a>
+              </div>
+        </div>
+        <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'rheogram' %}active{% endif %}">
+                <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheograms</a>
+              </div>
+        </div>
+        <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+                <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+              </div>
+        </div>
+        <div class="col-md-3">
+                 <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+              </div>
+        </div>
+      
+      </div>
+      </div>
+    
+   
+    
+   
+        <div class="col-10">
+          <!-- <div class="sample-sub-menu">
+            <div class="row">
+                <div class="col-md-3">
+                  <div class="sub-list active">
+                        <a href="{% url 'muddata:list' wellphase_id %}" id="mud"> Mud Data </a>
+                      </div>
+                </div>
+                <div class="col-md-3">
+                        <div class="sub-list">
+                        <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+                      </div>
+                </div>
+                <div class="col-md-3">
+                        <div class="sub-list">
+                        <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                      </div>
+                </div>
+                <div class="col-md-3">
+                         <div class="sub-list">
+                        <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                      </div>
+                </div>
+            </div>
+            </div> -->
+            
+                <div class="table-responsive table-striped table-hover">
+                    <table class="table muddata-data-list-view table_css">
+                    <!-- <h4 class="card-title text-center">Mud Data List</h4> -->
+                        <!-- <a href="/wells/muddata/create/{{ well_id }}/"><button type="button" class="btn btn-primary">Add New</button></a> -->
+                    
+                        <thead>
+                        
+                          <tr>
+                              <th></th>
+                              <th colspan="2" class="txt-col down-line text-center">Depth</th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th colspan="3" class="txt-col down-line text-center">Gel Strength</th>
+                              <th></th>
+                              <th class="txt-col"></th>
+                              <!-- <th>Date Recorded </th> -->
+                              <th></th>
+                              <th></th>
+                              
+                              </tr>
+                              </thead>
+                        
+                        <thead>
+                            <tr>
+                                <th>Well Phases</th>
+                                <th class="txt-col">Section</th>
+                                <th class="txt-col">From</th>
+                                <th class="txt-col">To</th>
+                                <th class="txt-col">Mud Weight</th>
+                                <th class="txt-col">Mud Type</th>
+                                <th class="txt-col">PV </th>
+                                <th class="txt-col">YP </th>
+                                <th class="txt-col">LSRYP </th>
+                                <th class="txt-col"> 0sec </th>
+                                <!-- <th>Date Recorded </th> -->
+                                <th class="txt-col">10min </th>
+                                <th class="txt-col">30min </th>
+                                
+                                {%if welltype == 'ACTUAL' %}
+                                <th>Date</th>
+                                {%endif%}
+                                <!-- <th class="text-center">ACTION</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for muddata in data %}
+                            <tr>
+                                <td>{{muddata.well_phase.phase_name}}</td>
+                                <td>{{muddata.section}}</td>
+                                <td>{{muddata.from_depth}}</td>
+                                <td>{{muddata.todepth}}</td>
+                                <td class="text-center">{{muddata.mud_weight}}</td>
+                                <td class="text-center">{{muddata.mudtype.mud_name}}</td>
+                                <td class="text-center">{{muddata.plastic_viscosity}}</td>
+                                <td class="text-center">{{muddata.yield_point}}</td>
+                                <td class="text-center">{{muddata.low_shear_rate}}</td>
+                                <td class="text-center">{{muddata.gel_strength_0sec}}</td>
+                                <!-- <td>{{muddata.date_recorded}}</td> -->
+                                <td class="text-center">{{muddata.gel_strength_10min}}</td>
+                                <td class="text-center">{{muddata.gel_strength_30min}}</td>
+                            
+                                {%if welltype == 'ACTUAL' %}
+                                <td>{{muddata.date}}</td>
+                                {%endif%}
+                                <!-- <td class="product-action text-center">
+                                <a href="{% url 'muddata:edit' muddata.id %}"> <span class="action-edit-well"><i class="feather icon-edit"></i></span></a>
+                                <a onclick="confirmation(event)" href="{% url 'muddata:delete' muddata.id %}"> <span class="action-delete-well"><i class="feather icon-trash"></i></span></a>                     </td> -->
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="col-sm-9 offset-sm-3 top-spacing">
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>  
+                    <a class="btn btn-primary detail-button" href="{% url 'muddata:edit' wellphase_id %}"><span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>  
+                    <a onclick="confirmation(event)" class="btn btn-outline-primary ml-1 waves-effect detail-button-reset" href="{% url 'muddata:delete' wellphase_id %}"><span class="action-delete-well"><i class="feather icon-trash"></i> Delete</span></a>  
+                    </div>
+        
+                </div>
+            
+        </div>
+        </div>
+        </div>
+         
+
+        <!--sidebar-->
+        <!-- <div class="col-2">
+          {% for wellphase in wellphases %}
+          <div class="row">
+            <div class="col-12">
+          <nav class="navbar bg-white phase-sidemenu">
+            <ul class="nav navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+              </li>
+            </ul>
+
+          </nav>
+          </div>
+          </div>
+          {% endfor %}
+        </div> -->
+      
+          
+        <div class="col-2">
+          <div class="left-sidebar">
+          <h4 class="model-caption">Well Phases</h4>
+          {% for wellphase in wellphases %}
+          <div class="row">
+            <div class="col-12">
+          <nav class="navbar bg-white phase-sidemenu">
+            <ul class="nav navbar-nav">
+              <li class="nav-item {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                <a class="nav-link" href="{% url 'muddata:list' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                
+              </li>
+            </ul>
+  
+          </nav>
+          </div>
+        </div>
+          
+          {% endfor %}
+        </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
+
+      
+

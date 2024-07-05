@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section id="data-list-view" class="data-list-view-header">
+  <!-- <div class="row" id="basic-table"> -->
+  <div class="container-fluid">
+    <div class="row align-items-start common-row-space">
+      {% getcountries countries as countries %}
+      {% include 'projectsidemenu.html' %} 
+      <div class="col-md-8 p-0  create-pg main-section col-md-10"> 
+      <div class="create_project_sec_well scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+        <button class="hide-show fa fa-long-arrow-right"></button>  {% endcomment %}
+      {% include "projectheader.html" %}
+    <div class="col-12 p-0">
+      {% include "welldetails_menu.html" %}    
+    </div>
+    <div class="col-12 p-0">
+      {% include "welldetailssubmenu.html" %}  
+    </div>
+    <div class="col-12 p-0">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Edit Well Trajectory </h4>
+          </div>
+          <div class="card-body">
+           <!-- <form class="form form-horizontal" method="post">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <input type="submit" value="Submit" />
+          </form>-->
+          <form class="form form-horizontal" method="POST" >
+            {% csrf_token %}
+            <input type="hidden" id="well" class="form-control" name="well" value="{{well_id}"}>
+
+          <div class="row">
+            <div class="col-12">
+                <table class="table table-borderless" id="welltrajectoryaddtable">
+                  <tr><th>MD({%display_depthunit request.session.unit%})</th><th>Inclination(°)</th><th>Azimuth(°)</th><th>TVD({%display_depthunit request.session.unit%})</th><th>DLS{%display_dlsunit request.session.unit%}</th><th>Actions</th></tr>
+                  {% for datas in welltrajectory %}
+                 
+                  <tr id="welltrajectorytableRow">
+                    <input type="hidden" name="welltrajectory_id" value={{datas.id}}>
+              <td><input  type="number" step='any' onkeydown="return event.keyCode !== 69" id="measured_depth" class="form-control measured_depth" name="measured_depth" placeholder="MD" value="{{datas.measured_depth}}"><span class="measure_depth_error"></span></td>
+              <td><input type="number" step='any' onkeydown="return event.keyCode !== 69" id="inclination" class="form-control inclination" name="inclination" placeholder="Inclination" value="{{datas.inclination}}"><span class="inclination_error"></span></td>
+              <td>
+                <input type="number" step='any' onkeydown="return event.keyCode !== 69" id="azimuth" class="form-control azimuth" name="azimuth" placeholder="Azimuth" value="{{datas.azimuth}}"><span class="azimuth_error"></span>
+ 
+                <input  type="hidden" class="form-control  delta_e" name="delta_e"value="{{datas.delta_e}}">
+                <input  type="hidden" class="form-control  delta_n" name="delta_n" value="{{datas.delta_n}}">
+                <input  type="hidden" class="form-control  east" name="east" value="{{datas.east}}">
+                <input  type="hidden" class="form-control  north" name="north" value="{{datas.north}}">
+                <input  type="hidden" class="form-control  easting" name="easting" value="{{datas.easting}}">
+                <input  type="hidden" class="form-control  northing" name="northing" value="{{datas.northing}}">
+                <input  type="hidden" class="form-control  vertical_section" name="vertical_section" value="{{datas.vertical_section}}">
+                
+              </td>
+              <td><input type="text" id="true_vertical_depth" class="form-control true_vertical_depth" name="true_vertical_depth" placeholder="TVD" value="{{datas.true_vertical_depth}}" readonly><span class="tvd_error"></span></td>
+              <td><input  type="text" id="dls" class="form-control" name="dls" placeholder="DLS" value="{{datas.dls}}" readonly><span class="dls_error"></span></td>
+
+              
+
+                      <td>
+                        <button type="button" name="add" class="welltrajectoryaddrows iconaction"><i class="fa fa-plus"></i></button>
+                        <button type="button" name="add" class="welltrajectoryremoverows iconaction"><i class="fa fa-trash"></i></button>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    <input type="hidden" name="surface_easting" id="surface_easting" value="{{easting_data}}">
+                        <input type="hidden" name="surface_northing" id="surface_northing" value="{{northing_data}}">
+                    <tr id="welltrajectorytableRow2" class="welltrajectorytableRow2" style="display:none">
+                      <input type="hidden" name="welltrajectory_id" value={{datas.id}}>
+                      <td><input  type="number" step='any' onkeydown="return event.keyCode !== 69" id="measured_depth" class="form-control measured_depth" name="measured_depth" placeholder="MD" value="{{datas.measured_depth}}"><span class="measure_depth_error"></span></td>
+                      <td><input  type="number" step='any' onkeydown="return event.keyCode !== 69" id="inclination" class="form-control inclination" name="inclination" placeholder="Inclination" value="{{datas.inclination}}"><span class="inclination_error"></span></td>
+                      <td>
+                        <input type="number" step='any' id="azimuth" onkeydown="return event.keyCode !== 69" class="form-control azimuth" name="azimuth" placeholder="Azimuth" value="{{datas.azimuth}}"><span class="azimuth_error"></span>
+                        <input  type="hidden" class="form-control  delta_e" name="delta_e">
+                        <input  type="hidden" class="form-control  delta_n" name="delta_n">
+                        <input  type="hidden" class="form-control  east" name="east">
+                        <input  type="hidden" class="form-control  north" name="north">
+                        <input  type="hidden" class="form-control  easting" name="easting">
+                        <input  type="hidden" class="form-control  northing" name="northing">
+                        <input  type="hidden" class="form-control  vertical_section" name="vertical_section">
+                      </td>
+                      <td><input type="text" id="true_vertical_depth" class="form-control true_vertical_depth" name="true_vertical_depth" placeholder="TVD" value="{{datas.true_vertical_depth}}" readonly><span class="tvd_error"></span></td>
+                      <td><input type="text" id="dls" class="form-control dls" name="dls" placeholder="DLS" value="{{datas.dls}}" readonly><span class="dls_error"></span>
+                      </td>
+                      <td>
+                        <button type="button" name="add" class="welltrajectoryaddrows iconaction"><i class="fa fa-plus"></i></button>
+                        <button type="button" name="add" class="welltrajectoryremoverows iconaction"><i class="fa fa-trash"></i></button>
+                      </td>
+                    </tr>
+                </table>
+                
+                </div>
+
+
+                    
+                </table>
+            </div>
+
+            <!-- <div class="col-12">
+                <button type="button" class="btn btn-outline-secondary pull-right addpressurerow">Add Row</button>
+              </div>-->
+              <div class="col-sm-12">
+                <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+              <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button trajectory_submit">Submit</button>
+              <!-- <button type="reset" class="btn btn-outline-secondary waves-effect">Reset</button> -->
+              
+            </div>
+ 
+    <!-- <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-right" href="{% url 'pressure:create' well_id %}">  <span class="action-create-well"><i class="feather "></i> </span></a> -->
+           
+          </div>
+          
+        </form>
+       
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+          <div class="col-md-12 warning"></div>
+      </div>
+   </div>
+  </div>
+    </section>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+
+.iconaction
+{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:15px;
+  color:#7c0201;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{block.super}}
+<script>
+  var well_id='{{well_id}}';
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+<script src="{% static 'js/welltrajectory/edit.js' %}"></script>
+{%endblock%}
+
+

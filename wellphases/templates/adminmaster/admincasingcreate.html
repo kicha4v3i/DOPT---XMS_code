@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+  
+<section>
+    <!-- <div class="row" id="basic-table"> -->
+      <div class="row align-items-start">
+        <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+     <div class="col-12">
+      {% include "masters_menu.html" %}  
+     </div>
+        <div class="col-12">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Create Casing Masters</h4>
+            </div>
+            <form method="post" id="casingmasterform" novalidate>
+                {% csrf_token %}              
+                <div class="row">
+                  <div class="col-12">
+                  <a class="btn btn-primary waves-effect ml-1 waves-float waves-light pull-left detail-button" href="{% url 'wellphases:importdata' %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>
+                  </div>
+                  <div class="col-6">
+                  <select name="unit" class="form-control">
+                    <option value="">Select</option>
+                    <option value="API">API</option> 
+                    <option value="SI">SI</option> 
+                  </select>
+                </div>
+                    <div class="col-12">
+                        <table class="table" id="casingmastertable">             
+                            <thead><tr><th>Nominal OD</th><th>Weight</th>
+                              <th><span>Inside Diameter</span> </th>
+                              <!-- <th>Grade</th> -->
+                              <th>Connection Type</th><th>Connection OD</th>
+                              <!-- <th>Range</th> -->
+                              <th>Drift ID</th>
+                              <th>Action</th></tr>
+                            <tr></thead>
+                              <tbody>
+                                <td><input id="nominal_od" type="text" class="form-control nominal_od" name="nominal_od" placeholder="Nominal OD" ></td>
+                                <td><input id="weight" type="text" class="form-control weight" name="weight" placeholder="Type" ></td>
+                                <td><input id="inside_diameter" type="text" class="form-control inside_diameter" name="inside_diameter" placeholder="Inside Diameter" ></td>
+                                <!-- <td>
+                                  <select name="grade" class="form-control grade">
+                                    <option value="">Select</option>
+                                    <option value="K 55">K 55</option> 
+                                    <option value="L 80">L 80</option>
+                                    <option value="N 80">N 80</option>
+                                    <option value="C 90">C 90</option>
+                                    <option value="T 95">T 95</option>
+                                    <option value="P 110">P 110</option>
+                                    <option value="Q 125">Q 125</option>
+                                    <option value="others">Others</option>
+                                  </select>
+                                </td> -->
+                                <td>
+                                  <input id="connection_type" type="text" class="form-control connection_type" name="connection_type" placeholder="Connection Type" >
+                                </td>
+                                <td>
+                                  <input id="connection_od" type="text" class="form-control connection_od" name="connection_od" placeholder="Connection OD" >
+                                </td>
+                                <td>
+                                  <input id="drift_id" type="text" class="form-control drift_id" name="drift_id" placeholder="Drift ID" >
+                                </td>
+                                <!-- <td>
+                                  <select name="casing_range" class="form-control casing_range">
+                                    <option value="">Select</option>
+                                    <option value="25">25 ft</option> 
+                                    <option value="34">34 ft</option>
+                                    <option value="45">45 ft</option>
+                                    <option value="others">Others</option>
+                                  </select>
+                                </td> -->
+                                <td>
+                                  <a type="button" class="casingmaster_addrow iconaction"><i class="fa fa-plus"></i></a>
+                                  <a type="button" class="casingmaster_removerow iconaction"><i class="fa fa-trash"></i></a>
+                                </td>        
+                            </tr>
+                            <tr id="casingmaster_addrow" style="display:none">
+                              <td><input id="nominal_od" type="text" class="form-control nominal_od" name="nominal_od" placeholder="Nominal OD" ></td>
+                              <td><input id="weight" type="text" class="form-control weight" name="weight" placeholder="Type" ></td>
+                              <td><input id="inside_diameter" type="text" class="form-control inside_diameter" name="inside_diameter" placeholder="Inside Diameter" ></td>
+                              <!-- <td>
+                                <select name="grade" class="form-control grade">
+                                  <option value="">Select</option>
+                                  <option value="K 55">K 55</option> 
+                                  <option value="L 80">L 80</option>
+                                  <option value="N 80">N 80</option>
+                                  <option value="C 90">C 90</option>
+                                  <option value="T 95">T 95</option>
+                                  <option value="P 110">P 110</option>
+                                  <option value="Q 125">Q 125</option>
+                                  <option value="others">Others</option>
+                                </select>
+                              </td> -->
+                              <td>
+                                <input id="connection_type" type="text" class="form-control connection_type" name="connection_type" placeholder="Connection Type" >
+                              </td>
+                              <td>
+                                <input id="connection_od" type="text" class="form-control connection_od" name="connection_od" placeholder="Connection OD" >
+                              </td>
+                              <td>
+                                <input id="drift_id" type="text" class="form-control drift_id" name="drift_id" placeholder="Drift ID" >
+                              </td>
+                              <!-- <td>
+                                <select name="casing_range" class="form-control casing_range">
+                                  <option value="">Select</option>
+                                  <option value="25">25 ft</option> 
+                                  <option value="34">34 ft</option>
+                                  <option value="45">45 ft</option>
+                                  <option value="others">Others</option>
+                                </select>
+                              </td> -->
+                              <td>
+                                <a type="button" class="casingmaster_addrow iconaction"><i class="fa fa-plus"></i></a>
+                                <a type="button" class="casingmaster_removerow iconaction"><i class="fa fa-trash"></i></a>
+                              </td>        
+                          </tr>
+                        </tbody>  
+                        </table>
+                        <div class="col-sm-9 offset-sm-3">
+                        <button type="submit" class="btn btn-primary detail-button">submit</button>
+                        <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                </div>
+          </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+      </div>
+      </div>
+
+</section>
+<style>
+    #iconaction
+  {
+    border:0;
+    background:transparent;
+    box-shadow:none;
+    font-size:15px;
+    color:#7367F0;
+  }
+  </style>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+{% endblock %}

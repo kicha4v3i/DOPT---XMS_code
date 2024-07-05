@@ -1,0 +1,97 @@
+/******************** subscriberlist ********************/
+a.nav-link.press-mnu.active {
+    /* background: -webkit-linear-gradient(#347EFC, #43B1FE); */
+    background: -webkit-linear-gradient(181deg, #7c0201, #bb1111);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* border-bottom: 2px solid #428ccb !important; */
+    border-radius:0px !important;
+}
+
+a.nav-link.press-mnu.active:before {
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
+    content: "";
+    /* background: #3b97fd; */
+    background: #7c0201;
+    width: 100%;
+    max-width: 74px;
+    /* left: 0px; */
+    height: 2px;
+    bottom: 0px;
+}
+
+.individual-table {
+    border: 1px solid #dfdfdf !important;
+}
+
+.individual-table th {
+    text-align: center !important;
+}
+
+/* .individual-table th, td {
+    border: 1px solid #dfdfdf !important;
+    padding: 10px !important;
+} */
+
+.individual-table td:nth-child(4) {
+    text-align: center;
+}
+
+/* .company-table {
+    border: 1px solid #dfdfdf !important;
+} */
+
+/* .company-table th {
+    text-align: center !important;
+} */
+
+
+.company-table td:nth-child(5) {
+    text-align: center;
+}
+
+/* .enterprise-table {
+    border: 1px solid #dfdfdf !important;
+} */
+/* 
+.enterprise-table th {
+    text-align: center !important;
+} */
+
+.enterprise-table th, td {
+    padding: 10px !important;
+}
+
+.enterprise-table td:nth-child(5) {
+    text-align: center;
+}
+
+.subscribe-tab {
+    margin: 0px 20px;
+}
+.sub-parent-tap{
+    justify-content: space-between;
+    width: 100%;
+    margin: 15px auto;
+    max-width:600px;
+}
+a.sub-press-tab {
+    width: 100%;
+    margin: 0px auto;
+    color: #959595bf !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    border: 2px solid #959595bf !important;
+}
+.sub-press-tab.active {
+    background: -webkit-linear-gradient( 182deg , #7c0201, #bb1111);
+    width: 100%;
+    max-width: 110px !important;
+    color: #fff !important;
+    margin: 0px auto;
+    border:none !important;
+    border-radius: 20px !important;
+}
+/******************** subscriberlist ********************/

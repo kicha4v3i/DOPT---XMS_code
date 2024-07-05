@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+<div class="row align-items-start">
+  <div class="col-md-10  create-pg">
+    <div class="create_project_sec scroll-line">
+      {% include "header.html" %}
+      <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">User Log</h4>
+      </div>
+      <h1>Project Users</h1>
+     <table class="table data-list-view table_css">
+     
+        <thead>
+            <tr>
+                <th>S.NO</th>
+                <th>Username</th>
+                <th>Actions</th>
+       
+            </tr>
+        </thead>
+        <tbody>
+         {% for user in proj_users %}
+         <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{ user.user_id }}</td>
+            <td>
+                <span><i class="feather icon-eye"></i></span>
+            </td>
+         </tr>
+         {% endfor %}
+           
+
+
+        </tbody>
+    </table>
+    
+    </div>
+      {% include "footer.html" %}
+    </div>
+  </div>
+  <div class="col-md-2">
+    {% include "userheader.html" %}
+  </div>
+</div>
+
+{%endblock%}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/auth/userlog.js' %}"></script>
+
+
+
+{%endblock%}

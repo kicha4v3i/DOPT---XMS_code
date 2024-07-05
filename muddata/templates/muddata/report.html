@@ -1,0 +1,561 @@
+{% load static %}
+{% load app_filters %}
+
+
+<section>
+  <div >
+    <img class="log-img" src="/media/logo/DOPT.png">
+    <h1 style="color:#7c0201;text-align:center;font-size:20px;font-family: 'Titillium Web';text-decoration: underline;">Phase Hydraulics Report</h1>
+  
+    
+        <h2 style="color:#3175bc;font-size:16px;font-family: 'Titillium Web';text-align:center;text-decoration: underline;">Well Information</h2>
+        <h2 style="color:#7c0201;font-size:16px;font-family: 'Titillium Web';">Mud data</h2>
+        <div class="table_wrapper">
+            <table class="table muddata-data-list-view mud-values pha-mud-vlu" style="border:1px solid #e7e7e7;">
+              <thead>
+                <tr>
+                    <!-- <th></th> -->
+                    <th colspan="2" class="txt-col down-line text-center" style="background:#7c0201;color:#fff;font-size:15px;">Depth</th>
+                    <th rowspan="2" class="txt-col text-center" style="background:#7c0201;color:#fff;font-size:15px;">MW </th>
+                    <th rowspan="2" class="txt-col text-center" style="background:#7c0201;color:#fff;font-size:15px;">Mud Type</th>
+                    <th rowspan="2" class="txt-col text-center" style="background:#7c0201;color:#fff;font-size:15px;">PV</th>
+                    <th rowspan="2" class="txt-col text-center" style="background:#7c0201;color:#fff;font-size:15px;">YP </th>
+                    <th rowspan="2" class="txt-col text-center" style="background:#7c0201;color:#fff;font-size:15px;">LSRYP </th>
+                    <!-- <th  style="background:#7c0201;color:#fff;"></th>
+                    <th  style="background:#7c0201;color:#fff;"></th>
+                    <th  style="background:#7c0201;color:#fff;"></th> -->
+                    <th  colspan="3" class="txt-col down-line text-center" style="background:#7c0201;color:#fff;font-size:15px;">Gel Strength</th>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                    <!-- <th></th> -->
+                    <th class="txt-col-sub text-center" style="background:#7c0201;color:#fff;font-size:15px;">From</th>
+                    <th class="txt-col-sub text-center" style="background:#7c0201;color:#fff;font-size:15px;">To</th>
+                    
+                    
+                    
+                    
+                    
+                    <th class="txt-col-sub text-center" style="background:#7c0201;color:#fff;font-size:15px;"> 0sec </th>
+                    <!-- <th>Date Recorded </th> -->
+                    <th class="txt-col-sub text-center" style="background:#7c0201;color:#fff;font-size:15px;"> 10min </th>
+                    <th class="txt-col-sub text-center" style="background:#7c0201;color:#fff;font-size:15px;"> 30min </th>
+                </tr>
+            </thead>
+            <tbody class="mud-detail md-center">
+                {%for mud in muddata%}
+                    <tr>
+                        <!-- <td></td> -->
+                        <td style="text-align:center;color:#000; font-size:13px;">{{mud.from_depth}} {%display_depthunit request.session.unit%} </td>
+                        <td style="text-align:center;color:#000; font-size:13px;">{{mud.todepth}} {%display_depthunit request.session.unit%}</td>
+                        <td style="text-align:center;color:#000; font-size:13px;" class="text-center">{{mud.mud_weight}} {%display_densityunit request.session.unit%}</td>
+                        <td class="text-center" style="text-align:center;color:#000; font-size:13px;">{{mud.mudtype.mud_name}}</td>
+                        <td class="text-center" style="text-align:center;color:#000; font-size:13px;">{{mud.plastic_viscosity}}{%display_plastic_viscosity request.session.unit%}</td>
+                        <td class="text-center" style="text-align:center;color:#000; font-size:13px;">{{mud.yield_point}}{%display_yield_point request.session.unit%}</td>
+                        <td class="text-center"  style="text-align:center;color:#000; font-size:13px;">{{mud.low_shear_rate}}{%display_low_shear_rate request.session.unit%}</td>
+                        <td style="text-align:center;color:#000; font-size:13px;" class="text-center">{{mud.gel_strength_0sec}}{%display_low_shear_rate request.session.unit%}</td>
+                        <td style="text-align:center;color:#000; font-size:13px;" class="text-center">{{mud.gel_strength_10min}}{%display_low_shear_rate request.session.unit%}</td>
+                        <td style="text-align:center;color:#000; font-size:13px;" class="text-center">{{mud.gel_strength_30min}}{%display_low_shear_rate request.session.unit%}</td>
+                        <!-- <td></td> -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <h2 style="color:#7c0201;font-size:16px;">Rheology data</h2>
+        <div class="row">
+            <div class="col-4 ">
+
+                <div class="outline-col">
+                    <table class="first-table rh-tbl" style="border:1px solid #e7e7e7;">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="color:#fff;font-size:15px;background: #7c0201;">RPM</th>
+                                <th class="text-center" style="color:#fff;font-size:15px;background: #7c0201;">Dial</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="inside-space">
+                        <table id="newtonian-table" class="reho-table rh-tbl rhl-boto" style="border:1px solid #e7e7e7;">
+                            
+                            <tbody>
+                                {% for rpm in rheogram_data %}
+                                <tr >
+                                    <td style="text-align:center;color:#000; font-size:13px;" class="text-center">{{rpm.rpm }}</td>
+                                    <td style="text-align:center;color:#000; font-size:13px;" class="text-center">{{rpm.dial }}</td>                            
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4"></div>
+        </div>
+        <h2 style="color:#7c0201;font-size:16px;">Rheogram Chart</h2>
+        <div style="border:1px solid #e7e7e7; padding:10px;"><img class="log-img" src="/media/rheogramchart-{{wellphase_id}}-{{section_name}}.png"  ></div>
+        <h2 style="color:#3175bc;font-size:16px;text-align: center;text-decoration: underline;">BHA Data</h2>
+        <div class="card-header">
+            <h4 style="color:#7c0201;font-size:16px;" class="card-title">BHA Data Details</h4>
+        </div>
+        <div class="table-responsive table-hover table-striped">
+        <table class="table table_css phase-rep-tbl" style="border:1px solid #e7e7e7;">
+            <thead>
+            <tr>
+                <th style="color:#fff;font-size:15px;background: #7c0201;">
+                <span class="font-weight-bold">Type</span>
+                </th>
+                <th style="color:#fff;font-size:15px;background: #7c0201;">
+                    <span class="font-weight-bold">Element</span>
+                </th>
+                <th style="color:#fff;font-size:15px;background: #7c0201;">
+                    <span class="font-weight-bold">OD</span>
+                </th>
+                <th style="color:#fff;font-size:15px;background: #7c0201;">
+                    <span class="font-weight-bold">ID</span>
+                </th>
+                <th style="color:#fff;font-size:15px;background: #7c0201;">
+                <span class="font-weight-bold">Length</span>
+                </th>
+                <th style="color:#fff;font-size:15px;background: #7c0201;">
+                <span class="font-weight-bold">Cumulative Length</span>
+                </th>  
+            </tr>            
+            </thead>
+            <tbody>
+            {%for element in bhaelement%}
+            <tr>
+                <td style="text-align:left;color:#000; font-size:13px;">
+                {{ element.type_name }}
+                </td>
+                <td style="text-align:left;color:#000; font-size:13px;">
+                    {{ element.element }}
+                </td>
+                <td style="text-align:center;color:#000; font-size:13px;text-align:center;">
+                    {{ element.od }} {%display_diameter request.session.unit%}
+                </td>
+                <td style="text-align:center;color:#000; font-size:13px;text-align:center;">
+                    {{ element.identity }} {%display_diameter request.session.unit%}
+                </td>
+                <td style="text-align:center;color:#000; font-size:13px;text-align:center;">
+                    {{ element.length }} {%display_depthunit request.session.unit%}
+                </td>
+                <td style="text-align:center;color:#000; font-size:13px;text-align:center;">
+                    {{ element.length_onejoint |floatformat:2 }} {%display_depthunit request.session.unit%}
+                </td>
+            </tr>
+            {%endfor%}
+            </tbody>
+        </table>
+        <h2 style="color:#7c0201;font-size:16px;">Drillbit</h2>
+        <div class="table-respons">
+            <table class="table phase-rep-tbl dril-boto" style="border:1px solid #e7e7e7;">
+              <thead>
+                <tr>
+                  <th style="background:#7c0201;color:#fff;font-size:15px;">
+                    <span class="font-weight-bold" >Bit Types</span>
+                  </th>
+                  <th style="background:#7c0201;color:#fff;font-size:15px;">
+                    <span class="font-weight-bold" >Manufacturer</span>
+                  </th>
+                  <th style="background:#7c0201;color:#fff;font-size:15px;">
+                    <span class="font-weight-bold" >Number of Nozzle</span>
+                </th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;">
+                  <span class="font-weight-bold">Extended Nozzle </span>
+              </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  
+                  <td style="text-align:left;color:#000; font-size:13px;">
+                    {{drillbit.bit_type}}
+                  </td>                           
+   
+                
+                  
+                  <td style="text-align:left;color:#000; font-size:13px;">
+                    {{ drillbit.manufacture }}
+                  </td>                         
+                
+                
+                  
+                  <td style="text-align:center;color:#000; font-size:13px;">
+                    {{ drillbit.no_of_nozzle }}
+                  </td>                         
+                            
+                
+                  
+                  <td style="text-align:center;color:#000; font-size:13px;">
+                    {%if drillbit.external_nozzle == None%}No
+                    {%else%}Yes{%endif%}
+                  </td>                         
+                </tr>                     
+              </tbody>
+            </table>
+
+            <!-- <table class="table" style="border:1px solid #e7e7e7;">
+              <tbody>
+                <tr>
+                  <td style="padding:5px 4px;color:#7c0201;font-size:15px;">
+                    <span class="font-weight-bold" >Bit Types</span>
+                  </td>
+                  <td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;">
+                    {{drillbit.bit_type}}
+                  </td>                           
+                </tr> 
+                <tr>
+                  <td style="padding:5px 4px;color:#7c0201;font-size:15px;">
+                    <span class="font-weight-bold" >Manufacturer</span>
+                  </td>
+                  <td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;">
+                    {{ drillbit.manufacture }}
+                  </td>                         
+                </tr>
+                <tr>
+                  <td style="padding:5px 4px;color:#7c0201;font-size:15px;">
+                      <span class="font-weight-bold" >Number of Nozzle</span>
+                  </td>
+                  <td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;">
+                    {{ drillbit.no_of_nozzle }}
+                  </td>                         
+                </tr>            
+                <tr>
+                  <td style="padding:5px 4px;color:#7c0201;font-size:15px;">
+                      <span class="font-weight-bold">Extended Nozzle </span>
+                  </td>
+                  <td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;">
+                    {%if drillbit.external_nozzle == None%}No
+                    {%else%}Yes{%endif%}
+                  </td>                         
+                </tr>                     
+              </tbody>
+            </table> -->
+            <h4 class="card-title text-center" style="padding:5px 0px;color:#7c0201;font-size:15px;">Nozzle Configuration</h4>
+            <table class="table nozzle-sze phase-rep-tbl" style="border:1px solid #e7e7e7;">
+              <thead>
+                <tr>
+                  <th style="color:#fff;background:#7c0201;font-size:15px;">
+                      <span class="font-weight-bold">Nozzle Size{%display_nozzle_size_unit request.session.unit%}</span>
+                  </th>
+                </tr>            
+              </thead>
+              <tbody>
+                {% for drill in drillbit_nozzle %}
+                {% if drill.nozzle_size != None%}
+                  <tr>       
+                    <td style="text-align:center;color: #000; font-size:13px;font-weight: 700;">
+                      {{ drill.nozzle_size }}
+                    </td>
+                    
+                  </tr>  
+                  {%endif%}
+                {% endfor %}
+                <td style="text-align:center;color: #7c0201; font-size:13px;font-weight: 700;background: #d9d4d4;"><span class="font-weight-bold t-fa">TFA ={{ drillbit.tfa}}{% display_diameter request.session.unit %}<sup>2</sup></span></td>
+              </tbody>
+            </table>
+            <!-- <div class="row">
+              <div class="col-2"><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"><span class="font-weight-bold t-fa">TFA ={{ drillbit.tfa}}</span></td><span class="drill-vlu">={{ drillbit.tfa}} </span></div>
+              <div class="col-4"></div>
+            </div> -->
+          </div>
+          <h2 style="color: #7c0201;font-size:16px;">Pressure Loss Summary</h2>
+          <table class="phase-rep-tbl pre-boto" style="border:1px solid #e7e7e7;">
+            <thead>
+              <tr>
+                <th style="background:#7c0201;color:#fff;font-size:15px;">Flowrate </th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;">RPM</th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;">ROP</th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;">PV</th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;">YP</th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;">m</th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;">K</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+              <td style="text-align:center;color:#000; font-size:13px;">{{pressure.data.flowrate}} {%display_flowrateunit request.session.unit%}</td>
+              <td style="text-align:center;color:#000; font-size:13px;">{{pressure.data.rpm}} rpm</td>
+              <td style="text-align:center;color:#000; font-size:13px;">{{pressure.data.rop}} {%display_rop request.session.unit%}</td>
+              <td style="text-align:center;color:#000; font-size:13px;"> {{pressure.data.pv}} {%display_plastic_viscosity request.session.unit%}</td>
+              <td style="text-align:center;color:#000; font-size:13px;"> {{pressure.data.yp}} {%display_yield_point request.session.unit%}</td>
+              <td style="text-align:center;color:#000; font-size:13px;"> {{pressure.data.m}}</td>
+              <td style="text-align:center;color:#000; font-size:13px;"> {{pressure.data.K}} </td>
+            </tr>
+            </tbody>
+          </table>
+
+          <!-- <table style="border:1px solid #e7e7e7;">
+            <tbody>
+              <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">Flowrate </th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;">{{pressure.data.flowrate}} {%display_flowrateunit request.session.unit%}</td></tr>
+              <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">RPM</th> <td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;">{{pressure.data.rpm}} rpm</td></tr>
+              <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">ROP</th> <td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;">{{pressure.data.rop}} {%display_rop request.session.unit%}</td></tr>
+              <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">PV</th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"> {{pressure.data.pv}} {%display_plastic_viscosity request.session.unit%}</td></tr>
+              <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">YP</th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"> {{pressure.data.yp}} {%display_yield_point request.session.unit%}</td></tr>
+              <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">m</th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"> {{pressure.data.m}}</td></tr>
+              <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">K</th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"> {{pressure.data.K}} </td></tr>
+            </tbody>
+          </table>  -->
+          
+          <h2 style="color: #7c0201;font-size:16px;">Pressure Loss Chart</h2>
+          <!-- <img class="log-img" src="/media/directchart_bar-{{wellphase_id}}-{{section_name}}.png"><br> -->
+          <div style="border:1px solid #e7e7e7; padding:10px; "><img class="log-img" src="/media/pressure_chart-{{wellphase_id}}-{{section_name}}.png"></div>
+          <h2 style="color: #7c0201;font-size:16px;">Table of Summary </h2>
+          <table class="phase-rep-tbl" style="border:1px solid #e7e7e7;">
+            <thead>
+            <tr>
+              <th style="background:#7c0201;color:#fff;font-size:15px;">Surface Pressure Loss </th>
+              <th style="background:#7c0201;color:#fff;font-size:15px;">Drillstring Pressure Loss </th>
+              <th style="background:#7c0201;color:#fff;font-size:15px;">Annular Pressure Loss </th>
+              <th style="background:#7c0201;color:#fff;font-size:15px;">Bit Pressure Loss </th>
+              <th style="background:#7c0201;color:#fff;font-size:15px;">Total Pressure Loss </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td style="text-align:center;color:#000; font-size:13px;"> {{total_surface}} {%display_pressureunit request.session.unit%}</td>
+            <td style="text-align:center;color:#000; font-size:13px;"> {{total_drillstring}} {%display_pressureunit request.session.unit%}</td>
+            <td style="text-align:center;color:#000; font-size:13px;"> {{total_annular}} {%display_pressureunit request.session.unit%}</td>
+            <td style="text-align:center;color:#000; font-size:13px;"> {{total_bit}} {%display_pressureunit request.session.unit%}</td>
+            <td style="text-align:center;color:#000; font-size:13px;"> {{totalpressure}} {%display_pressureunit request.session.unit%}</td>
+          </tr>
+            </tbody>
+          </table>
+
+          <!-- <table style="border:1px solid #e7e7e7;">
+            <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">Surface Pressure Loss :</th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"> {{total_surface}} {%display_pressureunit request.session.unit%}</td></tr>
+            <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">Drillstring Pressure Loss :</th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"> {{total_drillstring}} {%display_pressureunit request.session.unit%}</td></tr>
+            <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">Annular Pressure Loss :</th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"> {{total_annular}} {%display_pressureunit request.session.unit%}</td></tr>
+            <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">Bit Pressure Loss :</th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"> {{total_bit}} {%display_pressureunit request.session.unit%}</td></tr>
+            <tr><th style="padding:5px 0px;color:#7c0201;font-size:15px;">Total Pressure Loss :</th><td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;"> {{totalpressure}} {%display_pressureunit request.session.unit%}</td></tr>
+          </table> -->
+          <h2 style="color: #7c0201;font-size:16px;">Details Pressure Loss</h2>
+          <table class="phase-rep-tbl-d" style="border:1px solid #e7e7e7;">
+            <thead>
+              <tr>
+                <th style="background:#7c0201;color:#fff;font-size:px;"></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">BHA Element</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">OD/ID</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Length</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Cumulative Length</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Drillstring</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Annulus</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Annular flow regime</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#d9d4d4;">
+                <td style="text-align:center;color: #04aafb; font-size:13px; font-weight: bold;">OH</td>
+                <td style="text-align:left;color:#000; font-size:13px;">{{pressure.data.type_name}}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{pressure.data.bit_od}}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{pressure.data.bit_length}}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{pressure.data.bit_length}}</td>
+              </tr>
+              {% for datas in pressure.data.annularpressureloss reversed  %}
+              <tr>
+                <td style="text-align:center;padding:5px 0px;color:#000; font-size:13px;color: #04aafb; font-size:13px; font-weight: bold;">{{datas.element_type}}</td>
+                <td style="text-align:left;color:#000; font-size:13px;">{{datas.element}}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{datas.od}}{%display_diameter request.session.unit%}/{{datas.id}}{%display_diameter request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{datas.length_against|floatformat:0}} {%display_depthunit request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{% getcummulative wellphase_id section_name well_id forloop.counter %} {%display_depthunit request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{datas.drillstringloss|floatformat:0}} {%display_pressureunit request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{datas.pressureloss|floatformat:0}} {%display_pressureunit request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{datas.flowregime}}</td>
+              </tr>
+              {% endfor %}
+              <tr>
+                <td style="text-align:center;color: #3175bc; font-size:13px;font-weight: 800;" colspan="8">Total Annular Pressure Loss :<span style="color:#7c0201;"> {{total_annular}} {%display_pressureunit request.session.unit%}</span></td>
+              
+              </tr>
+              <tr>
+                <td style="text-align:center;color: #3175bc; font-size:13px;font-weight: 800;" colspan="8">Total DrillString Pressure Loss : <span style="color:#7c0201;">{{total_drillstring}} {%display_pressureunit request.session.unit%}</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- Total Annular Pressure Loss : {{total_annular}}<br>
+          Total DrillString Pressure Loss : {{total_drillstring}} -->
+          <h2 style="color: #7c0201;font-size:16px;">Surface Pressure Loss Table</h2>
+          <table class="phase-rep-tbl" style="border:1px solid #e7e7e7;">
+            <thead>
+              <tr>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Element</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">ID</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Length</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Pressure Drop</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for surfece in pressure.data.surfacelosses  %}
+              <tr>
+                <td style="text-align:left;color:#000; font-size:13px;">{{surfece.type}}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{surfece.id}} {%display_diameter request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{surfece.length}} {%display_depthunit request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{surfece.pressureloss|floatformat:0}} {%display_pressureunit request.session.unit%}</td>
+              </tr>
+              {%endfor%}
+              <tr><td colspan="4" style="text-align:center;color: #3175bc; font-size:13px;font-weight: 800;">Total Surface Pressure Loss :<span style="color:#7c0201;">{{total_surface}} {%display_pressureunit request.session.unit%}</span></td></tr>
+            </tbody>
+          </table>
+          <!-- Total Surface Pressure Loss : {{total_surface}} -->
+          <h2 style="color:#7c0201;font-size:16px;font-weight: 600;">Bit Pressure Loss</h2>
+          <table class="phase-rep-tbl bit-bot" style="border:1px solid #e7e7e7;">
+            <thead>
+              <tr>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">TFA</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">ΔP<sub>bit</sub></span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">BHHP</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">HSI</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Impact Force</span></th>
+                <th style="background:#7c0201;color:#fff;font-size:15px;"><span class="font-weight-bold">Jet Velocity</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bit in pressure.data.bitpressurelosses %}
+              <tr>
+                <td style="text-align:center;color:#000; font-size:13px;">{{bit.tfa_value|floatformat:2}} {%display_diameter request.session.unit%}<sup>2</sup></td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{bit.bit_pressure_loss|floatformat:0}} {%display_pressureunit request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{bit.bhhp|floatformat:0}} {%display_bhhp request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{bit.hsi|floatformat:2}} {%display_bhhp request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{bit.impact_forces|floatformat:0}} {%display_impactforce request.session.unit%}</td>
+                <td style="text-align:center;color:#000; font-size:13px;">{{bit.jet_velocity|floatformat:0}} {%display_depthunit request.session.unit%}/sec</td>
+              </tr>
+               <!-- <tr>
+                <th colspan="6" style="padding:5px 0px;color:#7c0201;font-size:15px;"><span class="font-weight-bold">Nozzle size</span></th>
+                {% for nozzle in bit.nozzle_size%}
+                <tr><td colspan="6" style="text-align:center;padding:5px 0px;color: #3175bc; font-size:13px;font-weight: 700;">{{nozzle}}</td></tr>
+                {%endfor%}
+              </tr>  -->
+              {%endfor%}
+              
+            </tbody>
+          </table>
+          <h2 style="color:#7c0201;font-size:16px;">ECD Bit Chart</h2>
+          <div style="border:1px solid #e7e7e7; padding:10px;"> <img class="log-img" src="/media/ecdbit_chart-{{wellphase_id}}-{{section_name}}.png"></div>
+          <h2 style="color:#7c0201;font-size:16px;">ECD Bit Chart Table</h2>
+          <table class="phase-rep-tbl ecd-bitbot" style="border:1px solid #e7e7e7;">
+            <thead>
+              <tr><th style="background:#7c0201;color:#fff;font-size:15px;">ECD{%display_densityunit request.session.unit%}</th><th style="background:#7c0201;color:#fff;font-size:15px;">MD({%display_depthunit request.session.unit%})</th></tr>
+            </thead>
+            <tbody>
+              {%for bitecd in pressure.data.ecdchartdata%}
+              <tr><td style="text-align:center;color:#000; font-size:13px;">{{bitecd.x|floatformat:2}}</td><td style="text-align:center;color:#000; font-size:13px;">{{bitecd.y|floatformat:2}}</td></tr>
+              {%endfor%}
+            </tbody>
+          </table>
+          <h2 style="color:#7c0201;font-size:16px;">ECD Alonghole Chart</h2>
+          <div style="border:1px solid #e7e7e7; padding:10px; "><img class="log-img" src="/media/ecdalong_chart-{{wellphase_id}}-{{section_name}}.png"></div>
+          <h2 style="color:#7c0201;font-size:16px;">ECD Alonghole Chart Table</h2>
+          <table class="phase-rep-tbl ecd-alonbot" style="border:1px solid #e7e7e7;">
+            <thead>
+              <tr><th style="background:#7c0201;color:#fff;font-size:15px;">ECD{%display_densityunit request.session.unit%}</th><th style="background:#7c0201;color:#fff;font-size:15px;">MD({%display_depthunit request.session.unit%})</th></tr>
+            </thead>
+            <tbody>
+              {%for bitalong in pressure.data.ecdalongwell%}
+              <tr><td style="text-align:center;color:#000; font-size:13px;">{{bitalong.x|floatformat:2}}</td><td style="text-align:center;color:#000; font-size:13px;">{{bitalong.y|floatformat:2}}</td></tr>
+              {%endfor%}
+            </tbody>
+          </table>
+          <h2 style="color:#7c0201;font-size:16px;font-weight: 800;">Slip Velocity</h2>
+          <div style="border:1px solid #e7e7e7; padding:10px;margin-bottom: 50px;"><img class="log-img" src="/media/directchart_slip-{{wellphase_id}}-{{section_name}}.png"></div>
+          <h2 style="color:#7c0201;font-size:16px;font-weight: 800;">CCI</h2>
+          <div style="border:1px solid #e7e7e7; padding:10px;margin-bottom: 50px;"><img class="log-img" src="/media/cci_chart-{{wellphase_id}}-{{section_name}}.png"></div>
+          <h2 style="color:#7c0201;font-size:16px;font-weight: 800;">TR</h2>
+          <div style="border:1px solid #e7e7e7; padding:10px;"><img class="log-img" src="/media/tr_chart-{{wellphase_id}}-{{section_name}}.png"></div>
+        
+    </div> 
+<style>
+  .pha-mud-vlu th{
+   
+   padding-bottom:0px;
+   padding-top:5px;
+   margin:0px;
+    height:50px; 
+  }
+
+  .pha-mud-vlu td{
+    padding-bottom:0px;
+   padding-top:5px;
+   padding-left:2px;
+   padding-right:2px;
+   margin:0px;
+    height:50px; 
+  }
+
+  .rh-tbl th{
+    padding-bottom:0px;
+    padding-top:5px;
+    
+  }
+
+  .rh-tbl td{
+    padding-bottom:0px;
+    padding-top:5px;
+    height:50px;
+  }
+
+  
+
+  .phase-rep-tbl th{
+    padding-bottom:0px;
+    padding-top:5px;
+    padding-left:2px;
+   padding-right:2px; 
+   height:50px; 
+  }
+
+  .phase-rep-tbl td{
+    padding-bottom:0px;
+    padding-top:5px;
+    padding-left:2px;
+   padding-right:2px; 
+   height:50px; 
+  }
+
+  .phase-rep-tbl-d th{
+    padding-bottom:0px;
+    padding-top:5px;
+    padding-left:0px;
+    padding-right:0px;
+    margin:0px;
+    height:50px; 
+  }
+
+  .phase-rep-tbl-d td{
+    padding-bottom:0px;
+    padding-top:5px;
+    padding-left:2px;
+   padding-right:2px; 
+   height:50px; 
+  }
+
+  .rhl-boto{
+    margin-bottom: 250px;
+  }
+
+  .dril-boto{
+    margin-bottom: 50px;
+  }
+
+  .pre-boto{
+    margin-bottom: 400px;
+  }
+
+  .bit-bot{
+    margin-bottom: 490px;
+  }
+  .ecd-bitbot{
+    margin-bottom: 350px;
+  }
+  .ecd-alonbot{
+    margin-bottom: 300px;
+  
+  }
+
+  .sm-tlt{
+     display: flex !important;
+  }
+</style>
+
+</section>

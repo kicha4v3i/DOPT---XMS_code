@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section id="data-list-view" class="data-list-view-header">
+    <div class="container-fluid">
+    <div class="row align-items-start common-row-space">
+        <div class="col-md-12 p-0 create-pg ">
+        <div class="create_project_sec scroll-line new-cru-well">
+            {% include "header.html" %}
+    <div class="action-btns d-none">
+
+    </div>
+
+    <!-- DataTable starts -->
+
+    <div class="table-responsive user-table-lists">
+        {% poauser_rights_permission 'Add User' request as value %}
+            {% if value %}
+            <a class="btn btn-primary waves-effect  waves-float waves-light detail-button mb-2" href="{% url 'custom_auth:admin_user_create' %}" >  <span class="action-edit-project"><i class="feather icon-plus-circle"></i> Add user</span></a> 
+            {% endif %}
+        <div class="card">
+            
+        <table class="table">
+            <caption class="table-title" style="caption-side: top"><h1>Users List</h1></caption>
+            
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Designation</th>
+
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in data %}
+             
+                 
+                <tr>
+                    <td class="name" data-value="{{obj.name}}" data-id="{{obj.id}}">{{obj.name}}</td>
+                    <td class="lastname" data-value="{{obj.lastname}}">{{obj.lastname}}</td>
+                    <td class="email" data-value="{{obj.email}}">{{obj.email}}</td>
+                    <td class="designation" data-value="{{obj.designation}}">{{obj.designation}}</td>
+                    <input type="hidden" id="title" value="{{obj.title}}" class="title" data-value="{{obj.title}}">
+
+                    <td class="product-action text-center">
+                    <form class="edit-form" method="POST">
+                        {% csrf_token %}
+                        {% poauser_rights_permission 'Modifying User Details' request as value %}
+                        {% if value %}
+                        <span class="action-edit">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <input type="hidden" name="user_id" class="user_id_value" value="{{ obj.id }}">
+                        </span>
+                        {% endif %}
+                    
+
+                        {% poauser_rights_permission 'Delete User' request as value %}
+                        {% if value %}
+                        <span class="action-delete" data-id="{{obj.id}}">
+                            <i class="fa-solid fa-trash"></i>
+                        </span>
+                        {% endif %}
+                        <a href="{% url 'custom_auth:poauserrights' obj.id %}" class="user-reset user-icons" data-id="{{obj.id}}" title="Reset Password">
+                            <span>
+                                <i class="fa-solid fa-user-lock"></i>
+                            </span>
+                        </a>
+                        <span class="user-icons reset_password" data-id="{{obj.id}}">
+                            <i class="fa-solid fa-key"></i>
+                        </span>
+                    </form>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <!-- DataTable ends -->
+
+    <!-- add new sidebar starts -->
+    <div class="add-new-data-sidebar">
+        <div class="overlay-bg"></div>
+        <div class="add-new-data">
+            <form action="{% url 'custom_auth:adminusercreate' %}" method="post" name="adduserform">
+                {% csrf_token %}
+
+            <div class="div mt-2 px-2 d-flex new-data-title justify-content-between">
+                <div>
+                    <h4 class="text-uppercase form-title table-title"> User</h4>
+                </div>
+                <div class="hide-data-sidebar">
+                    <i class="feather icon-x"></i>
+                </div>
+            </div>
+            <div class="data-items pb-3">
+                <div class="data-fields px-2 mt-3">
+                    <div class="row">
+                        <div class="col-sm-12 data-field-col">
+                            <label class="project-edit-name" for="data-name">Title</label>
+                            <select name="title" class="form-control" id="gender">
+                                <option value="">Select</option>
+                                <option value="Miss">Miss</option>
+                                <option value="Mrs">Mrs</option>
+                                <option value="Mr">Mr</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-12 data-field-col">
+                            <label class="project-edit-name" for="data-name">First Name</label>
+                            <input type="hidden" class="form-control" id="id" name="id">
+
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                        <div class="col-sm-12 data-field-col">
+                            <label class="project-edit-name" for="data-name">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name">
+                        </div>
+                        <div class="col-sm-12 data-field-col edit_hide">
+                            <label for="data-name">Designation</label>
+                            <input type="text" class="form-control" id="designation" name="designation">
+                        </div>
+                        <div class="col-sm-12 data-field-col edit_hide">
+                            <label class="project-edit-name" for="data-name">Email</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                      
+                </div>
+            </div>
+            <div class="add-data-footer d-flex justify-content-around px-3 mt-2">
+                <div class="add-data-btn">
+                    <button class="btn btn-primary detail-button">Submit</button>
+                </div>
+                <div class="cancel-data-btn">
+                    <button class="btn btn-outline-danger detail-button">Cancel</button>
+                </div>
+            </div>
+        </form>
+
+        </div>
+    </div>
+    {% include "footer.html" %}
+    </div>
+    </div>
+    <!-- <div class="col-md-2">
+        {% include "userheader.html" %}
+    </div> -->
+    </div>
+    <!-- add new sidebar ends -->
+</div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+    var csrf = '{{ csrf_token }}';
+</script>
+<script src="{% static 'js/auth/user.js' %}"></script>
+{%endblock%}
+

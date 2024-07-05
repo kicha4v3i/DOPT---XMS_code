@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+
+  
+<section>
+    <!-- <div class="row" id="basic-table"> -->
+      <div class="row align-items-start" id="">
+        <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+        <div class="col-12">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Pumps</h4>
+            </div>
+
+            <div class="col-12">
+                <table class="table table_css">
+                    <tr><th>Manufacturer:</th><td>{{pump.pump_manufacturer.name}}</td></tr>
+                    <tr><th>Pump Name:</th><td>{{pump.name}}</td></tr>
+                    <tr><th>Type:</th><td>{{pump.type}}</td></tr>
+                    <tr><th>Unit:</th><td>{{pump.unit}}</td></tr>
+
+                    <tr><td>Stroke Length(in):</td><td>{{pump.stroke_length|diameterunit:pump.unit}}</td></tr>
+
+                </table>
+              </div>
+              <div class="col-12">
+                <table class="table">
+                  <h4 class="card-title text-center">Mud Pump Data Table</h4>
+                    <tr  class="linearsize"><th>Liner Size(in)</th>
+                        {% for obj in pump.mudpumpmasterdata_set.all %}
+                        <td>{{obj.linear_size|diameterunit:pump.unit}} </td>   
+                        {% endfor %}
+                    </tr>
+                    <tr class="pressure"><th>Max Discharge Pressure(Psi)</th>
+                        {% for obj in pump.mudpumpmasterdata_set.all %}
+                        <td>{{obj.max_discharge_pressure|pressureunit:pump.unit}} </td>   
+                        {% endfor %}
+                    </tr>
+                </table>
+              </div>
+
+            <div class="col-12">
+                <table class="table mudpumptable flowrate_table ">
+                    <tr><th>Pump Speed(SPM)</th><th colspan=4 class="flowrateth text-center" >Flowrate(GPM)</th></tr>
+
+                    {% for speed in pump.mudpumpmasterspeed_set.all %}
+                    <tr class="flowrate"> <td>
+                        {{speed.pump_speed}} SPM
+                    </td>
+                    {% for flowrateobj in speed.mudpumpmasterflowrate_set.all %}
+
+                    <td>
+                        {{flowrateobj.flowrate|flowrateunit:pump.unit}}
+                    </td>
+                    {% endfor %}
+
+                    </tr>
+                    {% endfor %}
+                </table>
+                <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+            </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+        </div>
+      </div>
+
+      <!-- <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a> -->
+
+      
+    </section>
+    <style>
+      /* .mudpumptable tr td:first-child, .mudpumptable tr th:first-child { background: #e8e8e8;}
+      .mudpumptable tr th:first-child, .mudpumptable tr th:nth-child(2) { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+      .mudpumptable tr:last-child td:first-child{ border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; } 
+      .mudpumptable tr:last-child td:nth-child(2) {  border-bottom-left-radius: 10px;}
+      .mudpumptable tr:last-child td:last-child {  border-bottom-right-radius: 10px;}
+      .mudpumptable tr td:nth-child(2),
+      .mudpumptable tr th:nth-child(2),
+      .mudpumptable tr td:nth-child(3),
+      .mudpumptable tr td:nth-child(4),
+      .mudpumptable tr td:nth-child(5) { background: #d3d3d3; } */
+    </style>
+
+{% endblock %}

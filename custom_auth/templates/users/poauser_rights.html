@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/user-rights/user_rights.css' %}">
+
+<section id="data-list-view" class="data-list-view-header user_rights_pg">
+    <div class="container-fluid">
+    <div class="scroll-line new-cru-well common-row-space">
+    {% include "header.html" %}
+        <form action="" method="POST" name="userrights_form">
+            {% csrf_token %}
+            <div class="card mt-2">
+            <div class="table-responsive user-table-lists">
+                <div class="table-title" style="caption-side: top"><h1 class="table-common text-center">User Rights</h1></div>
+                <div class="users-list">
+                    <table class="table userrights-table">
+                        <tbody>
+                            <tr class="table-1">
+                                <td>Select All</td>
+                                <td>
+                                    <span class="round">
+                                        <input type="checkbox" class="user_rights customselect_all">
+                                        <label for="checkbox" class="rou-label"></label>
+                                    </span>
+                                </td>
+                            </tr> 
+                            {% for main_module in main_modules%}
+                                {% if main_module.has_submenu %}
+                                <tr class="table-2">
+                                    <td>{{main_module.name}}</td>
+                                    <td>
+                                        <span class="round">
+                                            <input type="checkbox" class="user_rights mainmodule" value="{{main_module.id}}">
+                                            <label for="checkbox" class="rou-label"></label>
+                                        </span>
+                                    </td>
+                                </tr>
+                                {%endif%}
+
+                                {% getsubmenu main_module.id as submenu %}
+                                {% for value in submenu %}
+                                <tr>
+                                    <td>{{value.name}}</td>
+                                    <td>
+                                        {% getpoauserrights value.id userid as user_check %}
+                                        <span class="round">
+                                            <input type="checkbox" class="user_rights main_module{{main_module.id}}" name="rights{{value.id}}" value="{{value.id}}" {% if user_check %} checked {% endif %}>
+                                            <label for="checkbox" class="rou-label"></label>
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="user-rights-btn pb-5">
+                    <button type="submit" class="btn btn-primary  btn-inline detail-button mt-3">Submit</button>
+                </div>
+
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+</section>
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/auth/customuserrights.js' %}"></script>
+{%endblock%}
+
+
+
+
+

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+     <div class="row">
+      {% getcountries countries as countries %}
+      {% include 'projectsidemenu.html' %} 
+      <div class="col-md-8 p-0  create-pg main-section col-md-10">
+      <div class="create_project_sec scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+        <button class="hide-show fa fa-long-arrow-right"></button>  {% endcomment %}
+
+      {% include "projectheader.html" %}
+    <div class="col-12">
+      {% include "welldetails_menu.html" %}    
+    </div>
+    <div class="col-12">
+      {% include "welldetailssubmenu.html" %}  
+    </div>
+    <div class="col-12">
+        <div class="card note-text">
+          <div class="card-header">
+            <h4 class="card-title">Hydraulic Data</h4>
+          </div>
+          <div class="card-body">
+              <div class="addtableBox" style="display:none">
+                <div class="tableContCol col1">
+                    <input type="text" class="form-control start_date" name="start_date">
+                </div>
+                <div class="rightCol">
+                    <div class="tablerow row1">
+                        <input type="hidden" name="hydraulic_id" value="" id="hydraulic_id">
+                        <div class="tableContCol col3"><input type="text" class="form-control md" name="md"></div>
+                        <div class="tableContCol col4"><input type="text" class="form-control flowrate" name="flowrate"></div>
+                        <div class="tableContCol col5"><input type="text" class="form-control rop" name="rop"></div>
+                        <div class="tableContCol col6"><input type="text" class="form-control rpm" name="rpm"></div>
+                        <div class="tableContCol col7"><input type="text" class="form-control pump_pressure" name="pump_pressure"></div>
+                        <div class="tableContCol col8"><input type="text" class="form-control annular_pressure" name="annular_pressure"></div>
+                        <div class="tableContCol col9"><input type="text" class="form-control ecd" name="ecd"></div>
+                        <div class="tableContCol col9">
+                          <button type="button" name="add" class="addhydraulic_data iconaction add-edit-btn" data_id="0"><i class="fa fa-plus"></i></button>
+                          <button type="button" name="remove" class="removehydraulic_data iconaction add-edit-btn" data_id="0"><i class="fa fa-trash"></i></button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <form class="form form-horizontal" method="POST" id="Hydraulicdata_form">
+                {% csrf_token %}
+                <input type="hidden" id="well" class="form-control" name="well" value="{{well_id}}">
+                <input type="hidden" id="type" class="form-control" name="well" value="edit">
+
+
+              <div class="row">
+                <div class="col-12">
+                <!-- <button type="button" name="add" class="addhydraulic_content iconaction add-edit-btn bot-edit-btn"><i class="fa fa-plus"></i></button> -->
+
+                <div class="tablewrapper cst_table">
+                    <div class="tablenner">
+                        <div class="tableHead">
+                            <div class="tableHeadCol col3 hydra-hd-cent">MD</div>
+                            <div class="tableHeadCol col4 hydra-hd-cent">Flowrate</div>
+                            <div class="tableHeadCol col5 hydra-hd-cent">ROP</div>
+                            <div class="tableHeadCol col6 hydra-hd-cent">RPM</div>
+                            <div class="tableHeadCol col7 hydra-hd-cent">Pump Pressure</div>
+                            <div class="tableHeadCol col8 hydra-hd-cent">Annular Pressre</div>
+                            <div class="tableHeadCol col9 hydra-hd-cent">ECD</div>
+                        </div>
+                        <div class="tableContent">
+                              {% for getdata in hydraulic_data%}
+                              <div class="tableBox rem-bor-box" id="hydraulicrow{{forloop.counter0}}">
+                                  <div class="rightCol" id="hydraulic_content{{forloop.counter0}}">
+                                      <div class="tablerow row1">
+                                        <input type="hidden" name="hydraulic_id" value="{{getdata.id}}">
+                                        <div class="tableContCol col3"><input type="text" class="form-control md" name="md" value="{{getdata.measured_depth}}"><span class="md_error"></span></div>
+                                        <div class="tableContCol col4"> <input type="text" class="form-control flowrate" name="flowrate" value="{{getdata.flowrate}}"><span class="flowrate_error"></span></div>
+                                        <div class="tableContCol col5"><input type="text" class="form-control rop" name="rop" value="{{getdata.rop}}"><span class="rop_error"></span></div>
+                                        <div class="tableContCol col6"><input type="text" class="form-control rpm" name="rpm" value="{{getdata.rpm}}"><span class="rpm_error"></span></div>
+                                        <div class="tableContCol col7"><input type="text" class="form-control pump_pressure" name="pump_pressure" value="{{getdata.pump_pressure}}"><span class="pump_pressure_error"></span></div>
+                                        <div class="tableContCol col8"><input type="text" class="form-control annular_pressure" name="annular_pressure" value="{{getdata.annular_pressure}}"><span class="annular_pressure_error"></span></div>
+                                        <div class="tableContCol col9"><input type="text" class="form-control ecd" name="ecd" value="{{getdata.ecd}}"><span class="ecd_error"></span></div>
+                                        <div class="tableContCol col9">
+                                          <button type="button" name="add" class="addhydraulic_data iconaction add-edit-btn" data_id="{{forloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                          <button type="button" name="remove" class="removehydraulic_data iconaction add-edit-btn" data_id="{{forloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                        </div>
+                                      </div>
+                                  </div>   
+                              </div>
+                              {%endfor%}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-9 offset-sm-3 but-su">
+                  <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>    
+               <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button hydraulics_submit">Submit</button>
+               <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+              </div>
+                </div>
+                <!-- <div class="col-12">
+                    <button type="button" class="btn btn-outline-secondary pull-right addwelltrajectoryrow">Add Row</button>
+                  </div> -->
+                  <!-- <div class="col-sm-9 offset-sm-3">
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>    
+                 <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                 <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button>
+                </div> -->
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="row">
+          <div class="col-sm-12 graphics-card">
+            <div class="col-sm-6 gra-img1">
+              <figure class="highcharts-figure">
+                <div id="dynamic-welltractory-tvd-vs" style="width: 100%; ";></div>
+              </figure> 
+            </div>
+            <div class="col-sm-6 gra-img1">
+              <figure class="highcharts-figure">
+                <div id="dynamic-welltractory-container" style="width: 100%; ";></div>
+              </figure>
+            </div>
+          </div>
+        </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+          <!-- <div class="left-sidebar">
+            <h4 class="model-caption">Well Phases</h4>
+            {% for wellphase in wellphases %}
+              <div class="row">
+                <div class="col-12">
+                  <nav class="navbar bg-white phase-sidemenu">
+                    <ul class="nav navbar-nav">
+                      <li class="nav-item phs-list {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                        <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            {% endfor %}
+          </div> -->
+           <div class="col-md-12 warning"></div>
+      </div>
+      </div>
+      
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+  var unit='{%display_depthunit request.session.unit%}';
+  var well_id='{{well_id}}';
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/hydraulic_data.js' %}"></script>
+<script src="{% static 'js/allvalidation.js' %}"></script>
+
+{%endblock%}
+
+
+

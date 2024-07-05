@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<div class="row">
+  <div class="col-md-10  create-pg"> 
+    <div class="create_project_sec scroll-line">
+      {% include "header.html" %}
+    <div class="card create-project">
+    <div class="col-12">
+      <form class="form form-horizontal" method="POST" id="commonpermission_form">
+        {% csrf_token %}
+        <label>Users</label>
+        <select name="user_id" class="form-control" id="user_id">
+          <option value="">Select User</option>
+          {% for user in users%}
+          <option value="{{user.id}}">{{user.email}}</option>
+          {% endfor %}
+        </select>
+        {% if wellcount != 0 %}
+          <label>Wells</label>
+          <select name="well_id" class="form-control" id="well_id">
+            <option value="">Select Well</option>
+            {% for well in wells%}
+              <option value="{{well.id}}">{{well.name}}</option>
+            {% endfor %}
+          </select>
+        {%endif%}
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Create</th>
+              <th>Edit</th>
+              <th>Delete</th>
+              <th>View</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for module in modules %}
+              <tr>
+                <th>{{module.name}}</th>
+                <td>
+                  <input type="checkbox" name="{{module.name}}_create" value="1" id="{{module.id}}_create" class="userrights_checkbox">
+                </td>
+                <td>
+                  <input type="checkbox" name="{{module.name}}_edit" value="1" id="{{module.id}}_edit" class="userrights_checkbox">
+                </td>
+                <td>
+                  <input type="checkbox" name="{{module.name}}_delete" value="1" id="{{module.id}}_delete" class="userrights_checkbox">
+                </td>
+                <td>
+                  <input type="checkbox" name="{{module.name}}_view" value="1" id="{{module.id}}_view" class="userrights_checkbox"></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="col-sm-9 offset-sm-3 ">
+          <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+      </div>
+      </form>
+    </div>
+    </div>
+    {% include "footer.html" %}
+    </div>
+  </div>
+  <div class="col-md-2">
+    {% include "userheader.html" %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+var rights_option=["create","view","edit","delete"]
+
+
+$('#well_id').on('change',function(){
+    var well_id=$(this).val()
+    var user_id=$('#user_id').val()
+    getrights(well_id,user_id)
+    
+})
+$('#user_id').on('change',function(){
+    var well_id=$('#well_id').val() 
+    var user_id=$(this).val()
+    getrights(well_id,user_id)
+    
+})
+function getrights(well_id,user_id){
+  var project_id='{{project_id}}'
+
+  $.ajax({ 
+      type: "GET",                      
+      url: "{% url 'custom_auth:getuserrights' %}",                  
+      data: {
+        well_id:well_id, 
+        user_id:user_id,
+        project_id:project_id
+      },
+      dataType: "json",
+      success: function (data) {  
+        $('.userrights_checkbox').prop('checked', false)
+        var rightsdata=JSON.parse(data)
+        for(var i=0;i<rightsdata.length;i++){
+          for(var j=0;j<rights_option.length;j++){
+            var rights = rights_option[j];
+            if(rightsdata[i].fields[rights]==1){
+              $('#'+rightsdata[i].fields.module+'_'+rights).prop('checked', true);
+            }else{
+              $('#'+rightsdata[i].fields.module+'_'+rights).prop('checked', false);
+
+            }
+          }
+
+        }
+      }
+  });
+}
+</script>
+{%endblock%}
+

@@ -1,0 +1,121 @@
+.add-row-div {
+    display: none;
+}
+.back-clr i {
+    background-color: red;
+    padding: 4px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    color: #ffffff;
+    background-image: linear-gradient(182deg, #7c0201,#bb1111 );
+    font-size: 12px;
+}
+.back-clr
+{
+    padding: 7px !important;
+}
+.left_message
+{
+    width: fit-content;
+    max-width: 50%;
+    border-radius: 0rem 0.675rem 0.675rem 0.675rem;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 0.125rem 0.25rem rgba(165,163,174,.3);
+    margin-bottom: 10px;
+}
+.left_message p
+{
+    margin-bottom: 0.2rem !important;
+}
+.right_message
+{
+    width: fit-content;
+    max-width: 50%;
+    background-color: #7c02010f;
+    margin: 0 0 10px auto;
+    border-radius: 0.675rem 0rem 0.675rem 0.675rem;
+    padding: 10px;
+}
+.right_message p{
+    margin-bottom: 0.2rem !important;
+}
+.chat_back_clr
+{
+    background-color:#F8F8F8 !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(165,163,174,.3);
+}
+.back-input-clr
+{
+    background-color: #ffffff;
+    box-shadow: 0 0.125rem 2.25rem rgba(165,163,174,.3);
+    padding: 10px;
+    border-radius: 0.575rem;
+    margin: 10px !important;
+}
+.note-statusbar {
+    display: none;
+    border: none !important;
+}
+.note-editor.note-airframe, .note-editor.note-frame
+{
+    border: none !important;
+}
+.send-btn
+{
+    color: #ffffff;
+    background-image: linear-gradient(182deg, #7c0201,#bb1111 );
+    padding: 6px 10px 6px 10px;
+    border: #7c0201;
+}
+.send-btn:hover
+{
+    box-shadow: 0 8px 25px -8px #7c0201 !important;
+}
+.send-btn i
+{
+    padding-right: 10px;
+}
+.dis-chat
+{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+.msg-date
+{
+    text-align: end;
+    font-size: 10px;
+    font-weight: 700;
+}
+.send-btn {
+    margin-left: 20px;
+}
+.note-editable p
+{
+    margin: 0 !important;
+}
+.note-editable
+{
+    border:1px solid #D9D9D9;
+    border-radius: 5px;
+}
+.chat_back_clr .note-editable
+{
+    border:none !important;
+}
+.chat-header {
+    box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+.inner-hed
+{
+    display: flex;
+    padding: 10px !important;
+    gap: 15px;
+}
+.inner-hed h5
+{
+    margin: 0;
+}

@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section id="data-list-view" class="data-list-view-header">
+  <!-- <div class="row" id="basic-table"> -->
+    <div class="row align-items-start">
+      <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line new-cru-well">
+          {% include "header.html" %}
+    <div class="col-md-12">
+      {% include "welldetails_menu.html" %} 
+    </div>
+    <div class="col-12">
+      {% include "welldetailssubmenu.html" %}  
+    </div>
+    <div class="rig-det">
+    <div class="row">
+    <div class="col-2">
+      {% include "rig_menu.html" %}  
+  </div>
+      <div class="col-10">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Create MudPump </h4>
+          </div>
+          <div class="card-body">
+            <form class="form form-horizontal" method="POST" id="mudpumpform" name="mudpumpform">
+                {% csrf_token %}
+                <input type="hidden" id="well" class="form-control" name="well" value={{well_id}}>
+                <input type="hidden" id="unit" class="form-control"  value={{well.project.unit}}>
+                
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="pump_manufacturer">Pump Manufacturer</label>
+                    </div>
+                    <div class="col-sm-9">
+                      <select class="form-control select2"  name="master" id="manumaster">
+                        <option value="">-- manufacturer master --</option>
+                        {% for obj in manufactureres %}
+                        <option value="{{obj.id}}" >{{obj.name}}</option>
+                        {% endfor %}
+
+                    </select></div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="pump_name">Pump Name</label>
+                      </div>
+                      <div class="col-sm-9">
+
+                      <select class="form-control"  name="pump_name_select" id="pump_name_select">
+                          <option value="">-- Pump Name --</option>  
+                      </select>
+                      </div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="pump_manufacturer" class="form-control" name="pump_manufacturer" placeholder="Pump Manufacturer">
+
+                  <input name="pump_name" id="pump_name" type="hidden">
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="pump_type">Pump Type</label>
+                      </div>
+                      <div class="col-sm-9">
+                          <select class="form-control" id="types" name="pump_type">
+                              <option value="">-- Pump Type --</option>
+                              <option value="Triplex" >Triplex</option>
+                              <option value="Duplex" >Duplex</option>
+                          </select></div>
+                    </div>
+                  </div>
+                
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="stroke_length">Stroke Length{%display_diameterunit well.project.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" id="stroke_length" class="form-control" name="stroke_length" placeholder="Stroke Length">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name" for="number_of_pumps">Number of Pumps</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" id="number_of_pumps" class="form-control" name="number_of_pumps" placeholder="Number of Pumps" >
+                      </div>
+                    </div>
+                  </div>
+                           
+                  <div class="col-12">
+                    <table class="table mudpumpdata">
+                        <h4 class="card-title text-center">Mud Pump Data Table</h4>
+                        <tr  class="linearsize"><th class="label linersize">Liner Size{%display_diameterunit well.unit%}<span id="linearsizeunit"></span></th>{%for i in colum%}<td><input type="number" class="form-control linear_size" name="linear_size" id="linear_size"></td>{%endfor%}</tr>
+                        <tr class="pressure"><th class="label">Max Discharge Pressure{%display_pressureunit well.unit%}<span id="pressureunit"></span></th>{%for i in colum%}<td><input type="number" class="form-control" name="max_discharge_pressure" ></td>{%endfor%}</tr>
+                    </table>
+                  </div>
+    
+    
+                <div class="col-12">
+                    <table class="table mudpumptable" id="mudpumptable">
+                        <tr><th class="label">Pump Speed(SPM)</th><th class="flowrateth label text-center" colspan="4">Flowrate{%display_flowrateunit well.unit%}<span id="flowrateunit"></span></tr>
+                          {%for i in row%}<tr class="flowrate"><th><input type="number" class="form-control pump_speed" name="pump_speed" id="pump_speed"></th>{%for i in colum%}<td><input type="number" class="form-control" name="flowrate" id="flowrate"></td>{%endfor%}</tr>{%endfor%}
+                    </table>
+                </div>
+                
+
+                <div class="col-12 mb-2">
+                  <button type="button" class="btn btn-outline-secondary pull-right removemudpumpcolumn-master">Remove Column</button>&nbsp;
+                    <button type="button" class="btn btn-outline-secondary pull-right removemudpumprow-master mr-2">Remove Row</button>
+                    <button type="button" class="btn btn-outline-secondary pull-right addmudpumpcolumn mr-2">Add Column</button>&nbsp;
+                    <button type="button" class="btn btn-outline-secondary pull-right addmudpumprow mr-2">Add Row</button>
+                    
+                </div>
+
+                <div class="col-sm-9 offset-sm-3">
+                  <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                  <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                  <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      </div>
+      </div>
+      {% include "footer.html" %}
+      </div>
+      </div>
+      <div class="col-md-2">
+        {% include "userheader.html" %}
+        <div class="col-md-12 warning"></div>
+    </div>
+    </div>
+    </section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+</style>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+<script>
+ $('#number_of_pumps').val(1);
+  
+  $("#mudpumpform").validate({
+    rules: {
+      stroke_length:"required",
+      pump_name:"required",
+      pump_manufacturer:"required",
+      pump_type:"required",
+      pump_speed:"required",
+      mud_pump:"required",
+      linear_size:"required",
+      max_discharge_pressure:"required",
+      number_of_pumps:"required"
+    },
+    messages: {
+      stroke_length:"Please enter the Stroke length",
+      pump_name:"please select the  Pump name",
+      pump_manufacturer:"Please enter the Pump manufacturer",
+      pump_type:"Please enter the Pump type",
+      pump_speed:"Please enter the Pump speed",
+      mud_pump:"Please enter the Mud Pump",
+      linear_size:"Please enter the Linear size",
+      max_discharge_pressure:"Please enter the Max Discharge Pressure",
+      number_of_pumps:"Please enter the Number of Pumps"
+    }
+});
+    var storedArray = JSON.parse(sessionStorage.getItem("items"));
+    var well_id='{{well_id}}'
+    if(well_id == storedArray[1]){
+      $('.warning').show();
+    }else{
+      $('.warning').hide();
+    }
+</script>
+{% endblock %}
+

@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+
+  
+<section>
+  <div class="container-fluid">
+    <div class="row" id="">
+      <div class="col-md-12  create-pg">
+      <div class="create_project_sec scroll-line">
+      {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+      </div>
+
+      
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">HWDP Details</h4>
+            </div>
+            <div class="card-body">
+              <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link in-client active" data-toggle="tab" href="#staticmaster">Inbuilt Master</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link in-client " data-toggle="tab" href="#dynamicmaster">Client Master</a>
+                </li>
+               
+              </ul>
+              <div class="tab-content">
+                
+              <div id="staticmaster" class="tab-pane active">
+              <table class="table  dataTable no-footer" id="superadmin-master">
+                <thead>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Nominal OD(in)</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Class</span>
+                    </th>
+                    <th>
+                        <span class="font-weight-bold">Pipe OD(in)</span>
+                      </th>
+                    <th>
+                      <span class="font-weight-bold">Weight(ppf)</span>
+                    </th>
+                    <th>
+                        <span class="font-weight-bold">Pipe ID(in)</span>
+                    </th>  
+                    <th>
+                      <span class="font-weight-bold">Connection Type</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Tool OD(in)</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Tool ID(in)</span>
+                    </th>
+                    <th>
+                        <span class="font-weight-bold">Box Length(in)</span>
+                    </th>
+                    <th>
+                        <span class="font-weight-bold">Pin Length(in)</span>  
+                    </th>
+                  </tr>            
+                </thead>
+                <tbody>
+                  {% for drill in admindrillhwdp %}
+                  <tr>
+                    <td class="text-center">
+                      {%if drill.nominal_od%}{{ drill.nominal_od }} in{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.class_type%}{{ drill.class_type}}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.pipebody_od%}{{ drill.pipebody_od}} in{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.weight%}{{ drill.weight }} ppf{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.pipebody_id%}{{ drill.pipebody_id}} in{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.connection_type%}{{ drill.connection_type}}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.tool_od%}{{ drill.tool_od }} in{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.tool_id%}{{ drill.tool_id }} in{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.box_length%}{{ drill.box_length }} in{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.pin_length%}{{ drill.pin_length }} in{%endif%}
+                    </td>
+                  </tr>  
+                  {% endfor %}
+          
+                </tbody>
+              </table>
+              
+            </div>
+            <div id="dynamicmaster" class="tab-pane ">
+              {% user_rights_permission 'Create Master' request as value %}
+
+              {% if value %}
+              <a href="/wells/bhadata/drillHWDP/create/"><button type="button" class="btn btn-primary detail-button mb-1"><span><i class="feather icon-plus"></i> Add New</span></button></a>
+             {% endif %}
+              <table class="table  dataTable no-footer" id="client-master">
+                <thead>
+                  <tr>
+                    <th class="common-txt-center">
+                      <span class="font-weight-bold">Nominal OD(in)</span>
+                    </th>
+                    <th class="common-txt-center">
+                      <span class="font-weight-bold">Class</span>
+                    </th>
+                    <th class="common-txt-center">
+                        <span class="font-weight-bold">Pipe OD(in)</span>
+                      </th>
+                    <th class="common-txt-center">
+                      <span class="font-weight-bold">Weight(ppf)</span>
+                    </th>
+                    <th class="common-txt-center">
+                        <span class="font-weight-bold">Pipe ID(in)</span>
+                    </th>  
+                    <th class="common-txt-center">
+                      <span class="font-weight-bold">Connection Type</span>
+                    </th>
+                    <th class="common-txt-center">
+                      <span class="font-weight-bold">Tool OD(in)</span>
+                    </th>
+                    <th class="common-txt-center">
+                      <span class="font-weight-bold">Tool ID(in)</span>
+                    </th>
+                    <th class="common-txt-center">
+                        <span class="font-weight-bold">Box Length(ft)</span>
+                    </th>
+                    <th class="common-txt-center">
+                        <span class="font-weight-bold">Pin Length(ft)</span>  
+                    </th>
+                  </tr>            
+                </thead>
+                <tbody>
+                  {% for drill in drillhwdp %}
+                  <tr>
+                    <td class="text-center">
+                      {%if drill.nominal_od%}{{ drill.nominal_od }} in{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.class_type%}{{ drill.class_type}}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.pipebody_od%}{{ drill.pipebody_od}} in{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.weight%}{{ drill.weight }} ppf{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.pipebody_id%}{{ drill.pipebody_id}} in{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.connection_type%}{{ drill.connection_type}}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.tool_od%}{{ drill.tool_od }} in{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.tool_id%} {{ drill.tool_id }} in{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.box_length%}{{ drill.box_length }} ft{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.pin_length%}{{ drill.pin_length }} ft{%endif%}
+                    </td>
+                  </tr>  
+                  {% endfor %}
+          
+                </tbody>
+              </table>
+              <div class="row" id="basic-table">
+  
+                <div class="col-sm-12">
+                    <a onclick="confirmation(event)" class="btn btn-primary waves-effect detail-button" href="{% url 'bhadata:drillHWDPdelete' %}" > <span class="action-delete-well delete"><i class="feather icon-trash delete"></i> Delete</span></a>
+                    {% user_rights_permission 'Edit Master' request as value %}
+
+                    {% if value %}
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'bhadata:drillHWDPedit' %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                    {% endif %}
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button" href="{% url 'bhadata:HWDPimportdata' %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>
+
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a> 
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+              <!-- <div class="card">
+                <div class="card-header">
+                <div class="card-title" >
+                  {% if drillhwdp.has_other_pages %}
+                  <ul class="pagination">
+                    {% if drillhwdp.has_previous %}
+                      <li><a href="?page={{ drillhwdp.previous_page_number }}">&laquo;</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in drillhwdp.paginator.page_range %}
+                      {% if drillhwdp.number == i %}
+                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                      {% else %}&nbsp;&nbsp;
+                        <li><a href="?page={{ i }}">{{ i }}</a></li>
+                      {% endif %}
+                    {% endfor %}&nbsp;&nbsp;
+                    {% if drillhwdp.has_next %}
+                      <li><a href="?page={{ drillhwdp.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                  </ul>
+                {% endif %}
+              </div>
+              </div>
+                </div> -->
+                <!-- <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a> -->
+            </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <!-- <div class="col-md-2">
+          {% include "userheader.html" %}
+      </div> -->
+      </div>
+
+      
+
+      
+    
+    </div> 
+  </section>
+
+    <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+    <script>
+    $(function() {
+      $('#client-master').DataTable({
+        "ordering": false
+      });
+      $('#superadmin-master').DataTable({
+        "ordering": false
+      });
+
+
+    });
+    </script>
+
+{% endblock %}

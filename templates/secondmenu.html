@@ -1,0 +1,78 @@
+<nav class="well_sidebar py-2 mb-4">
+<ul class="nav flex-column" id="nav_accordion">
+     <li class="nav-item has-submenu">
+          <a class ="nav-link {% if request.session.submenu == 'well_details' %}active{% endif %}" href="{% url 'wells:detail' request.session.well_id %}"> Well Details </a>
+          <ul class="submenu collapse">
+               <li class ="nav-item">
+                    <a class ="nav-link {% if request.session.submenu == 'rig_details' %}active{% endif %}" href="{% url 'rig:detail' request.session.well_id %}">Rig Details</a>
+                </li>
+                
+                <li class ="nav-item">
+                    <a class ="nav-link {% if request.session.submenu == 'welltrajectory' %}active{% endif %}" href="{% url 'welltrajectory:detail' request.session.well_id %}"> Well Trajectory</a>
+               </li>
+               <li class ="nav-item">
+                    <a class ="nav-link {% if request.session.submenu == 'wellphases' %}active{% endif %}" href="{% url 'wellphases:detail' request.session.well_id %}"> Well Phases </a>
+               </li>
+            
+               <li class ="nav-item">
+                    <a class ="nav-link {% if request.session.submenu == 'pressure' %}active{% endif %}" href="{% url 'pressure:detail' request.session.well_id %}"> Pore Pressure & Fracture Pressure </a>
+               </li>
+          </ul>
+     </li>
+     <li class="nav-item has-submenu">
+          <a class ="nav-link" href="{% url 'muddata:list' request.session.well_id %}"> Hydraulicsgg </a>
+          <ul class="submenu collapse">
+               <li class ="nav-item">
+                    <a class ="nav-link {% if request.session.submenu == 'muddata' %}active{% endif %}" href="{% url 'bhadata:testphase' request.session.well_id %}"> Select Phase</a>
+               </li>
+               <li class ="nav-item">
+                    <a class ="nav-link {% if request.session.submenu == 'muddata' %}active{% endif %}" href="{% url 'muddata:list' request.session.well_id %}"> Mud Data</a>
+               </li>
+               <li class ="nav-item">
+                    <a class ="nav-link {% if request.session.submenu == 'rheogramlist' %}active{% endif %}" href="{% url 'muddata:rheogramlist' request.session.well_id %}">Rheogram</a>
+               </li>
+               <li class ="nav-item">
+                    <a class ="nav-link {% if request.session.submenu == 'drillbitdata' %}active{% endif %}" href="{% url 'drillbitdata:drillbitlist' request.session.well_id %}"> Drill Bit Data</a>
+              </li>
+              <li class ="nav-item">
+                    <a class ="nav-link {% if request.session.submenu == 'bhadata' %}active{% endif %}" href="{% url 'bhadata:bhadatalist' request.session.well_id %}"> BHA Data</a>
+             </li>
+              
+          </ul>
+     </li>
+     <li class="nav-item has-submenu">
+          <a class ="nav-link" href="">  Optimization </a>
+     </li>
+</ul>
+</nav>
+
+   <script>
+     document.addEventListener("DOMContentLoaded", function(){
+  document.querySelectorAll('.sidebar .nav-link').forEach(function(element){
+    
+    element.addEventListener('click', function (e) {
+
+      let nextEl = element.nextElementSibling;
+      let parentEl  = element.parentElement;	
+
+        if(nextEl) {
+            e.preventDefault();	
+            let mycollapse = new bootstrap.Collapse(nextEl);
+            
+            if(nextEl.classList.contains('show')){
+              mycollapse.hide();
+            } else {
+                mycollapse.show();
+                // find other submenus with class=show
+                var opened_submenu = parentEl.parentElement.querySelector('.submenu.show');
+                // if it exists, then close all of them
+                if(opened_submenu){
+                  new bootstrap.Collapse(opened_submenu);
+                }
+            }
+        }
+    }); // addEventListener
+  }) // forEach
+}); 
+     </script>
+     

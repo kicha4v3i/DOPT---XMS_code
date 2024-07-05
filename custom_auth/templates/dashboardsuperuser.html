@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/dashboard.css' %}">
+<div class="main-dashboard-super">
+<section id="dashboard-page">
+    <div class="row">
+        <div class="col-3">
+            <div class="card summary_card cards_list_dashboard dash-card" data-id="{{project_country.country}}" data-name="{{country_details.name}}">
+                <div class="location"><i class="ficon feather icon-map-pin"></i> Subscribers 
+                </div>
+                <div class="row">
+                  <div class="col-4">
+                    <div class="count">{{data.totalindividuals}}</div>
+                    <div class="title">Individual</div>
+                  </div>
+                  <div class="col-4">
+                    <div class="count">{{data.totalcompanies}}</div>
+                    <div class="title">Companies</div>
+                  </div>
+                  <div class="col-4">
+                    <div class="count">{{data.totalenterprise}}</div>
+                    <div class="title">Enterprise</div>
+                  </div>
+                </div>
+            </div>
+        </div> 
+        <div class="col-3">
+          <div class="card summary_card cards_list_dashboard dash-card" >
+            <a href={% url 'custom_auth:enquiries' %}>
+              <div class="location"><i class="ficon feather icon-map-pin"></i> Enquiries 
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="count">{{data.totaluserenquiry}}</div>
+                  <div class="title">General</div>
+                </div>
+                <div class="col-6">
+                  <div class="count">{{data.totalenquiryenterprise}}</div>
+                  <div class="title">Enterprise</div>
+                </div>
+ 
+              </div>
+            </a>
+          </div>
+      </div> 
+      <div class="col-3">
+        <div class="card summary_card cards_list_dashboard dash-card">
+          <a href={% url 'custom_auth:adminusers' %}>
+            <div class="location"><i class="ficon feather icon-map-pin"></i> User Management
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="count">{{data.totalpoausers}}</div>
+                <div class="title">Total POA Users</div>
+              </div>
+            </div>
+          </a>
+        </div>
+    </div> 
+    <div class="col-3">
+      <div class="card summary_card cards_list_dashboard dash-card" >
+        <a href={% url 'ticket:queries' %}>
+          <div class="location"><i class="ficon feather icon-map-pin"></i> Support Service
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <div class="count">{{data.totaluserenquiry}}</div>
+              <div class="title">General</div>
+            </div>
+            <div class="col-6">
+              <div class="count">{{data.totalenquiryenterprise}}</div>
+              <div class="title">Enterprise</div>
+            </div>
+        
+          </div>
+        </a>
+      </div>
+  </div> 
+    </div>
+</section>
+<section>
+  <div>
+  <table id="subscriber-list" class="table subscriber-table" style="width:100%">
+    <thead>
+        <tr>
+            <th>First Names</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+
+        </tr>
+    </thead>
+</table>
+</div>
+</div>
+
+
+</section>
+</div>
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/poadashboard.js' %}"></script>
+
+
+
+{%endblock%}

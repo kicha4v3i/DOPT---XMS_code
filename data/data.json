@@ -1,0 +1,984 @@
+[{
+  "model": "custom_auth.Packages",
+  "pk": 1,
+  "fields": {
+    "name": "Perpetual",
+    "types": "predefined",
+    "created": "2021-05-06 00:07:32",
+    "status": 1
+
+  }
+},
+{
+  "model": "custom_auth.Packages",
+  "pk": 2,
+  "fields": {
+    "name": "Corporate Yearly",
+    "types": "predefined",
+    "created": "2021-05-06 00:07:32",
+    "status": 1
+
+  }
+},
+{
+  "model": "custom_auth.PackageConcurrentUsers",
+  "pk": 1,
+  "fields": {
+    "name": "One Concurrent User",
+    "concurrent_users": 1,
+    "status": 1,
+    "created": "2021-05-06 00:07:32",
+    "package_id": 1
+  }
+},
+{
+  "model": "custom_auth.PackageConcurrentUsers",
+  "pk": 2,
+  "fields": {
+    "name": "2 concurrent users",
+    "concurrent_users": 2,
+    "status": 1,
+    "created": "2021-05-06 00:07:32",
+    "package_id": 2
+  }
+},
+{
+  "model": "custom_auth.PackageConcurrentUsers",
+  "pk": 3,
+  "fields": {
+    "name": "5 concurrent users",
+    "concurrent_users": 5,
+    "status": 1,
+    "created": "2021-05-06 00:07:32",
+    "package_id": 2
+  }
+},
+{
+  "model": "custom_auth.PackageConcurrentUsers",
+  "pk": 4,
+  "fields": {
+    "name": "10 concurrent users",
+    "concurrent_users": 10,
+    "status": 1,
+    "created": "2021-05-06 00:07:32",
+    "package_id": 2
+  }
+},
+{
+  "model": "custom_auth.PackageUsers",
+  "pk": 1,
+  "fields": {
+    "name": "one",
+    "concurrent_users": 1,
+    "admins": 1,
+    "well_managers": 2,
+    "well_engineers": 3,
+    "other_users": 4,
+    "status": 1,
+    "created": "2021-05-06 00:07:32",
+    "package_concurrent_users_id": 1
+  }
+},
+{
+  "model": "custom_auth.PackageUsers",
+  "pk": 2,
+  "fields": {
+    "name": "two",
+    "concurrent_users": 2,
+    "admins": 1,
+    "well_managers": 5,
+    "well_engineers": 5,
+    "other_users": 10,
+    "status": 1,
+    "created": "2021-05-06 00:07:32",
+    "package_concurrent_users_id": 2
+  }
+},
+{
+  "model": "custom_auth.PackageUsers",
+  "pk": 3,
+  "fields": {
+    "name": "three",
+    "concurrent_users": 5,
+    "admins": 1,
+    "well_managers": 5,
+    "well_engineers": 5,
+    "other_users": 10,
+    "status": 1,
+    "created": "2021-05-06 00:07:32",
+    "package_concurrent_users_id": 3
+  }
+},
+{
+  "model": "custom_auth.PackageUsers",
+  "pk": 4,
+  "fields": {
+    "name": "four",
+    "concurrent_users": 10,
+    "admins": 1,
+    "well_managers": 10,
+    "well_engineers": 10,
+    "other_users": 20,
+    "status": 1,
+    "created": "2021-05-06 00:07:32",
+    "package_concurrent_users_id": 4
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 1,
+  "fields": {
+    "name": "Admin"
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 2,
+  "fields": {
+    "name": "Creator"
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 3,
+  "fields": {
+    "name": "Editor"
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 4,
+  "fields": {
+    "name": "Viewer"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 1,
+  "fields": {
+    "name": "WGS84"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 2,
+  "fields": {
+    "name": "NAD27"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 3,
+  "fields": {
+    "name": "WGS 66"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 4,
+  "fields": {
+    "name": "WGS 60"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 5,
+  "fields": {
+    "name": "NAD 27"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 6,
+  "fields": {
+    "name": "OSGB 36"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 7,
+  "fields": {
+    "name": "ETRS 89"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 8,
+  "fields": {
+    "name": "GDA 94"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 9,
+  "fields": {
+    "name": "JGD 2011"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 10,
+  "fields": {
+    "name": "Tokyo 97"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 11,
+  "fields": {
+    "name": "KGD 2002"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 12,
+  "fields": {
+    "name": "TWD 67"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 13,
+  "fields": {
+    "name": "TWD 97"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 14,
+  "fields": {
+    "name": "PZ-90.11"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 15,
+  "fields": {
+    "name": "GTRF"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 16,
+  "fields": {
+    "name": "CGS-2000"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 17,
+  "fields": {
+    "name": "ITRF-2014"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 18,
+  "fields": {
+    "name": "ITRF-2008"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 19,
+  "fields": {
+    "name": "ED 50"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 20,
+  "fields": {
+    "name": "Minna Nigeria East Belt"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 21,
+  "fields": {
+    "name": "Minna Nigeria West Belt"
+  }
+},
+{
+  "model": "wells.CoordinateSystems",
+  "pk": 22,
+  "fields": {
+    "name": "Minna Nigeria Mid Belt"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 1,
+  "fields": {
+    "name": "Aitoff"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 2,
+  "fields": {
+    "name": "Alaska Series E"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 2,
+  "fields": {
+    "name": "Albers Equal Area Conic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 3,
+  "fields": {
+    "name": "Azimuthal Equdistant"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 4,
+  "fields": {
+    "name": "Behrmann Equal Area Cylindrical"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 5,
+  "fields": {
+    "name": "Bipolar Oblique Conformal Conic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 6,
+  "fields": {
+    "name": "Bonne"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 7,
+  "fields": {
+    "name": "Cassini-Soldner"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 8,
+  "fields": {
+    "name": "Chamberlin Trimetric"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 9,
+  "fields": {
+    "name": "Craster Parabolic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 10,
+  "fields": {
+    "name": "Cylindrical Equal Area"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 11,
+  "fields": {
+    "name": "Double Sterographic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 12,
+  "fields": {
+    "name": "Eckert I"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 13,
+  "fields": {
+    "name": "Eckert II"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 14,
+  "fields": {
+    "name": "Eckert III"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 15,
+  "fields": {
+    "name": "Eckert IV"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 16,
+  "fields": {
+    "name": "Eckert V"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 17,
+  "fields": {
+    "name": "Eckert VI"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 18,
+  "fields": {
+    "name": "Equidistant Conic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 19,
+  "fields": {
+    "name": "Equidistant Cylindrical"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 20,
+  "fields": {
+    "name": "Equirectangular"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 21,
+  "fields": {
+    "name": "Gall's Stereographic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 22,
+  "fields": {
+    "name": "Gauss-Krüger"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 23,
+  "fields": {
+    "name": "Geocentric Coordinate System"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 24,
+  "fields": {
+    "name": "Geographic Coordinate System"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 25,
+  "fields": {
+    "name": "Gnomonic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 26,
+  "fields": {
+    "name": "Great Britain National Grid"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 27,
+  "fields": {
+    "name": "Hammer-Aitoff"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 28,
+  "fields": {
+    "name": "Hotine Oblique Mercator"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 29,
+  "fields": {
+    "name": "Krovak"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 30,
+  "fields": {
+    "name": "Lambert Azimuthal Equal Area"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 31,
+  "fields": {
+    "name": "Lambert Conformal Conic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 32,
+  "fields": {
+    "name": "Local Cartesian Projection"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 33,
+  "fields": {
+    "name": "Loximuthal"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 34,
+  "fields": {
+    "name": "McBryde-Thomas Flat-Polar Quartic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 35,
+  "fields": {
+    "name": "Mercator"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 36,
+  "fields": {
+    "name": "Miller Cylindrical"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 37,
+  "fields": {
+    "name": "Mollweide"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 38,
+  "fields": {
+    "name": "New Zeland National Grid "
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 39,
+  "fields": {
+    "name": "Orthographic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 40,
+  "fields": {
+    "name": "Perspective"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 41,
+  "fields": {
+    "name": "Plate Carrée"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 42,
+  "fields": {
+    "name": "Polar Stereographic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 43,
+  "fields": {
+    "name": "Polyconic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 44,
+  "fields": {
+    "name": "Quartic Authalic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 45,
+  "fields": {
+    "name": "Rectified Skewed Orthomorphic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 46,
+  "fields": {
+    "name": "Robinson"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 47,
+  "fields": {
+    "name": "Simple Conic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 48,
+  "fields": {
+    "name": "Sinusoidal"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 49,
+  "fields": {
+    "name": "Space Oblique Mercator"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 50,
+  "fields": {
+    "name": "State Plane Coordinate System"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 51,
+  "fields": {
+    "name": "Stereographic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 52,
+  "fields": {
+    "name": "Times"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 53,
+  "fields": {
+    "name": "Transverse Mercator"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 54,
+  "fields": {
+    "name": "Two-Point Equidistant"
+  }
+},{
+  "model": "wells.Projections",
+  "pk": 55,
+  "fields": {
+    "name": "Universal Polar Stereographic"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 56,
+  "fields": {
+    "name": "Universal Transverse Mercator"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 57,
+  "fields": {
+    "name": "Van Der Grinten I"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 58,
+  "fields": {
+    "name": "Vertical Near-Side Perspective"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 59,
+  "fields": {
+    "name": "Winkel I"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 60,
+  "fields": {
+    "name": "Winkel II"
+  }
+},
+{
+  "model": "wells.Projections",
+  "pk": 61,
+  "fields": {
+    "name": "Winkel Tripel"
+  }
+},
+
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 1,
+  "fields": {
+    "name": "Conductor Casing "
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 2,
+  "fields": {
+    "name": "Drive Pipe"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 3,
+  "fields": {
+    "name": "Surface Casing 1"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 4,
+  "fields": {
+    "name": "Surface Casing 2"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 5,
+  "fields": {
+    "name": "Intermediate Casing 1"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 6,
+  "fields": {
+    "name": "Intermediate Casing 2"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 7,
+  "fields": {
+    "name": "Intermediate Liner 1"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 8,
+  "fields": {
+    "name": "Intermediate Liner 2"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 9,
+  "fields": {
+    "name": "Production Casing 1"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 10,
+  "fields": {
+    "name": "Production Casing 2"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 11,
+  "fields": {
+    "name": "Production Liner 1"
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 12,
+  "fields": {
+    "name": "Production Liner 2 "
+  }
+},
+{
+  "model": "wellphases.CasingTypes",
+  "pk": 13,
+  "fields": {
+    "name": "Open Hole "
+  }
+},
+{
+  "model":"surfacepipe.SurfaceNameModels",
+  "pk": 1,
+  "fields":{
+    "surfacepiping_name":"Mud Pump to Rig Floor"
+  }
+},
+{
+  "model":"surfacepipe.SurfaceNameModels",
+  "pk": 2,
+  "fields":{
+    "surfacepiping_name":"Standpipe to Kelly Hose"
+  }
+},
+{
+  "model":"surfacepipe.SurfaceNameModels",
+  "pk": 3,
+  "fields":{
+    "surfacepiping_name":"Kelly Hose to Top Drive"
+  }
+},
+{
+  "model":"surfacepipe.SurfaceNameModels",
+  "pk": 4,
+  "fields":{
+    "surfacepiping_name":"Kelly"
+  }
+},
+{
+  "model":"surfacepipe.SurfaceNameModels",
+  "pk": 5,
+  "fields":{
+    "surfacepiping_name":"Top Drive"
+  }
+},
+{
+  "model":"drillbitdata.BitTypesNames",
+  "pk": 1,
+  "fields":{
+    "bittype_names":"PDC Bit",
+    "bit_values":"0.95"  
+  }
+},
+{
+  "model":"drillbitdata.BitTypesNames",
+  "pk": 2,
+  "fields":{
+    "bittype_names":"Mill Tooth Bit",
+    "bit_values":"1.03"
+  }
+},
+{
+  "model":"drillbitdata.BitTypesNames",
+  "pk": 3,
+  "fields":{
+    "bittype_names":"Tri-Cone Insert",
+    "bit_values":"1.03"
+  }
+},
+{
+  "model":"drillbitdata.BitTypesNames",
+  "pk": 4,
+  "fields":{
+    "bittype_names":"Two Cone Bit",
+    "bit_values":"1.03"
+  }
+},
+{
+  "model":"drillbitdata.BitTypesNames",
+  "pk": 5,
+  "fields":{
+    "bittype_names":"Diamond Impregnated Bit",
+    "bit_values":"1.03"
+  }
+},
+{
+  "model":"drillbitdata.BitTypesNames",
+  "pk": 6,
+  "fields":{
+    "bittype_names":"Drag Bit",
+    "bit_values":"1.03"
+  }
+},
+{
+  "model":"drillbitdata.BitTypesNames",
+  "pk": 7,
+  "fields":{
+    "bittype_names":"Bi-Center Bit",
+    "bit_values":"1.03"
+  }
+},
+{
+  "model":"drillbitdata.BitTypesNames",
+  "pk": 8,
+  "fields":{
+    "bittype_names":"Core Bit",
+    "bit_values":"1.03"
+  }
+},
+{
+  "model":"drillbitdata.BitTypesNames",
+  "pk": 9,
+  "fields":{
+    "bittype_names":"Other",
+    "bit_values":"1.03"
+  }
+},
+{
+  "model":"muddata.RheogramNameModels",
+  "pk": 1,
+  "fields":{
+    "rheogram_rpm":"3"
+  }
+},
+{
+  "model":"muddata.RheogramNameModels",
+  "pk": 2,
+  "fields":{
+    "rheogram_rpm":"6"
+  }
+},
+{
+  "model":"muddata.RheogramNameModels",
+  "pk": 3,
+  "fields":{
+    "rheogram_rpm":"100"
+  }
+},
+{
+  "model":"muddata.RheogramNameModels",
+  "pk": 4,
+  "fields":{
+    "rheogram_rpm":"200"
+  }
+},
+{
+  "model":"muddata.RheogramNameModels",
+  "pk": 5,
+  "fields":{
+    "rheogram_rpm":"300"
+  }
+},
+{
+  "model":"muddata.RheogramNameModels",
+  "pk": 6,
+  "fields":{
+    "rheogram_rpm":"600"
+  }
+}
+
+]

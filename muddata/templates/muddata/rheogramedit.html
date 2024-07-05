@@ -1,0 +1,1132 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters muddata_filters %}
+
+  <div class="row align-items-start">
+    {% getcountries countries as countries %}
+    {% include 'projectsidemenu.html' %} 
+  <div class="col-md-8 p-0  create-pg main-section col-md-10">
+    <div class="create_project_sec scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+        <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+          {% include "projectheader.html" %}
+          <div class="col-12">
+              {% include "welldetails_menu.html" %} 
+          </div>
+          <div class="col-12">
+            <div class="sample-sub-menu">
+              <div class="container">
+                <div class="row menu-button menu-types">
+                  <!-- <div class="col-md-2"></div> -->
+                  <div class="col-md-3">
+                      <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+                          <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+                      </div>
+                  </div>
+                  <!-- <div class="col-md-3">
+                      <div class="sub-list {% if request.session.submenu == 'rheogram' %}active{% endif %}">
+                          <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+                      </div>
+                  </div> -->
+                  <div class="col-md-3 data-drill">
+                      <div class="sub-list drill-data {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+                          <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                      <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                          <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+                      </div>
+                  </div>
+                  <div class="col-md-3 data-drill">
+                    <div class="sub-list drill-data2  {% if request.session.submenu == 'hydraulics' %}active{% endif %}">
+                    <a href="{% url 'muddata:calculateallpressureloss' wellphase_id %}" id="bhadata"> Hydraulics</a>
+                  </div>
+                </div>
+                  <!-- <div class="col-md-3">
+                      <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                          <a href="{% url 'muddata:pressurelawcalculation' wellphase_id %}" id="bhadata">Bore Pressure Loss</a>
+                      </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                        <a href="{% url 'muddata:annuluspressureloss' wellphase_id %}" id="bhadata">Annulus Pressure Loss</a>
+                    </div>
+                </div> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="sample-sub-menu">
+              <div class="container">
+                <div class="row menu-button">
+                  <div class="col-3"></div>
+                    <div class="col-6">
+                      <ul class="nav nav-tabs mid-center" role="tablist">
+                        <li class="nav-item sub-list">
+                            <a class="nav-link edit-reho" data-toggle="tab" href="#muddata" role="tab">Mud Properties</a>
+                        </li>
+                        <li class="nav-item  sub-list">
+                            <a class="nav-link edit-reho active" data-toggle="tab" href="#rheology" role="tab">Rheology</a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="col-3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <div class="col-12">
+            <div class="tab-content">
+              <div class="tab-pane" id="muddata" role="tabpanel">
+                {% if muddatacount == 0 %}
+                  <form class="form form-horizontal" method="POST" id="muddataform" action="{% url 'muddata:create' wellphase_id %}">
+                    {% csrf_token %}
+                    <input type="hidden" id="well" class="form-control" name="well" value={{well_id}}>
+                    <input type="hidden" name="well_phase" id="well_phases">
+                    <input type="hidden" class="page_type" value="create">
+                    <div class="row">
+                      <div class="col-12">
+                        <table class="table" id="muddata-table">
+                          <thead>
+                            <tr>
+                              <th>Section</th>
+                              <th>From</th>
+                              <th>To</th>
+                              <th>Mud Weight</th>
+                              <th>Mud Type</th>
+                              <th>Plastic Viscosity</th>
+                              <th>Yield Point</th>
+                              <th>Low Shear Rate Yield Point</th>
+                              <th>Gel Strength 0sec</th>
+                              <th>Gel Strength 10min </th>
+                              <th>Gel Strength 30min </th>
+                              <th>Action</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style="width: 12%;">
+                                  <input type="text" class="form-control section" name="section" placeholder="Section" value="SEC{{wellphase_id}}01" readonly>
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control from_depth" name="from_depth" placeholder="From Depth" value="{{fromdepth}}">
+                                  <input type="hidden" class="fromdepth" value="{{fromdepth}}">
+                              </td>
+                              <td style="width: 10%;">
+                                  <input type="text" class="form-control to_depth" name="to_depth" placeholder="To depth" value="{{todepth}}">
+                                  <input type="hidden" class="todepth" value="{{todepth}}">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control mud_weight" name="mud_weight" placeholder="Mud Weight">
+                              </td>
+                              <td>
+                                  <select name="mudtype" class="form-control mudtype">
+                                  <option value="">Select</option>
+                                  {% for type in mudtype %}
+                                  <option value="{{type.id}}">{{type.mud_name}}</option>
+                                  {% endfor %}
+                                  </select>
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control plastic_viscosity" name="plastic_viscosity" placeholder="Plastic Viscosity">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control yield_point" name="yield_point" placeholder="Yield Point">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control low_shear_rate" name="low_shear_rate" placeholder="Low Shear Rate Yield Point">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control gel_strength_0sec" name="gel_strength_0sec" placeholder="Gel Strength 0sec">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control gel_strength_10min" name="gel_strength_10min" placeholder="Gel Strength 10min">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control gel_strength_30min" name="gel_strength_30min" placeholder="Gel Strength 30min">
+                              </td>
+                              <td>
+                                  <button type="button" name="add" class="addmuddatarow iconaction" wellphase-id="{{wellphase_id}}"><i class="fa fa-plus"></i></button>
+                                  <button type="button" name="remove" class="deletemuddatarow iconaction"><i class="fa fa-trash"></i></button>
+                              </td>
+                            </tr>
+                            <tr id="muddatatobeadd" style="display:none">
+                              <td>
+                                  <input type="text" class="form-control section" name="section" placeholder="Section" readonly>
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control from_depth" name="from_depth" placeholder="From Depth">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control to_depth" name="to_depth" placeholder="To depth">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control mud_weight" name="mud_weight" placeholder="Mud Weight">
+                              </td>
+                              <td>
+                                  <select name="mudtype" class="form-control mudtype">
+                                  <option value="">Select</option>
+                                  {% for type in mudtype %}
+                                  <option value="{{type.id}}">{{type.mud_name}}</option>
+                                  {% endfor %}
+                                  </select>
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control plastic_viscosity" name="plastic_viscosity" placeholder="Plastic Viscosity">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control yield_point" name="yield_point" placeholder="Yield Point">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control low_shear_rate" name="low_shear_rate" placeholder="Low Shear Rate Yield Point">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control gel_strength_0sec" name="gel_strength_0sec" placeholder="Gel Strength 0sec">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control gel_strength_10min" name="gel_strength_10min" placeholder="Gel Strength 10min">
+                              </td>
+                              <td>
+                                  <input type="text" class="form-control gel_strength_30min" name="gel_strength_30min" placeholder="Gel Strength 30min">
+                              </td>
+                              <td>
+                                  <button type="button" name="add" class="addmuddatarow iconaction" wellphase-id="{{wellphase_id}}"><i class="fa fa-plus"></i></button>
+                                  <button type="button" name="remove" class="deletemuddatarow iconaction"><i class="fa fa-trash"></i></button>
+                              </td>
+                            </tr>
+                          </tbody>  
+                        </table>
+                      </div>
+                      <div class="col-sm-9 offset-sm-3">
+                          <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                          <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>  
+                      </div>
+                    </div>
+                  </form>
+                  {%else%}
+                  <!--List Mud Data based on munddata count greater than 0 -->
+                  <!-- <h4 class="card-title text-center">Mud Data List</h4> -->
+                  <table class="table muddata-data-list-view">
+                    <thead>
+                      
+                        <tr>
+                            <th></th>
+                            <th colspan="2" class="txt-col down-line text-center">Depth</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th colspan="3" class="txt-col down-line text-center">Gel Strength</th>
+                            
+                            
+                            <!-- <th>Date Recorded </th> -->
+                            
+                            </tr>
+                            </thead>
+
+                  
+                      <thead>
+                          <tr>
+                              <th></th>
+                              <th class="txt-col">From </th>
+                              <th class="txt-col">To </th>
+                              <th class="txt-col">MW </th>
+                              <th class="txt-col">Mud Type</th>
+                              <th class="txt-col">PV </th>
+                              <th class="txt-col">YP </th>
+                              <th class="txt-col">LSRYP </th>
+                              <th class="txt-col"> 0sec </th>
+                              <th class="txt-col"> 10min</th>
+                              <th class="txt-col"> 30min</th>
+                              
+                              {%if welltype == 'ACTUAL' %}
+                              <th>Date</th>
+                              {%endif%}
+                          </tr>
+                      </thead>
+                      <tbody class="mud-detail">
+                          {% for section in sections %}
+                              <tr>
+                                  <!-- <td>{{section.section_name}}</td> -->
+                                  <td></td>
+                                  <td>{{section.from_depth | depthunit:request.session.unit}}</td>
+                                  <td>{{section.todepth | depthunit:request.session.unit}}</td>
+                                  <td class="text-center">{{section|getmuddata:'mud_weight'| densityunit:request.session.unit}}</td>
+                                  {%for mud in mudtype%}
+                                  {%if mud.id == section|getmuddata:'mudtype'%}                   
+                                  <td class="text-center">{{mud.mud_name}}</td>
+                                  {%endif%}
+                                  {%endfor%}
+                                  <td class="text-center">{% getpvyp section wellphase_id 'plastic_viscocity' %}{{section|getmuddata:'plastic_viscosity' | plastic_viscosity:request.session.unit}} </td>
+                                  <td class="text-center">{% getpvyp section wellphase_id 'yield_point' %}{{section|getmuddata:'yield_point' | gelstrengthunit:request.session.unit}}</td>
+                                  <td class="text-center">{% getpvyp section wellphase_id 'low_shear_rate' %}{{section|getmuddata:'low_shear_rate' | gelstrengthunit:request.session.unit}}</td>
+                                  <td class="text-center">{{section|getmuddata:'gel_strength_0sec' | gelstrengthunit:request.session.unit}}</td>
+                                  <td class="text-center">{{section|getmuddata:'gel_strength_10min' | gelstrengthunit:request.session.unit}}</td>
+                                  <td class="text-center">{{section|getmuddata:'gel_strength_30min' | gelstrengthunit:request.session.unit}}</td>
+                                  {%if welltype == 'ACTUAL' %}
+                                  <td>{{muddata.date}}</td>
+                                  {%endif%}
+                              </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+                  <div class="col-sm-9 offset-sm-3">
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>  
+                    <a class="btn btn-primary detail-button" href="{% url 'muddata:edit' wellphase_id %}">Edit</a>  
+                    <a onclick="confirmation(event)" class="btn btn-primary detail-button" href="{% url 'muddata:delete' wellphase_id %}">Delete</a>  
+                  </div>
+                {%endif%}
+              </div> <!--muddata tab end -->
+              <div class="tab-pane active" id="rheology" role="tabpanel">
+                <form class="form form-horizontal" method="POST" action="{% url 'muddata:rheogramedit' pk %}?wellphase={{wellphase_id}}">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_well" class="form-control" name="well" placeholder="Rating" value="{{form.well.value}}" >   
+                    <input type="hidden" name="well_phase" id="well_phases" value="{{wellphase_id}}">
+                    <input type="hidden" id="rheo_fromdepth" value="{{fromdepth}}">
+                    <input type="hidden" id="rheo_todepth" value="{{todepth}}">
+                    <div class="text-right">
+                      <button type="button" name="add" class="addrheogram_sections iconaction">
+                        Add Section <i class="fa fa-plus"></i>
+                      </button>
+                    </div>
+                    <div class="row">
+                      <div class="col-3">
+                        <div class="col-12">
+                          <h4 class="re-edithead down-line">Depth</h4>
+                        </div>
+                        <div class="col-12 reho-tlt">
+                          <div class="4" style="width:50%"></div>
+                          <div class="4" style="width:50%; text-align:center; color: #3175bc;font-weight: 600; font-size:16px;">From</div>
+                          <div class="4" style="width:50%; text-align:center; color: #3175bc;font-weight: 600; font-size:16px;">To</div>
+                        </div>
+                        <div class="nav flex-column nav-pills rh-pd-left" id="section-tab" role="tablist" aria-orientation="vertical">
+                          {% for section in sections %}
+                          <a class="nav-link remove-blue-line" id="section{{forloop.counter0 }}-tab" data-id="{{section.section_name}}" data-toggle="pill" href="#section{{forloop.counter0}}" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                            <div class="row">
+                              <!-- <div class="col-md-1 ">
+                                <input type="text" name="section" class="form-control" value="{{section.section_name}}">
+                              </div> -->
+                              <div class="col-md-4 ">
+                                <button type="button" name="remove" data-id="{{forloop.counter0}}" class="rheogramremove-tab iconaction"><i class="fa fa-trash"></i></button>
+                              </div>
+                              <div class="col-md-4 ">
+                                <input type="text" class="form-control" name="from_depth{{ forloop.counter0 }}" value="{{section.from_depth}}">
+                              </div>
+                              <div class="col-md-4 "> 
+                                <input type="text" class="form-control" name="todepth{{ forloop.counter0 }}" value="{{section.todepth}}">
+                              </div>
+                            </div>
+                          </a>
+                          {% endfor %}
+                        </div>
+                      </div>
+                      <div class="col-9">
+                      <div class="tab-content" id="section-content">
+                        {% for section in sections %}
+                        <input type="hidden" name="rheogram_sections" value="{{section|getrheogramsectionid:section.section_name}}">
+                        <div class="tab-pane fade" id="section{{forloop.counter0}}" role="tabpanel" aria-labelledby="{{section.section_name}}-tab">
+                          <input type="hidden" name="rheogram_sections" value="{{section|getrheogramsectionid:section.section_name }}">
+
+                          <div class="row">
+                            <div class="col-4">
+                              {% if section|checkmuddata:section.section_name == ''%}
+                              <div class="chk-btn">
+                              <input type="radio" class="section_name" name="section_name{{forloop.counter0}}" data-id="{{section.section_name}}" value="1" {% if "1" == section.selected_model %} checked {% endif %} >Newtonian
+                              </div>
+                              <div class="chk-btn">
+                              <input type="radio" class="section_name" name="section_name{{forloop.counter0}}" data-id="{{section.section_name}}" value="2" {% if "2" == section.selected_model %} checked {% endif %}>Bingham
+                              </div>
+                              <div class="chk-btn">
+                              <input type="radio" class="section_name" name="section_name{{forloop.counter0}}" data-id="{{section.section_name}}" value="3" {% if "3" == section.selected_model %} checked {% endif %}>Power Law
+                              </div>
+                              <div class="chk-btn">
+                              <input type="radio" class="section_name" name="section_name{{forloop.counter0}}" data-id="{{section.section_name}}" value="4" {% if "4" == section.selected_model %} checked {% endif %}>Hershel Bulkley
+                              </div>
+                              
+                              {%endif%}
+                              
+                              {% if section.selected_model == None %}
+                              <div class="outline-col">
+                                <table class="first-table">
+                                <thead>
+                                  <tr>
+                                    <th class="text-center">RPM</th>
+                                    <th class="text-center">Dial</th>
+                                  </tr>
+                                </thead>
+                                </table>
+                                <div class="inside-space">
+                              <table id="" class="reho-table">
+                                <tbody>
+                                  {% for rpm in rheogram_rpm %}
+                                  <tr class="{{mud.section}}">
+                                    <input type="hidden" class="input-hershel" name="rheogram_id{{forloop.parentloop.counter0}}" value="">
+                                    <td><input type="number" step="any" id="rpm" class="form-control rpm" name="rpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                    <td><input type="number" step="any" id="dial" class="form-control dial" name="dial{{forloop.parentloop.counter0}}" placeholder="Dial" value="">
+                                    </td>
+                                    <td>
+                                        <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                        <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                    </td>        
+                                </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                              </div>
+                              </div>
+                              {%else%}
+                              {%if section.selected_model == "1"%}
+                              <h4 class="model-caption">Newtonian Fluid</h4>
+                              <div class="outline-col">
+                                <table class="first-table">
+                                <thead>
+                                  <tr>
+                                  
+                                    <th class="text-center">RPM</th>
+                                    <th class="text-center">Dial</th>
+                                    <th style="width:20%;"></th>
+                                  </tr>
+                                </thead>
+                                </table>
+                                <div class="inside-space">
+                              <table id="newtonian-table" class="reho-table tbl-rheoedit">
+                                <tbody>
+                                  {% for rpm in rheogram_rpm %}
+                                  <tr class="{{mud.section}}">
+                                    <input type="hidden" class="input-hershel" name="rheogram_id{{forloop.parentloop.counter0}}" value="{% getrheogramid rpm.rheogram_rpm section 'newtonian' %}">
+                                    <td><input type="number" step="any" id="rpm" class="form-control rpm" name="rpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                    <td><input type="number" step="any" id="dial" class="form-control dial" name="dial{{forloop.parentloop.counter0}}" placeholder="Dial" value="{% getrheogrambymodels rpm.rheogram_rpm section 'newtonian' well_id wellphase_id %}">
+                                    </td>
+                                    <td>
+                                        <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                        <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                    </td>        
+                                </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                              </div>
+                              </div>
+
+                              {%endif%}
+                              {% if section.selected_model == "2"%}
+                              <h4 class="model-caption">Bingham Plastic</h4>
+                              <div class="outline-col">
+                                <table class="first-table">
+                                <thead>
+                                  <tr>
+                                    <th class="text-center">RPM</th>
+                                    <th class="text-center">Dial</th>
+                                    <th style="width: 18% !important;"></th>
+                                  </tr>
+                                </thead>
+                                </table>
+                                <div class="inside-space">
+                              <table id="bingham-table" class="reho-table">
+                                <tbody>
+                                  {% for rpm in rheogram_rpm %}
+                                  <tr class="{{mud.section}}">
+                                    <input type="hidden" class="input-hershel" name="rheogram_id{{forloop.parentloop.counter0}}" value="{% getrheogramid rpm.rheogram_rpm section 'bingham' %}">
+                                    <td><input type="number" step="any" id="rpm" class="form-control rpm" name="rpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                    <td><input type="number" step="any" id="dial" class="form-control dial" name="dial{{forloop.parentloop.counter0}}" placeholder="Dial" value="{% getrheogrambymodels rpm.rheogram_rpm section 'bingham' well_id wellphase_id %}">
+                                    </td>
+                                    <td>
+                                  <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                  <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                  </td>        
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                              </div>
+                              </div>
+                              {%endif%}
+                              {% if section.selected_model == "3"%}
+                              <h4 class="model-caption">Power Law</h4>
+                              <div class="outline-col">
+                                <table class="first-table">
+                                <thead>
+                                  <tr>
+                                    <th class="text-center">RPM</th>
+                                    <th class="text-center">Dial</th>
+                                    <th style="width: 20%;"></th>
+                                  </tr>
+                                </thead>
+                                </table>
+                                <div class="inside-space">
+                              <table id="powerlaw-table" class="reho-table">
+                                <tbody>
+                                  {% for rpm in rheogram_rpm %}
+                                  <tr class="{{mud.section}}">
+                                    <input type="hidden" class="input-hershel" name="rheogram_id{{forloop.parentloop.counter0}}" value="{% getrheogramid rpm.rheogram_rpm section 'powerlaw' %}">
+                                    <td><input type="number" step="any" id="rpm" class="form-control rpm" name="rpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                    <td><input type="number" step="any" id="dial" class="form-control dial" name="dial{{forloop.parentloop.counter0}}" placeholder="Dial" value="{% getrheogrambymodels rpm.rheogram_rpm section 'powerlaw' well_id wellphase_id %}">
+                                    </td>
+                                    <td>
+                                  <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                  <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                  </td>        
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                              </div>
+                              </div>
+                              {%endif%}
+                              {% if section.selected_model == "4"%}
+                              <h4 class="model-caption">Hershel Bulkley</h4>
+                              <div class="outline-col">
+                                <table class="first-table">
+                                  <thead>
+                                      <tr>
+                                          <th>RPM</th>
+                                          <th>Dial</th>
+                                          <th style="width: 20%;"></th>
+                                      </tr>
+                                  </thead>
+                                  </table>
+                                  <div class="inside-space">
+                                  <table id="rheogram-table{{forloop.counter0}}" data-id="{{section.section_name}}" class="reho-table rho-tbl">
+                                  <tbody>
+                                    {% for rpm in rheogram_rpm %}
+                                    <tr class="{{mud.section}}">
+                                      <input type="hidden" class="input-hershel" name="rheogram_id{{forloop.parentloop.counter0}}" value="{% getrheogramid rpm.rheogram_rpm section 'hershel' %}">
+                                        <td><input type="number" step="any" id="rpm" class="form-control rpm" name="rpm{{forloop.parentloop.counter0}}" placeholder="Rpm" value="{{rpm.rheogram_rpm }}"></td>
+                                        <td><input type="number" step="any" id="dial" class="form-control dial" name="dial{{forloop.parentloop.counter0}}" placeholder="Dial" value="{% getrheogrambymodels rpm.rheogram_rpm section 'hershel' well_id wellphase_id %}">
+                                        </td>
+                                        <td>
+                                            <button type="button" name="add" class="addrheogram-row iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-plus"></i></button>
+                                            <button type="button" name="remove" class="rheogramremove iconaction" data-id="{{forloop.parentloop.counter0}}"><i class="fa fa-trash"></i></button>
+                                        </td>        
+                                    </tr>
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                              </div>
+                              
+                          </div>
+                          <div class="col-7">
+                            <figure class="highcharts-figure charts">
+                              <div id="{{section.section_name}}-rheogramchart">
+                              </div>
+                            </figure>
+                          </div>
+                        </div>
+                              {%endif%}
+                              {%endif%}
+                            </div>
+                           
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                      
+                      <div class="col-sm-5 offset-sm-3 top-spacing">
+                        <button type="submit" id="submit"class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button">Submit</button>
+                        <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+                        <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                      </div>
+                  </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-2">
+        {% include "userheader.html" %}
+        <h4 class="model-caption">Well Phases</h4>
+        {% for wellphase in wellphases %}
+          <div class="row">
+            <div class="col-12">
+              <nav class="navbar bg-white phase-sidemenu">
+                <ul class="nav navbar-nav">
+                  <li class="nav-item phs-list {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                    <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+                    <ul class="myDIV nav navbar-nav custom_active_list pressure-sidemenu  {% if wellphase_id == wellphase.id %}show{% endif %}">
+                      {% getsectionbywellphase_id wellphase.id as sections %}
+                      {% for section in sections %}
+  
+                      <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="wellphase_sidemenu remove-line">{{section.section_name | depthunit:request.session.unit}}</li>
+                      {% endfor %}
+                  </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        {% endfor %}
+        <h4 class="model-caption">Phase Depth</h4>
+            <table>
+              <tr>
+                <td>
+                  <span class="font-weight-bold sta-col">From</span>
+                </td>
+                <td>
+                  {{fromdepth}}{%display_lengthunit request.session.unit%}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="font-weight-bold sta-col">To</span>
+                </td>
+                <td>
+                  {{todepth}}{%display_lengthunit request.session.unit%}
+                </td>
+              </tr>
+            </table>
+            <div id=parameters>
+              <div id="newtonian_model" class="model-all" style="display:none">
+                <p>Newtonian</p>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">PV :</span>
+                <div id="plastic_viscocity" class="myClass plastic_viscocity"></div>
+                </div>
+              </div>
+              <div id="bingham_model" class="model-all" style="display:none">
+                <p>Bingham Plastic</p>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">PV :</span>
+                <div id="plastic_viscocity" class="myClass plastic_viscocity"></div>
+                </div>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">YP :</span>
+                <div id="yield_point" class="myClass yield_point"></div>
+                </div>
+              </div>
+              <div id="powerlaw_model" class="model-all" style="display:none">
+                <p>Powerlaw</p>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">PV :</span>
+                <div id="plastic_viscocity" class="myClass plastic_viscocity"></div>
+                </div>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">YP :</span>
+                <div id="yield_point" class="myClass yield_point"></div>
+                </div>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">K :</span>
+                <div id="k_value" class="myClass k_value"></div>
+                </div>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">n :</span>
+                <div id="n_value" class="myClass n_value"></div>
+                </div>
+              </div>
+              <div id="hershel_model" class="model-all" style="display:none">
+                <p>Hershel</p>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">PV :</span>
+                <div id="plastic_viscocity" class="myClass plastic_viscocity"></div>
+                </div>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">YP :</span>
+                <div id="yield_point" class="myClass yield_point"></div>
+                </div>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">K :</span>
+                <div id="k_value" class="myClass k_value"></div>
+                </div>
+                <div class="same-line">
+                <span class="font-weight-bold sta-col">n :</span>
+                <div id="n_value" class="myClass n_value"></div>
+                </div>
+                <div class="same-line">
+                  <span class="font-weight-bold sta-col">Ty :</span>
+                  <div id="ty_value" class="myClass ty_value"></div>
+                </div>
+              </div>
+            </div>
+      </div>
+    </div>
+
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/rheogram.js' %}"></script>
+
+<script>
+
+
+$(document).on("click",".nav-link" , function() { 
+    $('#rheogram_allmodels_show').text("Display All Models");
+    var section_name=$(this).attr('data-id');
+    var wellphase_id="{{wellphase_id}}"
+    var well_id='{{well_id}}';
+    var series1=[]
+    var series2=[]
+    var rpm=[]
+    $.ajax({
+        type: "GET",
+        url:"/wells/muddata/getrheogrammodals",
+        data:{
+          wellphase_id:wellphase_id,
+          section_name:section_name,
+          well_id:well_id
+        },
+        success: function(data) {
+          chart_type=data.charttype
+          section_model = data.section_model
+          // alert(section_model)
+          rheogram_model=data.rheogram_model
+          $('.plastic_viscocity').html(data.modalparameters.plastic_viscocity.toFixed(2)+' {%display_plastic_viscosity request.session.unit%}')
+          $('.yield_point').html(data.modalparameters.yield_point.toFixed(2)+ ' {%display_gelstrengthunit request.session.unit%}')
+          $('.k_value').html(data.modalparameters.K+' lbf.sec^n/100ft2')
+          $('.n_value').html(data.modalparameters.n)
+          $('.ty_value').html(data.modalparameters.Ty+ ' {%display_gelstrengthunit request.session.unit%}')
+          $('.model-all').show()
+          if(data.modalparameters.Ty<0){
+            $("input[type=radio][value='4']").prop("disabled",true);
+          }
+
+          if(data.charttype=='direct'){
+          rheogramchart(data,section_name,section_model)
+          }else{
+            indirectrheogramchart(data,section_name)
+          }
+      }
+
+        
+      });
+  })
+var chart
+var min_rpm_index
+var minimumrmsmodal
+function rheogramchart(data,containerid,section_model){
+  // alert(section_model)
+  minimumrmsmodal=data.minimumrmsmodal
+  var lastrpm=data.last_rpm
+  chart = Highcharts.chart(containerid+'-rheogramchart', {
+    chart: {
+        //type: 'spline',
+        // zoomType: 'xy'
+        backgroundColor: 'transparent',
+        reflow: false,
+        
+
+    },
+    credits: {
+          enabled: false
+        },
+    title: {
+        text: ''
+    },
+    // subtitle: {
+    //     text: 'Source: Heinz  2003'
+    // },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'RPM'
+        },
+        tickInterval : 100 ,
+
+    },
+    yAxis: {
+        title: {
+            text: 'Dial'
+        },
+        tickInterval : 20,
+
+    },
+    legend: {
+        visible: false
+        
+    },
+    plotOptions: {
+        scatter: {
+            marker: {
+                radius: 5,
+                states: {
+                    hover: {
+                        enabled: true,
+                        lineColor: 'rgb(100,100,100)'
+                    }
+                }
+            },
+            states: {
+                hover: {
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+            tooltip: {
+                headerFormat: '<b>{series.name}</b><br>',
+                // pointFormat: '{point.x} cm, {point.y} kg'
+            }
+        },
+        dataLabels: {
+                style: {
+                  fontSize: "100px"
+        }
+        
+    }
+    },
+    
+    series: [
+    {
+      showInLegend: false,
+        type:'scatter',
+        name: 'Shear Stress(dial)',
+        color: '#0000ff',
+        data: data.userdial,
+        dashStyle: 'LongDashDot'
+
+
+    }, 
+    {
+      showInLegend: false,
+        type: 'spline',
+        name: 'Newtonian',
+        color: 'rgb(22,96,178)',
+        data: data.newtoniondial.modal,
+        dashStyle: 'Solid',
+        visible: false
+    },
+    {
+      showInLegend: false,
+        type: 'spline',
+        name: 'Bingham Plastic',
+        color: '#2CB68B',
+        data: data.binghammodal.modal,
+        dashStyle: 'Solid',
+        visible: false
+    },
+    {
+      showInLegend: false,
+        type: 'spline',
+        name: 'Powerlaw',
+        color: '#298f8a',
+        data: data.powerlawmodal.modal,
+        dashStyle: 'Solid',
+        visible: false
+    },
+    {
+      showInLegend: false,
+        type: 'spline',
+        name: 'Hershel Bulkley',
+        color: 'rgb(245,173,43)',
+        data: data.hershelmodal.modal,
+        dashStyle: 'Solid',
+        visible: false
+        
+  }
+  ]
+},
+function (chart){
+  var shearstress = chart.series[0];
+  var newtonion = chart.series[1];
+  var bingha = chart.series[2];
+  var powerlaw = chart.series[3];
+  var hershel = chart.series[4];
+
+  if(section_model==null){
+    if(minimumrmsmodal=='Hershel Bulkley')
+    {
+      min_rpm_index=4;
+      hershel.update({visible: true});
+      $('#hershel_model').show();
+    }else if(minimumrmsmodal=='Powerlaw'){
+      min_rpm_index=3;
+      powerlaw.update({visible: true});
+      $('#powerlaw_model').show();
+    }else if(minimumrmsmodal=='Bingham Plastic'){
+      min_rpm_index=2;
+      bingha.update({visible: true});
+      $('#bingham_model').show();
+    }else if(minimumrmsmodal=='Newtonian Fluid'){
+      min_rpm_index=1;
+      newtonion.update({visible: true});
+      $('#newtonian_model').show();
+    } 
+    chart.series[min_rpm_index].update({name:'<b style="font-size:15px;">'+minimumrmsmodal+'(Best Fit)</b>',rgb:'245,173,43'});
+  }
+  else if(section_model=='1'){
+    shearstress.update({visible:false});
+    newtonion.update({visible: true});
+    $('#newtonian_model').show();
+    $('#bingham_model').hide();
+    $('#powerlaw_model').hide();
+    $('#hershel_model').hide();
+  }
+  else if(section_model=='2'){
+    shearstress.update({visible:false});
+    bingha.update({visible: true});
+    $('#newtonian_model').hide();
+    $('#bingham_model').show();
+    $('#powerlaw_model').hide();
+    $('#hershel_model').hide();
+  }
+  else if(section_model=='3'){
+    shearstress.update({visible:false});
+    powerlaw.update({visible: true});
+    $('#newtonian_model').hide();
+    $('#bingham_model').hide();
+    $('#powerlaw_model').show();
+    $('#hershel_model').hide();
+  }
+  else if(section_model=='4'){
+    shearstress.update({visible:false});
+    hershel.update({visible: true});
+    $('#newtonian_model').hide();
+    $('#bingham_model').hide();
+    $('#powerlaw_model').hide();
+    $('#hershel_model').show();
+  }
+
+$('.section_name').click(function(){
+  var selected_model=$(this).val();
+  var wellphase_id="{{wellphase_id}}";
+  var section_name=$(this).attr('data-id');
+  $.ajax({ 
+    type: "GET",                      
+    url: "/wells/muddata/modelselected",                    
+    data: {
+      wellphase_id:wellphase_id,
+      selected_model:selected_model,
+      section_name:section_name
+    },
+    dataType: "json",
+    success: function (data) { 
+      if(selected_model == '1'){
+        $('#newtonian_model').show();
+        $('#bingham_model').hide();
+        $('#powerlaw_model').hide();
+        $('#hershel_model').hide();
+        bingha.update({visible: false});
+        newtonion.update({visible: true});
+        powerlaw.update({visible: false});
+        hershel.update({visible: false});
+        shearstress.update({visible:false})
+      }else if(selected_model == '2'){
+        $('#newtonian_model').hide();
+        $('#bingham_model').show();
+        $('#powerlaw_model').hide();
+        $('#hershel_model').hide();
+        newtonion.update({visible: false});
+        bingha.update({visible: true});
+        powerlaw.update({visible: false});
+        hershel.update({visible: false});
+        shearstress.update({visible:false})
+      }else if(selected_model == '3'){
+        $('#newtonian_model').hide();
+        $('#bingham_model').hide();
+        $('#powerlaw_model').show();
+        $('#hershel_model').hide();
+        newtonion.update({visible: false});
+        bingha.update({visible: false});
+        powerlaw.update({visible: true});
+        hershel.update({visible: false});
+        shearstress.update({visible:false})
+      }else if(selected_model == '4'){
+        $('#newtonian_model').hide();
+        $('#bingham_model').hide();
+        $('#powerlaw_model').hide();
+        $('#hershel_model').show();
+        newtonion.update({visible: false});
+        bingha.update({visible: false});
+        powerlaw.update({visible: false});
+        hershel.update({visible: true});
+        shearstress.update({visible:false})
+      }
+    }
+  });
+})
+});
+
+}
+
+var indirectchart
+var rheogram_model
+function indirectrheogramchart(data,containerid){
+  var minimumrmsmodal=data.minimumrmsmodal
+  var lastrpm=data.last_rpm
+  rheogram_model=data.rheogram_model
+  // alert(rheogram_model)
+  indirectchart = Highcharts.chart(containerid+'-rheogramchart', {
+    chart: {
+        //type: 'spline',
+        // zoomType: 'xy'
+    },
+    title: {
+        text: 'Shear Rate(dial) Line Fit Plot'
+    },
+    // subtitle: {
+    //     text: 'Source: Heinz  2003'
+    // },
+    xAxis: {
+        title: {
+            enabled: true,
+            text: 'RPM'
+        },
+        tickInterval : 100 ,
+
+    },
+    yAxis: {
+        title: {
+            text: 'Dial'
+        },
+        tickInterval : 20,
+
+    },
+    legend: {
+        // layout: 'vertical',
+        // align: 'left',
+        // verticalAlign: 'top',
+        // x: 100,
+        // y: 70,
+        // floating: true,
+        // backgroundColor: Highcharts.defaultOptions.chart.backgroundColor,
+        // borderWidth: 1
+        visible: false
+    },
+    plotOptions: {
+        scatter: {
+            marker: {
+                radius: 5,
+                states: {
+                    hover: {
+                        enabled: true,
+                        lineColor: 'rgb(100,100,100)'
+                    }
+                }
+            },
+            states: {
+                hover: {
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+            tooltip: {
+                headerFormat: '<b>{series.name}</b><br>',
+                // pointFormat: '{point.x} cm, {point.y} kg'
+            }
+        },
+        dataLabels: {
+                style: {
+                  fontSize: "100px"
+        }
+        
+    }
+    },
+    
+    series: [
+    {
+        type: 'spline',
+        name: 'Newtonian',
+        color: 'rgb(22,96,178)',
+        data: data.newtoniondial.modal,
+        dashStyle: 'Solid',
+        visible: false
+    },
+    {
+        type: 'spline',
+        name: 'Bingham Plastic',
+        color: '#2CB68B',
+        data: data.binghammodal.modal,
+        dashStyle: 'Solid',
+        visible: false
+    },
+    {
+        type: 'spline',
+        name: 'Powerlaw',
+        color: '#298f8a',
+        data: data.powerlawmodal.modal,
+        dashStyle: 'Solid',
+        visible: false
+    },
+    {
+        type: 'spline',
+        name: 'Hershel Bulkley',
+        color: 'rgb(245,173,43)',
+        data: data.hershelmodal.modal,
+        dashStyle: 'Solid',
+        visible: false
+  }
+  ]
+},
+function (chart){
+  var newtonion = chart.series[0];
+  var bingha = chart.series[1];
+  var powerlaw = chart.series[2];
+  var hershel = chart.series[3];
+  if(rheogram_model == '1'){
+    newtonion.update({visible: true});
+    $('#newtonian_model').show();
+  }
+  else if(rheogram_model == '2'){
+    bingha.update({visible: true});
+    $('#bingham_model').show();
+  }
+  else if(rheogram_model == '3'){
+    powerlaw.update({visible: true});
+    $('#powerlaw_model').show();
+  }
+  else if(rheogram_model == '4'){
+    hershel.update({visible: true});
+    $('#hershel_model').show();
+  }
+  chart.redraw();
+  // $('#rheogram_allmodels_show').click(function () {
+  // newtonion.update({visible: true});
+  // bingha.update({visible: true});
+  // powerlaw.update({visible: true});
+  // hershel.update({visible: true});
+  // });
+
+}
+);
+
+
+}
+    $('.modal-tables').hide();
+    var storedArray = JSON.parse(sessionStorage.getItem("items"));
+    var well_id='{{well_id}}'
+    if(well_id == storedArray[1]){
+      $('.warning').show();
+    }else{
+      $('.warning').hide();
+    }
+</script>
+<style>
+a.edit-reho.active {
+    color: #3f8aca !important;
+    border-bottom: 2px solid #428ccb !important;
+}
+
+.nav-tabs .nav-item .edit-reho {
+    border-radius: 0px !important;
+  }
+
+  .down-line {
+    border-bottom: 1px solid #dadada !important;
+}
+
+.iconaction
+{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:15px;
+  color:#b20f0f;
+  font-weight: 700;
+}
+</style>
+{%endblock%}
+{% block scripts %}
+{{block.super}}
+<script>
+    var imgsrc="{% static 'images/loading-81.gif' %}"
+</script>
+<script src="{% static 'js/sensitivity.js' %}"></script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+{%endblock%}     
+

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<section id="data-list-view" class="data-list-view-header">
+  <div class="container-fluid">
+  <div class="row common-row-space">
+  <div class="col-md-10  create-pg">
+    <div class="create_project_sec scroll-line">
+      {% include "header.html" %}
+      <div class="card-create-user">
+    <div class="card m-2">
+        <div class="card-header">
+            <h4 class="card-title">Import Data</h4>
+        </div>
+        <div class="card-body import">
+           <button type="submit" class="btn btn-primary detail-button"> <a  href="{% url 'bhadata:pipe_download_csv_data' %}"><span class="action-create-well"><i class="feather "></i>Download format</span></a></button>
+        </div> 
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group row">
+              <div class="col-sm-1 col-form-label">
+                <label for="well_phase">Unit</label>
+              </div>
+              <div class="col-4">
+                <select name="unit" class="form-control casingmaster-unit">
+                  <option value="">Select</option>
+                  <option value="API">API</option> 
+                  <option value="SI">SI</option> 
+                </select>
+              </div>
+            </div>
+            <input type="file" name="myfile">
+            <button type="submit" class="detail-button import_upload">Upload</button>
+          </form>
+        </div>  
+      </div>
+    </div>
+      {% include "footer.html" %}
+      </div>
+      </div>
+      <div class="col-md-2">
+        {% include "userheader.html" %}
+    </div>
+    </div>
+  </div>
+</section>
+<style>
+.environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+</style>
+{% endblock %}

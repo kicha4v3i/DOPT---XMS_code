@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+
+<div class="container-fluid">
+        <div class="row">
+        <div class="col-md-12  create-pg">
+          <div class="create_project_sec scroll-line">
+            {% include "header.html" %}
+      <div class="col-12 ">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Pumps</h4>
+            </div>
+            <div class="table-responsive">
+              <div class="container-fluid">
+                <ul class="nav nav-tabs" role="tablist">           
+                  <li class="nav-item">
+                    <a class="nav-link in-client active" data-toggle="tab" href="#staticmaster">Inbuilt Master</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link in-client" data-toggle="tab" href="#dynamicmaster">Client Master</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="tab-content">
+                <div id="staticmaster" class="container-fluid tab-pane active"><br>
+                  <table class="table">
+      
+                    <thead class="text-center">
+                        <tr>      
+                            <th>Manufacturer</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Stroke Length</th>
+                            <th>Actions</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+                        {% for objstaticpumps in staticpumps %}
+        
+                        <tr>
+                            <td>{{objstaticpumps.pump_manufacturer.name}}</td>
+                            <td>{{objstaticpumps.name}}</td>
+                            <td>{{objstaticpumps.type}}</td>
+                            <td class="text-center">{{objstaticpumps.stroke_length}}</td>
+                            <td  class="text-center">
+                              <a href="{% url 'mud:adminpumpview' pk=objstaticpumps.id %}">
+                                <span class="action-edit"><i class="feather icon-eye"></i></span>
+                            </a>
+                            </td>
+                          </tr>
+
+                          {% endfor %}
+        
+                    </tbody>
+                </table>
+                </div>
+                <div id="dynamicmaster" class="container-fluid tab-pane fade"><br>
+                  {% user_rights_permission 'Create Master' request as value %}
+                  {% if value %}
+                  <a class="btn btn-primary waves-effect mb-2 waves-float waves-light detail-button " href="{% url 'mud:pumpcreate'%}">  <span class="action-edit-project"><i class="feather icon-plus-circle"></i> Add New</span></a> 
+                  {% endif %}
+                  
+                  <table class="table">
+      
+                    <thead class="text-center">
+                        <tr>      
+                            <th>Manufacturer</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Stroke Length(in)</th>
+                            <th>Actions</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in pumps %}
+        
+                        <tr>
+                            <td>{{obj.pump_manufacturer.name}}</td>
+                            <td>{{obj.name}}</td>
+                            <td>{{obj.type}}</td>
+                            <td>{{obj.stroke_length}} in</td>
+                            <td  class="text-center">
+                              <a href="{% url 'mud:pumpview' pk=obj.id %}" >
+                                <span class="action-edit"><i class="feather icon-eye"></i></span>
+                            </a>
+                            {% user_rights_permission 'Edit Master' request as value %}
+                            {% if value %}
+                            <a href="{% url 'mud:pumpedit' pk=obj.id %}" >
+                                <span class="action-edit"><i class="feather icon-edit"></i></span>
+                            </a>
+                            {% endif %}
+                            <a onclick="confirmation(event)" href="{% url 'mud:pumpdelete' pk=obj.id %}" >
+                              <span class="action-edit"><i class="feather icon-trash-2"></i></span>
+                          </a>
+                            </td>
+                          </tr>
+                          {% endfor %}
+        
+                    </tbody>
+                </table>
+                </div>
+              
+          </div>
+                </div>
+        </div>
+      </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        </div>
+        <!-- <div class="col-md-2">
+          {% include "userheader.html" %}
+        </div> -->
+      </div>
+
+    
+      
+
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+
+  
+<section>
+  <div class="container-fluid">
+    <div class="row common-row-space" id="">
+      <div class="col-md-10 p-0 create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+  
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+    
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Drill Pipe Details</h4>
+            </div>
+            <div class="card-body">
+            <div class="table-responsive">
+              <table class="table dataTable no-footer" id="pipe-master">
+                <thead>
+                  <tr>
+                    <th>
+                      <span class="font-weight-bold">Nominal OD</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Class</span>
+                    </th>
+                    <th>
+                        <span class="font-weight-bold">Pipe OD</span>
+                      </th>
+                    <th>
+                      <span class="font-weight-bold">Weight</span>
+                    </th>
+                    <th>
+                        <span class="font-weight-bold">Pipe ID</span>
+                    </th>  
+                    <th>
+                      <span class="font-weight-bold">Connection Type</span>
+                    </th>
+                    <th>
+                        <span class="font-weight-bold">Upset</span>
+                    <th>
+                      <span class="font-weight-bold">Tool OD</span>
+                    </th>
+                    <th>
+                      <span class="font-weight-bold">Tool ID</span>
+                    <th>
+                        <span class="font-weight-bold">Box Length</span>
+                    </th>
+                    <th>
+                        <span class="font-weight-bold">Pin Length</span>  
+                    <th>
+                        <span class="font-weight-bold">Steel Grade</span>
+                    </th>  
+                  </tr>            
+                </thead>
+                <tbody>
+                  {% for drill in drillpipe %}
+                  <tr>
+                    <td class="text-center">
+                      {%if drill.normal_od%}{{ drill.normal_od }}{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.class_type%}{{ drill.class_type}}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.pipebody_od%}{{ drill.pipebody_od}}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.weight%}{{ drill.weight }}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.pipebody_id%}{{ drill.pipebody_id}}{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.connection_type%}{{ drill.connection_type}}{%endif%}
+                    </td>
+                    <td>
+                      {%if drill.upset%}{{ drill.upset }}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.tool_od%} {{ drill.tool_od }}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.tool_id%}{{ drill.tool_id }}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.box_length%}{{ drill.box_length }}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.pin_length%}{{ drill.pin_length }}{%endif%}
+                    </td>
+                    <td class="text-center">
+                      {%if drill.steel_grade%}{{ drill.steel_grade }}{%endif%}
+                    </td>
+                  </tr>  
+                  {% endfor %}
+          
+                </tbody>
+              </table>
+              <div class="row" id="basic-table">
+  
+                <div class="col-sm-12">
+                    <!-- <a onclick="confirmation(event)" class="btn btn-outline-danger ml-1 waves-effect pull-right" href="{% url 'bhadata:admindrillpipedelete' %}" > <span class="action-delete-well delete"><i class="feather icon-trash delete"></i> Delete</span></a> -->
+        
+                    <a class="btn btn-primary waves-effect waves-float waves-light detail-button " href="{% url 'bhadata:admindrillpipeedit' %}">  <span class="action-edit-well"><i class="feather icon-edit"></i> Edit</span></a>
+                    <a class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button " href="{% url 'bhadata:adminpipeimportdata' %}">  <span class="action-create-well"><i class="feather "></i>Import</span></a>
+                    <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+        
+                  </div>
+                </div>
+              <!-- <div class="card">
+                <div class="card-header">
+                <div class="card-title" >
+                  {% if drillpipe.has_other_pages %}
+                  <ul class="pagination">
+                    {% if drillpipe.has_previous %}
+                      <li><a href="?page={{ drillpipe.previous_page_number }}">&laquo;</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in drillpipe.paginator.page_range %}
+                      {% if drillpipe.number == i %}
+                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                      {% else %}&nbsp;&nbsp;
+                        <li><a href="?page={{ i }}">{{ i }}</a></li>
+                      {% endif %}
+                    {% endfor %}&nbsp;&nbsp;
+                    {% if drillpipe.has_next %}
+                      <li><a href="?page={{ drillpipe.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                  </ul>
+                {% endif %}
+              </div>
+              </div>
+                </div> -->
+
+            </div>
+          </div>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+      </div>
+      </div>
+    </div>
+      
+    
+      
+    </section>
+    <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+    <script>
+    $(function() {
+      $('#pipe-master').DataTable({
+        "ordering": false
+      });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% load notifications_tags %} 
+    <div class="row top-space-px">
+    <div class="col-md-10">
+        <div class="align-header">
+            <p class="today_date t-day">Today,{% now "jS F Y " %}</p>
+            <div>
+                {% if request.user.is_superuser or request.user.is_superadmin %}
+                <li class="dropdown dropdown-notification nav-item">
+                    <a class="nav-link nav-link-label" href="#" data-toggle="dropdown">
+                        <i class="ficon feather icon-bell"></i>
+                        {% if notifications_unread != 0 %}
+                            <span class="badge badge-pill badge-primary badge-up totalnotification">{{ notifications_unread }}</span>
+                        {%endif%}
+
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
+                        <!-- <li class="dropdown-menu-footer"><a class="dropdown-item p-1 text-center" href="{% url 'custom_auth:notifications' %}">View all notifications</a></li> -->
+                        <li class="dropdown-menu-header">
+                            <div class="dropdown-header m-0 notifi-cls">
+                                <h3 class="white m-0"></h3><span class="notification-title">Notifications</span><span class="totalnotification rnd-clr"></span> 
+                            </div>
+                        </li>
+                        <li class="scrollable-container media-list notification-list bck-clr-noti">
+                        </li>
+                        <li class="dropdown-menu-footer"><a class="dropdown-item p-1 text-center notifi-cls" href="{% url 'custom_auth:notifications' %}">View all notifications</a></li>
+                        
+                      
+                    </ul>
+                </li>
+                {% else %}
+                <li class="dropdown dropdown-notification nav-item">
+                    <a class="nav-link nav-link-label" href="#" data-toggle="dropdown">
+                        <i class="ficon feather icon-bell"></i>
+                        {% if notifications_unread != 0 %}
+                        <span class="badge badge-pill badge-primary badge-up totalnotification">{{ notifications_unread }}</span>
+                        {%endif%}
+
+                    </a>
+    
+                    <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
+                       
+                        <li class="dropdown-menu-header">
+                            <div class="dropdown-header m-0 notifi-cls">
+                                <h3 class="white m-0"><span class="notification-title">Notifications</span> <span class="totalnotification rnd-clr "></span></h3>
+                            </div>
+                        </li>
+                        <li class="scrollable-container media-list notification-list bck-clr-noti">
+                        </li>
+                        <li class="dropdown-menu-footer txt-clr-noti"><a class="dropdown-item p-1 text-center notifi-cls" href="{% url 'projects:notifications' %}">View all notifications</a></li>
+                        
+                        
+                    </ul>
+                </li>
+                {% endif %}
+            </div>
+      
+        
+       
+    </div>
+            
+        
+    </div>
+    </div>
+<script>
+   
+</script>

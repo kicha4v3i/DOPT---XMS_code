@@ -1,0 +1,556 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section>
+  <div class="row">
+    <div class="col-12">
+      {% include "welldetails_menu.html" %} 
+    </div>
+    <div class="col-12">
+      <div class="sample-sub-menu">
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+            <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+          </div>
+        </div>
+        <!-- <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'rheogram' %}active{% endif %}">
+                <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+              </div>
+        </div> -->
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+            <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+            <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+          </div>
+        </div>
+        <!-- <div class="col-md-3">
+            <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                <a href="{% url 'muddata:pressurelawcalculation' wellphase_id %}" id="bhadata">Bore Pressure Loss</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                <a href="{% url 'muddata:annuluspressureloss' wellphase_id %}" id="bhadata">Annulus Pressure Loss</a>
+            </div>
+        </div> -->
+        <div class="col-md-3">
+            <div class="sub-list {% if request.session.submenu == 'pressureloss' %}active{% endif %}">
+                <a href="{% url 'muddata:calculateallpressureloss' wellphase_id %}" id="bhadata">Hydraulics</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div> <!--row end -->
+<div class="row">
+   <div class='col-10'>
+        <div class="row">
+            <div class="col-4">
+                <div class="card p-1">
+                    <div id="pressurelawdata" class="pressurelawdiv">
+                        <label>Flow Rate{%display_flowrateunit well.unit%}</label><input type="text" name="flowrate" class="form-control flowrate pressurelawinput" placeholder="Flowrate">
+                        <label>RPM</label><input type="text" name="rpm" class="form-control rpm pressurelawinput" placeholder="RPM">
+                    </div>
+                    <div class="summary_pressureloss mt-2">
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="section_depth ">
+                    <p id="from_depth"></p>
+                    <p id="to_depth"></p>
+                    <p id="selected_modal"></p>
+                </div>
+                <div class="row ">
+                    <div class="col-md-12">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#surface-loss" role="tab">Surface Pressure Loss</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#circulation-loss" role="tab">Circulating Pressure Loss</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#bit-loss" role="tab">Bit Pressure Loss</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <div class="tab-content ">
+                    <div class="tab-pane" id="surface-loss" role="tabpanel">
+                       
+                    </div>
+                    <div class="tab-pane" id="circulation-loss" role="tabpanel">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#pipe-loss" role="tab">Drill String Pressure Loss</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#Annular-loss" role="tab">Annular Pressure Loss</a>
+                            </li>
+                        </ul>
+                        <div class="card p-1">
+                            <div class="tab-content">
+                                <div class="tab-pane" id="Annular-loss" role="tabpanel">
+                                </div>
+                                <div class="tab-pane" id="pipe-loss" role="tabpanel">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="bit-loss" role="tabpanel"></div>
+                </div>
+                <div class="modal fade allModal" id="allModal">
+                    <div class="modal-dialog">
+                      <div class="modal-content sample-model">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                          <h4 class="modal-title">All Models pressureloss</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="tab-pane" id="circulation-loss" role="tabpanel">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#allsurface-loss" role="tab">Surface Pressure Loss</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#allpipe-loss" role="tab">Drill String Pressure Loss</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#allAnnular-loss" role="tab">Annular Pressure Loss</a>
+                                </li>
+                            </ul>
+                            <div class="card p-1">
+                                <div class="tab-content">
+                                    <div class="tab-pane" id="allsurface-loss" role="tabpanel"></div>
+                                    <div class="tab-pane" id="allAnnular-loss" role="tabpanel"></div>
+                                    <div class="tab-pane" id="allpipe-loss" role="tabpanel"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                          <div class="table-responsive" id="newtonian-id"></div>
+                          <div class="table-responsive" id="bingham-id"></div>
+                          <div class="table-responsive" id="powerlaw-id"></div>
+                          <div class="table-responsive" id="hershel-id"></div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-danger" id="modal-close" >Close</button>
+                        </div> 
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class='allModels display-btn'>Show all Models</button>
+        <figure class="highcharts-figure charts">
+            <div id="pressurelosschart">
+            </div>
+        </figure>
+   </div> <!--col-10 end-->
+   <div class="col-2">
+    <h4 class="model-caption">Well Phases</h4>
+    {% for wellphase in wellphases %}
+    <div class="row">
+        <div class="col-12">
+            <div>
+            <!-- <nav class="navbar bg-white phase-sidemenu">
+            <ul class="nav navbar-nav"> -->
+                <div class="">
+                    <label class="tree-toggle nav-header glyphicon-icon-rpad"><span class="glyphicon glyphicon-folder-close m5"></span>{{wellphase.phase_name}}
+                    <span class="menu-collapsible-icon glyphicon glyphicon-chevron-down"></span></label>
+                <ul class="nav navbar-nav custom_active_list">
+                    {% getsectionbywellphase_id wellphase.id as sections %}
+                    {% for section in sections %}
+                    <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="nav-item">{{section.section_name}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+   </div>
+</div>
+</section>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script>
+    $(function(){
+        $('.custom_active_list li').click(function(){
+            $('.custom_active_list li').removeClass('active');
+            $(this).addClass('active');
+            $(this).closest('div').addClass('active');
+
+        });
+    });
+
+$(document).on("keyup", ".flowrate" , function() {
+    var flowrate=$(this).val();
+    var rpm=$(this).closest('div').find('.rpm').val()
+    if(flowrate!='' && rpm!=''){
+        getannuluspressurelaw(rpm,flowrate)
+    }
+});
+$(document).on("keyup", ".rpm" , function() {
+    var rpm=$(this).val();
+    var flowrate=$(this).closest('div').find('.flowrate').val()
+    if(flowrate!='' && rpm!=''){
+        getannuluspressurelaw(rpm,flowrate)
+    }  
+});
+function getannuluspressurelaw(rpm,flowrate){
+    // alert("hhhd")
+    var section_name = $('ul.custom_active_list').find('li.active').attr('data-id');
+    var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+    $.ajax({
+        type: "GET",
+        url:"/wells/muddata/calculateallpressure_loss",
+        // dataType: 'json',
+        cache: false,        
+
+        data:{
+            rpm:rpm,
+            flowrate:flowrate,
+            wellphase_id:wellphase_id,
+            section_name:section_name
+            
+        },
+        success: function(data) {
+            // alert("dyf")
+            console.log(data)
+            var from_depth
+            var todepth
+            var totalpipeloss=0
+            var totalsurfacelosses=0
+            var totalannularpressureloss=0
+            $('#from_depth').html("<span class='sectiondetails'>From Depth </span><span class='sectiondetails_value'>"+data.fromdepth+" ft</span>" )
+            $('#to_depth').html("<span  class='sectiondetails'>To Depth </span><span class='sectiondetails_value'>"+data.todepth+' ft</span>')
+            $('#selected_modal').html("<span  class='sectiondetails'>Selected model  </span><span class='sectiondetails_value'>"+data.selected_modal+"</span>")
+
+            var borepressureloss=""
+            borepressureloss +="<table class='table'><thead><tr><th>Element</th><th>ID</th><th>Length</th><th>Pressure Drop</th></tr></thead><tbody>"
+            for(var i=0;i<data.borepressureloss.length;i++){
+                borepressureloss +='<tr>';
+                borepressureloss +='<td>'+data.borepressureloss[i].type+'</td>';
+                borepressureloss +='<td>'+data.borepressureloss[i].ID+' in</td>';
+                borepressureloss +='<td>'+data.borepressureloss[i].length+' ft</td>';
+                borepressureloss +='<td>'+data.borepressureloss[i].pressureloss.toFixed(2)+' psi</td>';
+                borepressureloss +='</tr>'
+                totalpipeloss=totalpipeloss+data.borepressureloss[i].pressureloss
+            }
+            borepressureloss +='</tbody></table>';
+            borepressureloss +='<div class="text-center"><div class="text-danger">Total Drill String Pressure Loss  '+totalpipeloss.toFixed(2)+' psi</div></div>'
+            $('#pipe-loss').html(borepressureloss)
+
+            var surface=""
+            surface +="<div class='card p-3'><table class='table'><thead><tr><th>Element</th><th>ID</th><th>Length</th><th>Pressure Drop</th></tr></thead><tbody>"
+            for(var i=0;i<data.surfacelosses.length;i++){
+                surface +='<tr>';
+                surface +='<td>'+data.surfacelosses[i].type+'</td>';
+                surface +='<td>'+data.surfacelosses[i].id+' in</td>';
+                surface +='<td>'+data.surfacelosses[i].length+' ft</td>';
+                surface +='<td>'+data.surfacelosses[i].pressureloss+' psi</td>';
+                surface +='</tr>'
+                totalsurfacelosses=totalsurfacelosses+data.surfacelosses[i].pressureloss
+            }
+            surface +='</tbody></table>';
+            surface +='<div class="text-center"><div class="text-danger">Total Surface Pressure Loss   '+totalsurfacelosses.toFixed(2)+' psi</div></div>'
+            $('#surface-loss').html(surface)
+            
+            // if(data.linercount==0){
+                annuluspressureloss=''
+                cumulative_length=0
+                annuluspressureloss +="<table class='table'><thead><tr><th></th><th>BHA Element</th><th>OD/ID</th><th>Length</th><th>Cumulative Length</th><th>Annular flow regime</th><th>Annulus</th></tr></thead><tbody>"
+                for(var i=data.annularpressureloss.length-1;i>=0;i--){
+                    cumulative_length=cumulative_length+data.annularpressureloss[i].length_against
+                    annuluspressureloss +='<tr>';
+                    annuluspressureloss +='<td><span class='+data.annularpressureloss[i].element_type+'>'+data.annularpressureloss[i].element_type+'</span></td>';
+                    annuluspressureloss +='<td>'+data.annularpressureloss[i].type+'</td>';
+                    annuluspressureloss +='<td>'+data.annularpressureloss[i].od+' in/'+data.annularpressureloss[i].id+' in</td>';
+                    annuluspressureloss +='<td>'+data.annularpressureloss[i].length_against.toFixed(0)+' ft</td>';
+                    annuluspressureloss +='<td>'+cumulative_length.toFixed(0)+' ft</td>';
+                    annuluspressureloss +='<td>'+data.annularpressureloss[i].flowregime+'</td>';
+                    annuluspressureloss +='<td>'+data.annularpressureloss[i].pressureloss+' psi</td>';
+                    annuluspressureloss +='</tr>'
+                    totalannularpressureloss=totalannularpressureloss+data.annularpressureloss[i].pressureloss
+                }
+                annuluspressureloss +='</tbody></table>';
+                annuluspressureloss +='<div class="text-center"><div class="text-danger">Total Annular Pressure Loss   '+totalannularpressureloss.toFixed(2)+' psi</div></div>'
+                $('#Annular-loss').html(annuluspressureloss)
+            // }else{
+            //     annuluspressureloss=''
+            //     annuluspressureloss +="<table class='table'><thead><tr><th>Element</th><th>length_inside_casing</th><th>length_inside_openhole</th>"
+            //     for(var j=1;j<=data.linercount;j++){
+            //         annuluspressureloss +='<th>length_inside_liner'+j+'</th>'
+            //     }
+            //     annuluspressureloss +='</tr></thead></tbody>'
+            //     for(var i=data.annularpressureloss.length-1;i>=0;i--){
+            //         annuluspressureloss +='<tr>';
+            //         annuluspressureloss +='<td>'+data.annularpressureloss[i].type+'</td>';
+            //         annuluspressureloss +='<td>'+data.annularpressureloss[i].length_inside_casing+' in</td>';
+            //         annuluspressureloss +='<td>'+data.annularpressureloss[i].length_inside_openhole+' ft</td>';
+            //         for(var j=1;j<=data.linercount;j++){
+            //             annuluspressureloss +='<td>'+data.annularpressureloss[i]['length_inside_liner'+j]+'</td>'
+            //         }
+            //         annuluspressureloss +='</tr>'
+            //     }
+            //     annuluspressureloss +='</tbody></table>';
+            //     // annuluspressureloss +='<div class="text-center"><div class="text-danger">Total Annular Pressure Loss   '+totalannularpressureloss.toFixed(2)+' psi</div></div>'
+            //     $('#Annular-loss').html(annuluspressureloss) 
+            // }
+            var bitloss=""
+            bitloss +="<div class='card p-3 bitloss-div'><table class='table bit-losstable'><thead><tr><th>TFA(in<sup>2</sup>)</th><th>ΔP_bit(psi)</th><th>BHHP(hp)</th><th>HSI(hp/in<sup>2</sup>)</th><th>Impact Force(lbf)</th><th>Jet Velocity(ft/sec)</th></tr></thead><tbody>"
+            for(var i=0;i<data.bitpressurelosses.length;i++){
+                bitloss +='<tr>';
+                bitloss +='<td>'+data.bitpressurelosses[i].tfa_value+'</td>';
+                bitloss +='<td>'+data.bitpressurelosses[i].bit_pressure_loss.toFixed(2)+'</td>';
+                bitloss +='<td>'+data.bitpressurelosses[i].bhhp.toFixed(2)+'</td>';
+                bitloss +='<td>'+data.bitpressurelosses[i].hsi.toFixed(2)+'</td>';
+                bitloss +='<td>'+data.bitpressurelosses[i].impact_forces.toFixed(2)+'</td>';
+                bitloss +='<td>'+data.bitpressurelosses[i].jet_velocity.toFixed(2)+'</td>';
+                bitloss +='<td><a id="nozzel_details">Nozzel Size</a></td>';
+                bitloss +='</tr>';
+                
+                totalbitpressureloss=data.bitpressurelosses[i].bit_pressure_loss
+            }      
+            bitloss +='</tbody></table>';
+            $('#bit-loss').html(bitloss)
+            $('#nozzel_details').click(function(){
+            bitloss +="<table class='table'><thead><tr><th>Nozzel Size(1/32 inches)</th></thead><tbody>";
+            for(var i=0;i<data.bitpressurelosses.length;i++){
+            for(var j=0;j<data.bitpressurelosses[i].nozzle_size.length;j++){
+                bitloss +='<tr>';
+                bitloss +='<td>'+data.bitpressurelosses[i].nozzle_size[j]+'</td>';
+                bitloss +='</tr>';
+            }}
+            bitloss +='</tbody></table></div>';
+            $('#bit-loss').html(bitloss)
+            })
+
+            totalpressureloss = totalsurfacelosses+totalpipeloss+totalannularpressureloss+totalbitpressureloss
+            surface_pecentage = totalsurfacelosses/totalpressureloss*100
+            drillstring_pecentage = totalpipeloss/totalpressureloss*100
+            annular_pecentage = totalannularpressureloss/totalpressureloss*100
+            bit_percentage = totalbitpressureloss/totalpressureloss*100
+
+            var summary="";
+            summary +='<h5 class="text-danger text-center">Summary Of Pressure Loss</h5>';
+            summary +="<table class='table'><tbody>"
+            summary +='<tr><td class="text-danger">Surface Pressure Loss</td><td>'+totalsurfacelosses.toFixed(2)+' psi</td><td>'+surface_pecentage.toFixed()+'% </td></tr>'; 
+            summary +='<tr><td class="text-danger">Drill String Pressure Loss</td><td>'+totalpipeloss.toFixed(2)+' psi</td><td>'+drillstring_pecentage.toFixed()+'%</td></tr>';   
+            summary +='<tr><td class="text-danger">Bit Pressure Loss</td><td>'+totalbitpressureloss.toFixed(2)+' psi</td><td>'+bit_percentage.toFixed()+'%</td></tr>';  
+            summary +='<tr><td class="text-danger">Annular Pressure Loss</td><td>'+totalannularpressureloss.toFixed(2)+' psi</td><td>'+annular_pecentage.toFixed()+'%</td></tr>';  
+            summary +='<tr><td class="text-danger">Total Pressure Loss</td><td>'+totalpressureloss.toFixed(2)+' psi</td></tr>';  
+ 
+
+            summary +='</tbody></table>'; 
+            // $('.summary_pressureloss').html(summary)
+
+            
+            pressurelosschart(data.chartdata)
+        },
+        error: function (err) {
+            console.log(err)
+        },   
+    });
+   
+}
+function pressurelosschart(chartdata){
+    var unit='{%display_depthunit request.session.unit%}';
+    directchart = Highcharts.chart('pressurelosschart', {
+        chart: {
+            //type: 'spline',
+            // zoomType: 'xy'
+            reflow: false,
+
+        },
+        title: {
+            text: 'System Pressure Distribution'
+        },
+        // subtitle: {
+        //     text: 'Source: Heinz  2003'
+        // },
+        xAxis: {
+            opposite: true,
+            title: {
+                enabled: true,
+                text: 'Pressure Loss (psi)'
+            },
+            tickInterval : 200,
+
+        },
+        yAxis: {
+            reversed: true,
+            opposite: false,
+            title: {
+                text: 'MD '+unit
+            },
+            tickInterval : 1000,
+
+        },
+        legend: {
+            // layout: 'vertical',
+            // align: 'left',
+            // verticalAlign: 'top',
+            // x: 100,
+            // y: 70,
+            // floating: true,
+            // backgroundColor: Highcharts.defaultOptions.chart.backgroundColor,
+            // borderWidth: 1
+            
+        },
+        plotOptions: {
+            scatter: {
+                marker: {
+                    radius: 5,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            lineColor: 'rgb(100,100,100)'
+                        }
+                    }
+                },
+                states: {
+                    hover: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br>',
+                    // pointFormat: '{point.x} cm, {point.y} kg'
+                }
+            },
+            dataLabels: {
+                    style: {
+                      fontSize: "100px"
+            }
+            
+        }
+        },
+        
+        series: [
+        {
+            type: 'spline',
+            // name: 'Newtonian',
+            color: 'rgb(22,96,178)',
+            data: chartdata,
+            dashStyle: 'Solid',
+        },
+      ]
+    });
+}
+
+$(document).on("click", ".allModels" , function() {
+    var flowrate=$('.flowrate').val();
+    var rpm=$('.rpm').val();
+    if(flowrate!='' && rpm!=''){
+        getallmodellosses(rpm,flowrate)
+    }
+});
+
+function getallmodellosses(rpm,flowrate){
+    var section_name = $('ul.custom_active_list').find('li.active').attr('data-id');
+    var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+    $.ajax({
+        type: "GET",
+        url:"/wells/muddata/displayallmodals",
+        data:{
+            rpm:rpm,
+            flowrate:flowrate,
+            wellphase_id:wellphase_id,
+            section_name:section_name
+            
+        },
+        success: function(data) {
+            console.log(data.all_bore_pressure_loss)
+            var all_surface=""
+            all_surface +="<div class='card p-3'><table class='table'><thead><tr><th>Element</th><th>ID</th><th>Length</th><th colspan='4' style='text-align:center;'>All Model Pressure Drop</th></tr><tr><th></th><th></th><th></th><th>Newtonian</th><th>Bingham</th><th>Powerlaw</th><th>Hershel</th></tr></thead><tbody>"
+            for(var i=0;i<data.allsurface_loss.length;i++){
+                all_surface +='<tr>';
+                all_surface +='<td>'+data.allsurface_loss[i].type+'</td>';
+                all_surface +='<td>'+data.allsurface_loss[i].id+' in</td>';
+                all_surface +='<td>'+data.allsurface_loss[i].length+' ft</td>';
+                all_surface +='<td>'+data.allsurface_loss[i].newtonian_pressureloss+' psi</td>';
+                all_surface +='<td>'+data.allsurface_loss[i].bingham_pressureloss+' psi</td>';
+                all_surface +='<td>'+data.allsurface_loss[i].powerlaw_pressureloss+' psi</td>';
+                all_surface +='<td>'+data.allsurface_loss[i].hershel_pressureloss+' psi</td>';
+                all_surface +='</tr>'
+            }
+            all_surface +='</tbody></table>';
+            alert('surface_loss_all')
+            $('#allsurface-loss').html(all_surface)
+
+            var all_drillstring_losses = ''
+            all_drillstring_losses +="<table class='table'><thead><tr><th>Element</th><th>ID</th><th>Length</th><th>Newtonian</th><th>Bingham</th><th>Powerlaw</th><th>Hershel</th></tr></thead><tbody>"
+            for(var i=0;i<data.all_bore_pressure_loss.length;i++){
+                all_drillstring_losses +='<tr>';
+                all_drillstring_losses +='<td>'+data.all_bore_pressure_loss[i].type+'</td>';
+                all_drillstring_losses +='<td>'+data.all_bore_pressure_loss[i].ID+' in</td>';
+                all_drillstring_losses +='<td>'+data.all_bore_pressure_loss[i].length+' ft</td>';
+                all_drillstring_losses +='<td>'+data.all_bore_pressure_loss[i].newtonian+' psi</td>';
+                all_drillstring_losses +='<td>'+data.all_bore_pressure_loss[i].bingham+' psi</td>';
+                all_drillstring_losses +='<td>'+data.all_bore_pressure_loss[i].powerlaw+' psi</td>';
+                all_drillstring_losses +='<td>'+data.all_bore_pressure_loss[i].hershel+' psi</td>';
+                
+                all_drillstring_losses +='</tr>'
+                // totalnewtonian_drillstring=totalnewtonian_drillstring+newtonian_bore[i].pressureloss
+            }
+            all_drillstring_losses +='</tbody></table>';
+            
+            $('#allpipe-loss').html(all_drillstring_losses)
+
+            var allannularlosses=''
+            cumulative_length=0
+            allannularlosses +="<table class='table'><thead><tr><th></th><th>BHA Element</th><th>OD/ID</th><th>Length</th><th>Cumulative Length</th><th>Newtonian</th><th>Bingham</th><th>Powerlaw</th><th>Hershel</th></tr></thead><tbody>"
+            for(var i=data.all_annular_pressure_loss.length-1;i>=0;i--){
+                cumulative_length=cumulative_length+data.all_annular_pressure_loss[i].length_against
+                allannularlosses +='<tr>';
+                allannularlosses +='<td><span class='+data.all_annular_pressure_loss[i].element_type+'>'+data.all_annular_pressure_loss[i].element_type+'</span></td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].type+'</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].od+' in/'+data.all_annular_pressure_loss[i].id+' in</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].length_against.toFixed(0)+' ft</td>';
+                allannularlosses +='<td>'+cumulative_length.toFixed(0)+' ft</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].newtonion.toFixed(2)+' psi</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].bingham.toFixed(2)+' psi</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].powerlaw.toFixed(2)+' psi</td>';
+                allannularlosses +='<td>'+data.all_annular_pressure_loss[i].hershel.toFixed(2)+' psi</td>';
+                allannularlosses +='</tr>'
+            }
+            allannularlosses +='</tbody></table>';
+            
+            $('#allAnnular-loss').html(allannularlosses)
+            // html += '</div>'
+            // html += '</div>'
+            // html += '</div>'
+            // $('#allmodelvalues').append(html);
+            $('#allModal').modal('show')
+        }
+    })
+}
+$(document).on("click","#modal-close",function(){
+    $('#allModal').modal('show');('hide');
+});
+</script>
+<style>
+    table, th, td {
+      border-collapse: collapse;
+    }
+    </style>
+{% endblock %}
+
+
+
+      
+

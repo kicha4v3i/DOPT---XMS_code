@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<section>
+    <div class="row" id="">
+      <div class="col-md-10  create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-3">
+
+        {% include "casing_menu.html" %}  
+
+</div>
+        <div class="col-9">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title table-title">Edit Casing</h4>
+            </div>
+              
+            <form method="post" novalidate>
+              {% csrf_token %}
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="ranges">Ranges</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="ranges" class="form-control" name="ranges" placeholder="Ranges" value="{{form.ranges.value}}">
+                  </div>
+                </div>
+              </div>
+                          
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="grade">Grade</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <select class="form-control" name="grade">
+                      <option value="">-- Select Casing Grade --</option>
+                      {% for casinggrades in casinggrade %}
+                      <option value="{{casinggrades.id}}" {% if casinggrades.id == form.grade.value %} selected {% endif %}>{{casinggrades.grade_name}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="nominal_od">Nominal Od</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="nominal_od" class="form-control" name="nominal_od" placeholder="Nominal Od" value="{{form.nominal_od.value}}">
+                  </div>
+                </div>
+              </div> 
+
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="weight">Weight</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="weight" class="form-control" name="weight" placeholder="Weight" value="{{form.weight.value}}"> 
+                  </div>
+                </div>
+              </div> 
+
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="inside_diameter">Inside Diameter</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="inside_diameter" class="form-control" name="inside_diameter" placeholder="Inside Diameter" value="{{form.inside_diameter.value}}">
+                  </div>
+                </div>
+              </div>
+
+
+              <button type="submit" class="btn btn-primary detail-button-reset">submit</button>
+           </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+      </div>
+      </div>
+    </section>
+
+{% endblock %}

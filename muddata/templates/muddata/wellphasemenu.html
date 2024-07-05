@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<div class="container-fluid">
+<div class="row align-items-start common-row-space">
+{% getcountries countries as countries %}
+{% include 'projectsidemenu.html' %} 
+<div class="col-md-12 p-0  create-pg main-section col-md-10"> 
+        <div class="create_project_sec_well scroll-line new-cru-well">
+          {% comment %} <div class="well-name-list">{{well.name}}</div>
+          <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+          {% include "projectheader.html" %}
+          <div class="row">
+      <div class="col-9">
+        {% include "welldetails_menu.html" %} 
+      </div>
+      <div class="col-3">
+        {% include "userheader.html" %}
+        <div class="left-sidebar">
+          <h4 class="model-caption">Well Phase</h4>
+        {%if wellphases%}
+        {% for wellphase in wellphases %}
+        <div class="row">
+          <div class="col-12">
+        <nav class="navbar bg-white phase-sidemenu">
+          <ul class="nav navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}"> {{wellphase.phase_name}}</a>
+              
+            </li>
+          </ul>
+
+        </nav>
+        </div>
+        <div class="col-md-12 warning"></div>
+      </div>
+      {% endfor %}
+
+        </div>
+        </div>
+      {% include "footer.html" %}
+    </div>
+  </div>
+  </div>
+      
+        </div>
+      </div>
+        {%else%}
+        <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+     <script>  
+    
+      Swal.fire({
+            title: 'You must create well phase',
+            showCancelButton: true,
+            confirmButtonText: `Create`,
+            }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                window.location.href="{% url 'wellphases:create' request.session.well_id %}";
+            } else if (result.isDenied) {
+            Swal.fire('Changes are not saved', '', 'info')
+            }
+      }) 
+    
+</script>
+
+        {%endif%}
+      
+<script>
+
+  var storedArray = JSON.parse(sessionStorage.getItem("items"));
+      var well_id='{{well_id}}'
+      if(well_id == storedArray[1]){
+        $('.warning').show();
+      }else{
+        $('.warning').hide();
+      }
+</script>
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+ 
+
+<script src="{% static 'js/menuactive.js' %}"></script>
+
+{%endblock%}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/super_Admin/manufacture/manufacture.css' %}">
+<section>
+  <div class="container-fluid">
+  <div class="row common-row-space" id="">
+    <div class="col-md-12 p-0 create-pg">
+      <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+          <div class="col-12">
+            {% include "masters_menu.html" %}  
+          </div>
+          <div class="col-12 p-0">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Manufacturers</h4>
+              </div>
+              <div class="card-body">
+                <a href="/wells/mud/adminmanufacturer/create/" class="btn btn-primary detail-button waves-effect waves-light add-new-bttn"><span><i class="feather icon-plus"></i> Add New</span></a>
+                <div class="table-responsive">
+                  <table class="table master-data-list-view">
+                    <thead class="text-center">
+                        <tr>      
+                            <th>Name</th>
+                            <th>Actions</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in manufactureres %}
+                          <tr>
+                            <td>{{obj.name}}</td>
+                            <td  class="text-center">
+                            <a href="{% url 'mud:adminmanufactureredit' pk=obj.id %}" >
+                                <span class="action-edit"><i class="feather icon-edit"></i></span>
+                            </a>
+                            <a onclick="confirmation(event)" href="{% url 'mud:adminmanufacturerdelete' pk=obj.id %}" >
+                              <span class="action-edit"><i class="feather icon-trash-2"></i></span>
+                            </a>
+                            </td>
+                          </tr>
+                          {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% include "footer.html" %}
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% load notifications_tags %} 
+{% load app_filters %}
+    <div class="row top-space-px">
+    <div class="col-md-4">  
+    {% if request.user.licence_type != 'Individual' and  not request.user.is_superuser %}
+        <div class="user-img-head">
+            <button class="hide-show fa fa-long-arrow-right" aria-hidden="true"></button>
+            {% if request.company.company_image %}
+            <img class="user-imggg" src="/media/{{request.company.company_image}}">
+            {%else%}
+            <img class="user-imggg" src="/static/images/Character_icon_new.svg">
+            {%endif%}
+            <div class="user_name">{{request.company.company_name}}</div>
+           
+
+        </div>    
+    {% endif %}
+    </div>
+
+
+    <div class="col-md-8">
+        <div class="align-header">
+            <p class="today_date t-day">Today,{% now "jS F Y " %}</p>
+            <div>
+                {% if request.user.is_superuser or request.user.is_superadmin %}
+                <li class="dropdown dropdown-notification nav-item">
+                    <a class="nav-link nav-link-label" href="#" data-toggle="dropdown">
+                        <i class="ficon feather icon-bell"></i>
+                        <span class="badge badge-pill badge-primary badge-up totalnotification">{{ notifications_unread }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
+                        <!-- <li class="dropdown-menu-footer"><a class="dropdown-item p-1 text-center" href="{% url 'custom_auth:notifications' %}">View all notifications</a></li> -->
+                        <li class="dropdown-menu-header">
+                            <div class="dropdown-header m-0">
+                                <h3 class=" m-0 notification-title noti-siz">Notifications</h3>
+                            </div>
+                        </li>
+                        <li class="scrollable-container media-list notification-list bck-clr-noti   ">
+                        </li>
+                        <li class="dropdown-menu-footer"><a class="dropdown-item p-1 text-center viewallnotify" href="#"></a></li>
+                        
+                      
+                    </ul>
+                </li>
+                {% else %}
+                <li class="dropdown dropdown-notification nav-item">
+                    <a class="nav-link nav-link-label" href="#" data-toggle="dropdown">
+                        <i class="ficon feather icon-bell"></i>
+                        <span class="badge badge-pill badge-primary badge-up totalnotification">{{ notifications_unread }}</span>
+                    </a>
+    
+                    <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
+                       
+                        <li class="dropdown-menu-header">
+                            <div class="dropdown-header m-0">
+                                <h3 class=" m-0 notification-title noti-siz">Notifications</h3>
+                            </div>
+                        </li>
+                        <li class="scrollable-container media-list notification-list bck-clr-noti">
+                        </li>
+                        <li class="dropdown-menu-footer txt-clr-noti"><a class="dropdown-item p-1 text-center viewallnotify txt-siz-noti" href="#"></a></li>
+                        
+                        
+                    </ul>
+                </li>
+                {% endif %}
+            </div>
+        <div class="user-img-head">
+
+            <div class="dropdown dropdown-notification nav-item">
+                <a class="nav-link nav-link-label" href="#" data-toggle="dropdown">
+                    {% if request.user.profile_image %}
+                    <img class="user-imggg" src="/media/{{request.user.profile_image}}">
+                    {%else%}
+                    <img class="user-imggg" src="/static/images/Character_icon_new.svg">
+                    {%endif%}
+                </a>
+                 
+                <div class="dropdown-menu dropdown-menu-end profile-styl">
+                   <li>
+                    <div class=" m-0 notifi-cls">
+                        <div class="user_name first-letter-cap">
+
+                            {{request.user.name}} 
+                            {%if not request.user.is_superuser %}
+                            {{request.user.lastname}}
+                            {%endif%}
+                            <p>{{request.user.id|get_user_roles}}</p>
+            
+                        </div> 
+            
+            
+                        {% if request.user.profile_image %}
+                        <img class="user-imggg" src="/media/{{request.user.profile_image}}">
+                        {%else%}
+                        <img class="user-imggg" src="/static/images/Character_icon_new.svg">
+                        {%endif%} 
+                    </div>
+                   </li>
+                   <li>
+                    {% user_rights_permission 'Manage License' request as checkpermission %}
+                                  {% if checkpermission %}
+                                    <a class="update_license mr-1" href="{%url 'license:upgradelicense' %}" >Update License</a>
+                                {% endif %} 
+                   </li>
+                   <li>
+                    <a class="update_license" href="{%url 'license:changepassword' %}" >Change Password</a>
+                   </li>
+            
+                    {% checklicense_expire request as check_renew %}
+                                {% if check_renew  %}
+                                <a class="update_license" href="{%url 'custom_auth:renewlicense' %}" >Renew License</a>
+                                {% endif %}
+               
+                   <li>
+                    <a class="update_license mr-1" href="{%url 'license:editprofile' request.user.id %}" >Edit</a>
+                   </li>
+                   <li>
+                    {% if request.user.is_admin == 1 and request.user.licence_type != 'Individual' %}
+                                  <a class="update_license mr-1" href="{%url 'license:editcompanyprofile'%}" >Edit Company Profile</a>
+                                {% endif %}
+                   </li>
+                </div>
+            </div>
+   
+        </div>
+        {% comment %} </a> {% endcomment %}
+        
+
+    </div>
+</div>
+</div>
+<script>
+   
+</script>

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+     <div class="row">
+      {% getcountries countries as countries %}
+      {% include 'projectsidemenu.html' %} 
+      <div class="col-md-8 p-0  create-pg main-section col-md-10">
+      <div class="create_project_sec scroll-line new-cru-well">
+        {% comment %} <div class="well-name-list">{{well.name}}</div>
+        <button class="hide-show fa fa-long-arrow-right"></button>  {% endcomment %}
+
+      {% include "projectheader.html" %}
+    <div class="col-12">
+      {% include "welldetails_menu.html" %}    
+    </div>
+    <div class="col-12">
+      {% include "welldetailssubmenu.html" %}  
+    </div>
+    <div class="col-12">
+        <div class="card note-text">
+          <div class="card-header summary-tlt">
+            <h4 class="card-title">Well Summary</h4>
+          </div>
+          <div class="card-body">
+            {% for summary in summarypage%}
+                <div class="row">
+                {% for key, value in summary.items %} 
+                <div class="col-2"></div>
+                    <div class="col-4 summary_date date-summa" data="{{key|date:'d-m-y'}}"><div class="sam-text"><div class="date-num">{{key|date:'j'}}</div><div class="date-nme"> <p class="m-onth">{{key|date:'F'}}</p> <p class="da-name">{{key|date:'l'}}</p></div></div></div>
+                    <div class="col-4">
+                        <div class="summary_details data-detlis" id="summary_details_{{key|date:'d-m-y'}}">
+                            <p class="vl-bit">{{value.bitdepth}}</p>
+                            <p class="vl-name">Bit Depth</p>
+                            
+                            <p class="vl-bit">{{value.ecd}}</p>
+                            <p class="vl-name">ECD</p>
+
+                            <p class="vl-bit">{{value.pump_pressure}}</p>
+                            <p class="vl-name">Surface Pressure</p>
+
+                            <p class="vl-bit">{{value.flowrate}}</p>
+                            <p class="vl-name">Flowrate</p>
+
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                {% endfor %} 
+            </div>
+
+            {%endfor%}
+
+
+           
+
+            
+
+          </div>
+        </div>
+      </div>
+    {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+           <div class="col-md-12 warning"></div>
+      </div>
+      </div>
+      
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+{% endblock %}
+
+{% block scripts %}
+{{block.super}}
+<script>
+  var unit='{%display_depthunit request.session.unit%}';
+  var well_id='{{well_id}}';
+  $('.summary_details').hide()
+  $('.summary_date').on('click',function(){
+      var data=$(this).attr('data')
+      $('.summary_details').hide()
+      $('#summary_details_'+data).show()
+
+  })
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+
+{%endblock%}
+
+
+

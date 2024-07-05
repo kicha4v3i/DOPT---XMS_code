@@ -1,0 +1,191 @@
+
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<section>
+  <div class="row">
+    <div class="col-12">
+      {% include "welldetails_menu.html" %} 
+    </div>
+    <div class="col-12">
+      <div class="sample-sub-menu">
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'muddata' %}active{% endif %}">
+            <a href="{% url 'muddata:muddatarheogramlist' wellphase_id %}" id="mud"> Mud Data </a>
+          </div>
+        </div>
+        <!-- <div class="col-md-3">
+                <div class="sub-list {% if request.session.submenu == 'rheogram' %}active{% endif %}">
+                <a href="{% url 'muddata:rheogramlist' wellphase_id %}" id="Rheogram">Rheogram</a>
+              </div>
+        </div> -->
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'drillbit' %}active{% endif %}">
+            <a href="{% url 'drillbitdata:drillbitlist' wellphase_id %}" id="drillbit"> Drill Bit Data</a>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+            <a href="{% url 'bhadata:bhadatalist' wellphase_id %}" id="bhadata"> BHA Data</a>
+          </div>
+        </div>
+        <div class="col-md-3">
+            <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                <a href="{% url 'muddata:pressurelawcalculation' wellphase_id %}" id="bhadata">Bore Pressure Loss</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="sub-list {% if request.session.submenu == 'bhadata' %}active{% endif %}">
+                <a href="{% url 'muddata:annuluspressureloss' wellphase_id %}" id="bhadata">Annulus Pressure Loss</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div> <!--row end -->
+<div class="row">
+   <div class='col-10'>
+        <div class="row">
+            <div class="col-3">
+                <div id="pressurelawdata" class="pressurelawdiv">
+                    <label>Flow Rate{%display_flowrateunit well.unit%}</label><input type="text" name="flowrate" class="form-control flowrate pressurelawinput" placeholder="Flowrate">
+                    <label>RPM</label><input type="text" name="rpm" class="form-control rpm pressurelawinput" placeholder="RPM">
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="section_depth">
+                    <p id="from_depth"></p>
+                    <p id="to_depth"></p>
+                </div>
+                
+
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#surface-loss" role="tab">Surface Pressure Loss</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#circulation-loss" role="tab">Circulating Pressure Loss</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#bit-loss" role="tab">Bit Pressure Loss</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane" id="circulation-loss" role="tabpanel">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#pipe-loss" role="tab">Pipe Loss</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#Annular-loss" role="tab">Anuulur Loss</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane" id="Annular-loss" role="tabpanel">
+                                <p>annu</p>
+                            </div>
+                            <div class="tab-pane" id="pipe-loss" role="tabpanel">
+                                <p>pipe</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+   </div> <!--col-10 end-->
+   <div class="col-2">
+    <h4 class="model-caption">Well Phases</h4>
+    {% for wellphase in wellphases %}
+    <div class="row">
+        <div class="col-12">
+            <div>
+            <!-- <nav class="navbar bg-white phase-sidemenu">
+            <ul class="nav navbar-nav"> -->
+                <div class="pressure-loss">
+                    <label class="tree-toggle nav-header glyphicon-icon-rpad pre-head"><span class="glyphicon glyphicon-folder-close m5"></span>{{wellphase.phase_name}}
+                    <span class="menu-collapsible-icon glyphicon glyphicon-chevron-down pre-subhead"></span></label>
+                <ul class="nav navbar-nav custom_active_list">
+                    {% getsectionbywellphase_id wellphase.id as sections %}
+                    {% for section in sections %}
+                    <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="nav-item">{{section.section_name}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+   </div>
+</div>
+</section>
+<script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+<script>
+    $(function(){
+        $('.custom_active_list li').click(function(){
+            $('.custom_active_list li').removeClass('active');
+            $(this).addClass('active');
+            $(this).closest('div').addClass('active');
+
+        });
+    });
+
+$(document).on("keyup", ".flowrate" , function() {
+    var flowrate=$(this).val();
+    var rpm=$(this).closest('div').find('.rpm').val()
+    if(flowrate!='' && rpm!=''){
+        getannuluspressurelaw(rpm,flowrate)
+    }
+});
+$(document).on("keyup", ".rpm" , function() {
+    var rpm=$(this).val();
+    var flowrate=$(this).closest('div').find('.flowrate').val()
+    if(flowrate!='' && rpm!=''){
+        getannuluspressurelaw(rpm,flowrate)
+    }  
+});
+function getannuluspressurelaw(rpm,flowrate){
+    var section_name = $('ul.custom_active_list').find('li.active').attr('data-id');
+    var wellphase_id=$('ul.custom_active_list').find('li.active').attr('wellphase_id');
+    $.ajax({
+        type: "GET",
+        url:"/wells/muddata/getannuluspressurelaw",
+        data:{
+            rpm:rpm,
+            flowrate:flowrate,
+            wellphase_id:wellphase_id,
+            section_name:section_name
+            
+        },
+        success: function(data) {
+            var html=""
+            var from_depth
+            var todepth
+            html +="<table class='table'><thead><tr><td>Element</td><td>OD</td><td>Length</td><td>Pressure Drop</td></tr></thead><tbody>"
+            for(var i=0;i<data.length;i++){
+                html +='<tr>';
+                html +='<td>'+data[i].type+'</td>';
+                html +='<td>'+data[i].od+' in</td>';
+                html +='<td>'+data[i].length+' ft</td>';
+                html +='<td>'+data[i].pressureloss+' psi</td>';
+                html +='</tr>'
+                from_depth=data[i].sectionfromdepth 
+                todepth=data[i].sectiontodepth
+            }
+            html +='</tbody></table>';
+            $('#Annular-loss').html(html)
+            $('#Annular-loss').addClass('active')
+            $('#circulation-loss').addClass('active')
+            $('.nav-link[href="#Annular-loss"]').addClass('active');
+            $('#from_depth').text("From:"+from_depth+' ft')
+            $('#to_depth').text("To:"+todepth+' ft')
+        }     
+    });
+}
+</script>
+{% endblock %}
+
+
+
+      
+

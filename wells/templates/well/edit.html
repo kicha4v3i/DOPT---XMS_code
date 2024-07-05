@@ -1,0 +1,743 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load humanize %}
+<section id="data-list-view" class="data-list-view-header">
+  <form class="form form-horizontal" method="POST">
+  <div class="row align-items-start">
+    <div class="col-md-9 p-0  create-pg">
+      <div class="create_project_sec_well scroll-line new-cru-well">
+        {% include "header.html" %}
+        <div class="card create-project">
+          <div class="card-header">
+            <h4 class="card-title"> <a class="bck-button" href="{{request.META.HTTP_REFERER}}"><img class="img-size" src="../../../static/images/left.png"></a> Edit Well</h4>
+          </div>
+          <div class="card-body">
+                {% csrf_token %}
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label for="email-id">Project Name</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-control proj-edit-inp"  name="project">
+                            <option value="">-- project name --</option>
+                            {% for project in projects %}
+                            <option value="{{project.id}}"  {% if project.id == form.project.value %} selected {% endif %}>{{project.project_name}}</option>
+                            {% endfor %}
+                        </select></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-block-name" for="block">Block Name<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-sm-9">
+                      <select class="form-control proj-edit-inp"  name="block" id="block">
+                          <option value="">-- Block name --</option>
+                          {% for block in blocks %}
+                            <option value="{{block.id}}" {% if block.id  ==  form.block.value %} selected {% endif %}>{{block.block_name}}</option>
+                          {% endfor %}
+                     
+                      </select></div>
+
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-field-name" for="field">Field Name<span style="color: red;">*</span></label>
+                    </div>
+                    <div class="col-sm-9">
+                      <select class="form-control proj-edit-inp"  name="field" id="field">
+                        <option value="">-- Field name --</option>
+                        {% for field in fields %}
+                          <option value="{{field.id}}" {% if field.id  ==  form.field.value %} selected {% endif %}>{{field.field_name}}</option>
+                        {% endfor %}
+                      </select></div>
+
+                  </div>
+                </div>
+                <div class="col-8">
+                  <div class="form-group row text-center default_units">                          
+                        <input type="radio" id="plan" name="well_type" value="PLAN" {% if "PLAN" == form.well_type.value %} checked {%endif%}>
+                        <label for="plan">PLAN</label>
+                        <input type="radio" id="actual" name="well_type" value="ACTUAL" {% if "ACTUAL" == form.well_type.value %} checked {%endif%}>
+                        <label for="actual">ACTUAL</label>
+                        <input type="radio" id="offset" name="well_type" value="OFFSET" {% if "OFFSET" == form.well_type.value %} checked {%endif%}>
+                        <label for="offset">OFFSET</label>
+                </div>
+                  
+                </div>
+                <!-- <div class="col-12">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label for="email-id">Well Type</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="welltype" name="well_type">
+                            <option value="">-- Well Type --</option>
+                            <option  value="PLAN" {% if "PLAN" == form.well_type.value %} selected {% endif %}>PLAN</option>
+                            <option value="ACTUAL" {% if "ACTUAL" == form.well_type.value %} selected {% endif %}>ACTUAL</option>
+                            <option value="OFFSET" {% if "OFFSET" == form.well_type.value %} selected {% endif %}>OFFSET</option>
+                        </select></div>
+                  </div>
+                </div> -->
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label for="well-name">Well Name</label>
+                    </div>
+                    <div class="col-sm-9">
+                      <input type="text" id="well-name" class="form-control proj-edit-inp" name="name"  value="{{form.name.value}}"  placeholder="Well Name">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label for="email-id">Coordinate System</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-control proj-edit-inp "  name="coordinate_system">
+                            <option value="">-- Coordinate System --</option>
+                            {% for coordinate_system in coordinate_systems %}
+                            <option value="{{coordinate_system.id}}" {% if coordinate_system.id == form.coordinate_system.value %} selected {% endif %}>{{coordinate_system.name}}</option>
+
+                            {% endfor %}
+
+                        </select></div>
+                  </div>
+                </div>
+                {% if well.plan_well_list != None %}
+                <div class="col-6 ">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label for="plan_well_list">Plan Well List</label>
+                    </div>
+                    <div class="col-sm-9">                 
+                        <select class="form-control" id="plan_well_list" name="plan_well_list">
+                          <option value="">-- Plan Well List --</option>
+                          {% for planwell in planwells %}
+                            <option value="{{planwell.id}}"  {% if planwell.id == form.plan_well_list.value %} selected {% endif %}>{{planwell.name}}</option>
+
+                            {% endfor %}
+                        </select>
+                      </div>
+                  </div>
+                </div>
+                {%endif%}
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label for="email-id">Datum</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-control proj-edit-inp" id="datum" name="datum">
+                            <option value="">-- Datum --</option>
+                            <option value="MSL" {% if "MSL" == form.datum.value %}selected {% endif %} >MSL</option>
+                            <option value="Ground Level" {% if "Ground Level" == form.datum.value %} selected {% endif %}>Ground Level</option>
+                        </select></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label for="email-id">Projection</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-control proj-edit-inp " id="projection" name="projection">
+                            <option value="">-- Projection --</option>
+                            {% for projection in projections %}
+                            <option value="{{projection.id}}" {% if projection.id == form.projection.value %} selected {% endif %}>{{projection.name}}</option>
+
+                            {% endfor %}
+
+                        </select></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="email-id">Environment</label>
+                    </div>
+                  </div>
+                  <div class="col-12 pl-0">
+                    <div class="form-group row text-center default_units">   
+                      <input type="radio" id="Onshore" name="environment" class="environment_edit" value="Onshore" {% if "Onshore" == form.environment.value %} checked {%endif%}>                       
+                      <label for="Onshore">Onshore</label>
+                      <input type="radio" id="Offshore" name="environment" class="environment_edit" value="Offshore" {% if "Offshore" == form.environment.value %} checked {%endif%}>
+                      <label for="Offshore">Offshore</label>
+                      <input type="radio" id="Swamp" name="environment" class="environment_edit" value="Swamp" {% if "Swamp" == form.environment.value %} checked {%endif%}>
+                      <label for="Swamp">Swamp</label>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="col-12">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label for="email-id">Environment</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="environment" name="environment">
+                            <option value="">-- Environment --</option>
+                            <option value="Onshore" {% if "Onshore" == form.environment.value %}selected {% endif %}>Onshore</option>
+                            <option value="Offshore" {% if "Offshore" == form.environment.value %}selected {% endif %}>Offshore</option>
+                        </select>
+                      </div>
+                  </div>
+                </div> -->
+                <div class="col-6 pl-0"> 
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name-well" for="longtitude">LONGITUDE </label>
+                      </div>
+                      <div class="col-sm-9">
+                        <!-- <input type="coords" id="longtitude" class="form-control longtitude" name="longtitude"  placeholder="Longtitude"> -->
+                        <input type="hidden" id="longtitude_data" value="{{form.longtitude.value}}">
+                        <div class="coords-container  ">
+                          <input type="text" data-coords-type="degrees" name="longtitude_coords_degrees" class="coords-input coords-degrees"><span class="coords-indicator coords-degrees">°</span>
+                          <input type="text" data-coords-type="minutes" name="longtitude_coords_minutes" class="coords-input coords-minutes"><span class="coords-indicator coords-minutes">'</span>
+                          <input type="text" data-coords-type="seconds" name="longtitude_coords_seconds" class="coords-input coords-seconds"><span class="coords-indicator coords-seconds">"</span>
+                          <select name="longtitude_compass" class="coords-select coords-compass" data-coords-type="compass"><option value=""></option><option value="E">E</option><option value="W">W</option></select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label class="project-edit-name-well" for="latitude">LATITUDE</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <!-- <input type="coords" id="latitude" class="form-control latitude" name="latitude"  placeholder="Latitude"> -->
+                        <input type="hidden" id="latitude_data" value="{{form.latitude.value}}">
+                        <div class="coords-container  ">
+                          <input type="text" data-coords-type="degrees" name="latitude_coords_degrees" class="coords-input coords-degrees" value=""><span class="coords-indicator coords-degrees">°</span>
+                          <input type="text" data-coords-type="minutes" name="latitude_coords_minutes" class="coords-input coords-minutes" value=""><span class="coords-indicator coords-minutes">'</span>
+                          <input type="text" data-coords-type="seconds" name="latitude_coords_seconds" class="coords-input coords-seconds" value=""><span class="coords-indicator coords-seconds">"</span>
+                          <select name="latitude_compass" class="coords-select coords-compass" data-coords-type="compass"><option value="" ></option><option value="N">N</option><option value="S">S</option></select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row" id="zone">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="zone">Zone</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="zone" class="form-control " name="zone" value="{{form.zone.value}}"  placeholder="Zone">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 offshore-platform sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="slot_latitude">Slot Latitude</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <!-- <input type="coords" id="slot_latitude" class="form-control" name="slot_latitude"  value="{{form.slot_latitude.value}}" placeholder="Slot Latitude"> -->
+                        <input type="hidden" id="slot_latitude" value="{{form.slot_latitude.value}}">
+                        <div class="coords-container  ">
+                          <input type="text" data-coords-type="degrees" name="slot_latitude_coords_degrees" class="coords-input coords-degrees" value=""><span class="coords-indicator coords-degrees">°</span>
+                          <input type="text" data-coords-type="minutes" name="slot_latitude_coords_minutes" class="coords-input coords-minutes" value=""><span class="coords-indicator coords-minutes">'</span>
+                          <input type="text" data-coords-type="seconds" name="slot_latitude_coords_seconds" class="coords-input coords-seconds" value=""><span class="coords-indicator coords-seconds">"</span>
+                          <select name="slot_latitude_compass" class="coords-select coords-compass" data-coords-type="compass"><option value=""></option><option value="E">E</option><option value="W">W</option></select>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 offshore-platform sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="slot_longtitude">Slot Longitude</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <!-- <input type="coords" id="slot_longtitude" class="form-control" name="slot_longtitude"  value="{{form.slot_longtitude.value}}" placeholder="Slot Longitude"> -->
+                        <input type="hidden" id="slot_longtitude" name="slot_longtitude"  value="{{form.slot_longtitude.value}}">
+                        <div class="coords-container  ">
+                          <input type="text" data-coords-type="degrees" name="slot_longtitude_coords_degrees" class="coords-input coords-degrees"><span class="coords-indicator coords-degrees">°</span>
+                          <input type="text" data-coords-type="minutes" name="slot_longtitude_coords_minutes" class="coords-input coords-minutes"><span class="coords-indicator coords-minutes">'</span>
+                          <input type="text" data-coords-type="seconds" name="slot_longtitude_coords_seconds" class="coords-input coords-seconds"><span class="coords-indicator coords-seconds">"</span>
+                          <select name="slot_longtitude_compass" class="coords-select coords-compass" data-coords-type="compass"><option value=""></option><option value="N">N</option><option value="S">S</option></select>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="northing">Northing(mN)</label>
+                      </div>
+                      
+                      <div class="col-sm-9">
+                        <input type="text" id="northing" class="form-control northing" name="northing" value="{{form.northing.value}}"  placeholder="Northing">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="easting">Easting(mE)</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="easting" class="form-control easting"  name="easting"  value="{{form.easting.value}}"  placeholder="easting">
+                      </div>
+                    </div>
+                  </div>
+                </div>                  
+                  <!-- <div class="col-12 offshore environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="water_depth">Water Depth{%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="water_depth" class="form-control" name="water_depth" value="{{form.water_depth.value}}"  placeholder="Water Depth">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 onshore environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="ground_elevation">Ground Elevation {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="ground_elevation" class="form-control" name="ground_elevation" value="{{form.ground_elevation.value}}"   placeholder="Ground Elevation">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 onshore-pad sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="pad_name">Pad Name</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="pad_name" class="form-control" name="pad_name"  value="{{form.pad_name.value}}" placeholder="Pad Name">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 onshore-pad sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="number_of_well_pads">Number of Well Pads</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="number_of_well_pads" class="form-control" value="{{form.number_of_well_pads.value}}"  name="number_of_well_pads" placeholder="Number of Well Pads">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 onshore-pad sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="number_of_well_slots_in_pad">Number of Well Slots in Pad</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any"id="number_of_well_slots_in_pad" class="form-control" value="{{form.number_of_well_slots_in_pad.value}}"  name="number_of_well_slots_in_pad" placeholder="Number of Well Slots in Pad">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 onshore-pad  sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="well_slot_no_or_name">Well Slot No or Name</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="well_slot_no_or_name" class="form-control" value="{{form.well_slot_no_or_name.value}}"  name="well_slot_no_or_name" placeholder="Well Slot No or Name">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 offshore-platform offshore-swamp  sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="platform_name">Platform Name</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="platform_name" class="form-control"  value="{{form.platform_name.value}}" name="platform_name" placeholder="Platform Name">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 offshore-platform sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="number_of_slots_in_platform">Number of Slots in Platform</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="number_of_slots_in_platform" class="form-control"   value="{{form.number_of_slots_in_platform.value}}" name="number_of_slots_in_platform" placeholder="Number of Slots in Platform">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 offshore-platform sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="slot_no">Slot No</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="slot_no" class="form-control" name="slot_no"   value="{{form.slot_no.value}}" placeholder="Slot No">
+                      </div>
+                    </div>
+                  </div> -->
+                  
+
+                  <!-- <div class="col-12 offshore-subsea sub-environment-fields">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="cluster_name">Cluster Name</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="text" id="cluster_name" class="form-control" name="cluster_name" value="{{form.cluster_name.value}}"  placeholder="Cluster Name">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="air_gap">AirGap {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="air_gap" class="form-control" name="air_gap" value="{{form.air_gap.value}}"  placeholder="Air Gap">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="wellhead_to_datum">Wellhead To Datum {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="wellhead_to_datum" class="form-control" name="wellhead_to_datum" value="{{form.wellhead_to_datum.value}}" placeholder="Wellhead To Datum">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="rkb_wellhead">RKB to Wellhead {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="rkb_wellhead" class="form-control" name="rkb_wellhead" value="{{form.rkb_wellhead.value}}" placeholder="RKB to Wellhead">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="rkb_datum">RKB to Datum {%display_lengthunit request.session.unit%}</label>
+                      </div>
+                      <div class="col-sm-9">
+                        <input type="number" step="any" id="rkb_datum" class="form-control" name="rkb_datum" value="{{form.rkb_datum.value}}"  placeholder="RKB to Datum">
+                      </div>
+                    </div>
+                  </div>-->
+                  <input type="hidden" class="form-control" id="environment_sub_type" name="environment_sub_type"></input>
+                  <!-- <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-6 col-form-label text-center">
+                        <label for="email-id">Well Engineer</label>
+                      </div>
+                    </div>
+                  </div> -->
+                      <!-- <div class="col-sm-6">
+                          <select class="form-control proj-edit-inp" id="wellengineer" name="well_engineer">
+                              <option value="">-- Well Engineer Name --</option>
+                              {% for wellengineer in wellengineers %}
+                              <option value="{{wellengineer.id}}" {% if wellengineer.id == wellengineer_id  %} selected {% endif %}>{{wellengineer.name}}</option>
+  
+                              {% endfor %}
+  
+                          </select></div> -->
+                   
+                  <!-- <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-sm-3 col-form-label">
+                        <label for="email-id">Environment Sub Type</label>
+                      </div>
+                      <div class="col-sm-9">
+                          <select class="form-control" id="environment_sub_type" name="environment_sub_type">
+                              <option value="">-- Environment Sub Type --</option>
+                          </select>
+                        </div>
+                    </div>
+                  </div> -->
+                  <div class="col-sm-9 offset-sm-3">
+                    <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light pull-right detail-button">Submit</button>
+                    <a class="btn" href="{{request.META.HTTP_REFERER}}"></a>
+                  
+                  <!-- <button type="reset" class="btn btn-outline-secondary waves-effect">Reset</button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          {% include "footer.html" %}
+   </div>
+  </div>
+  <div class="col-md-3">
+    {% include "userheader.html" %}
+      <!-- <div class="user_det user-details">
+        <div class="action-edit-project flex justify-content-between">
+          <a class="" href="/users/">
+            <div class="test">
+              <i class="feather icon-plus"></i>
+            </div>
+          </a>
+          <p>No of Well Engineer </p><span class="user_count">{{wellengineers_count}}</span>
+        </div>
+        
+        <div class="action-edit-project flex justify-content-between">
+          <a class="" href="/users/">
+            <div class="test">
+              <i class="feather icon-plus"></i>
+            </div>
+          </a>
+          <p>No of View </p><span class="user_count">{{viewers}}</span></div>
+          
+        </div> -->
+        <div>
+          <div id="onshore_elements" class="sub_env" style="display: none;"></div>
+        </div>
+        <div class="col-md-12 warning"></div>
+      </div>
+    </div>
+  </form>
+  </section>
+<style>
+  .environment-fields,.sub-environment-fields
+{
+  display: none;
+}
+.cords_text_box input{
+  width: 100px;
+}
+.cords_text_box input:first-child{
+  margin-right: 10px;
+}
+.sub_env {
+  background: #ffffff;
+    padding: 1em 2em;
+    border-radius: 20px;
+    margin: 0px auto;
+    width: 90%;
+}
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.13.4/jquery.mask.min.js"></script>
+<script>
+$('.northing').mask("#,##0.00", {reverse: true});
+  $('.easting').mask("#,##0.00", {reverse: true});
+  
+  $(document).ready(function (){
+    var env_sub_type='{{form.environment_sub_type.value}}'
+    $('.env_sub_type a[href="#'+env_sub_type+'_tab"]').tab('show');
+  })
+
+
+  $('.environment_edit').click(function(){
+      var sub_environment = '';
+      sub_environment = '<div class="tab">';
+      if(this.value=="Onshore"){
+        sub_environment +='<p class="on-shore">Onshore Type</p>'
+        sub_environment +='<ul class="nav nav-tabs env_sub_type" role="tablist"><li class="nav-item "><a class="nav-link active side-on-lists" onclick="tags_value(this)" data-toggle="tab" href="#standalone_tab" role="tab" aria-selected="false" type="standalone">Standalone</a></li>'
+        sub_environment +='<li class="nav-item"><a class="nav-link side-on-lists" onclick="tags_value(this)" data-toggle="tab" href="#padtype_tab" role="tab" aria-selected="true" type="padtype">Pad Type</a></li>'
+      }
+      else if(this.value=="Offshore"){
+        sub_environment +='<p class="on-shore">Offshore Type</p>'
+        sub_environment +='<ul class="nav nav-tabs env_sub_type" role="tablist"><li class="nav-item "><a class="nav-link active side-on-lists" onclick="tags_value(this)" data-toggle="tab" href="#standalone_tab" role="tab" aria-selected="false" type="standalone" >Standalone</a></li>'
+        sub_environment +='<li class="nav-item"><a class="nav-link side-on-lists" data-toggle="tab" onclick="tags_value(this)" href="#platform_tab" role="tab" aria-selected="true" type="platform">Platform</a></li>'
+        sub_environment +='<li class="nav-item"><a class="nav-link side-on-lists" data-toggle="tab" onclick="tags_value(this)" href="#subsea_tab" role="tab" aria-selected="true" type="subsea">Subsea</a></li>'
+      }
+      else{
+        sub_environment +='<p class="on-shore">Offshore Type</p>'
+        sub_environment +='<p class="on-shore">Swamp</p>'
+        sub_environment +='<div class="tab-pane" id="swamp_tab"><input type="text" id="pad_name" class="form-control on-bottom-space" name="pad_name" value="{{form.pad_name.value}}" placeholder="Pad name"></div>'
+      }
+      sub_environment +='</div></ul>'
+      sub_environment +='<div class="tab-content"><div class="tab-pane fade show active" id="standalone_tab"></div>'
+      sub_environment +='<div class="tab-pane fade" id="subsea_tab"><input type="text" id="cluster_name" class="form-control on-bottom-space" name="cluster_name" placeholder="Cluster Name" value="{{form.cluster_name.value}}"></div>'
+      sub_environment +='<div class="tab-pane fade" id="padtype_tab"><input type="text" id="pad_name" class="form-control on-bottom-space" name="pad_name" placeholder="Pad name" value="{{form.pad_name.value}}">'
+      sub_environment +='<input type="number" step="any" id="number_of_well_slots_in_pad" class="form-control on-bottom-space" name="number_of_well_slots_in_pad" placeholder="No of Well Slots in Pad" value="{{form.number_of_well_slots_in_pad.value}}">'
+      sub_environment +='<input type="text" id="well_slot_no_or_name" class="form-control on-bottom-space" name="well_slot_no_or_name" placeholder="Well Slot No or Name" value="{{form.well_slot_no_or_name.value}}">'
+      sub_environment +='</div>'
+      sub_environment +='<div class="tab-pane fade" id="platform_tab"><input type="text" id="platform_name" class="form-control on-bottom-space" name="platform_name" value="{{form.platform_name.value}}" placeholder="Platform Name">'
+      sub_environment +='<input type="number" step="any" id="number_of_slots_in_platform" class="form-control on-bottom-space" name="number_of_slots_in_platform" value="{{form.number_of_slots_in_platform.value}}" placeholder="Number of Slots in Platform">'
+      sub_environment +='<input type="number" step="any" id="slot_no" class="form-control on-bottom-space" name="slot_no" value="{{form.slot_no.value}}" placeholder="Slot No"></div></div>'
+      sub_environment +='<table><tr><p class="datu-center">Datum information</p></tr>'
+      if(this.value=="Onshore"){
+      sub_environment +='<tr><input type="number" step="any" id="ground_elevations" class="form-control ground_elevations on-bottom-space" name="ground_elevation" value="{{form.ground_elevation.value}}" placeholder="Ground Elevation"></tr>'
+      }else if(this.value=="Offshore" || this.value=="Swamp"){
+        sub_environment +='<tr><input type="number" step="any" id="water_depth" class="form-control on-bottom-space" name="water_depth" value="{{form.water_depth.value}}" placeholder="Water Depth"></tr>'
+      }
+      sub_environment +='<tr><input type="number" step="any" id="air_gap" class="form-control on-bottom-space" name="air_gap" value="{{form.air_gap.value}}" placeholder="Air Gap"></tr>'
+      sub_environment +='<tr><input type="number" step="any" id="wellhead_to_datum" class="form-control on-bottom-space" name="wellhead_to_datum" value="{{form.wellhead_to_datum.value}}" placeholder="Wellhead To Datum"></tr>'
+      sub_environment +='<tr><input type="number" step="any" id="rkb_wellhead" class="form-control on-bottom-space" name="rkb_wellhead" value="{{form.rkb_wellhead.value}}" placeholder="RKB to Wellhead"></tr>'
+      sub_environment +='<tr><input type="number" step="any" id="rkb_datum" class="form-control on-bottom-space" name="rkb_datum" value="{{form.rkb_datum.value}}" placeholder="RKB to Datum"></tr></table>'
+      
+      
+      $('#onshore_elements').html(sub_environment);
+    $('#onshore_elements').show();
+    var environment_type=$('.tab').find('a.active').attr('type');
+    $('#environment_sub_type').val(environment_type);
+    if(this.value=="Swamp"){
+      $('#environment_sub_type').val('swamp');
+    }
+    })
+    
+  var environment='{{form.environment.value}}'  
+  var sub_environment = '';
+      sub_environment = '<div class="tab">';
+      if(environment=="Onshore" ){
+        sub_environment +='<p class="on-shore">Onshore Type</p>'
+        sub_environment +='<ul class="nav nav-tabs env_sub_type" role="tablist"><li class="nav-item "><a class="nav-link side-on-lists" onclick="tags_value(this)" data-toggle="tab" href="#standalone_tab" role="tab" aria-selected="false" type="standalone">Standalone</a></li>'
+        sub_environment +='<li class="nav-item"><a class="nav-link side-on-lists" onclick="tags_value(this)" data-toggle="tab" href="#padtype_tab" role="tab" aria-selected="true" type="padtype">Pad Type</a></li>'
+      }
+      else if(environment=="Offshore"){
+        sub_environment +='<p class="on-shore">Offshore Type</p>'
+        sub_environment +='<ul class="nav nav-tabs env_sub_type" role="tablist"><li class="nav-item "><a class="nav-link active side-on-lists" onclick="tags_value(this)" data-toggle="tab" href="#standalone_tab" role="tab" aria-selected="false" type="standalone" >Standalone</a></li>'
+        sub_environment +='<li class="nav-item"><a class="nav-link side-on-lists" data-toggle="tab" onclick="tags_value(this)" href="#platform_tab" role="tab" aria-selected="true" type="platform">Platform</a></li>'
+        sub_environment +='<li class="nav-item"><a class="nav-link side-on-lists" data-toggle="tab" onclick="tags_value(this)" href="#subsea_tab" role="tab" aria-selected="true" type="subsea">Subsea</a></li>'
+      }
+      else{
+        sub_environment +='<p class="on-shore">Offshore Type</p>'
+        sub_environment +='<p class="on-shore">Swamp</p>'
+        sub_environment +='<div class="tab-pane" id="swamp_tab"><input type="text" id="pad_name" class="form-control on-bottom-space" name="pad_name" value="{{form.pad_name.value}}" placeholder="Pad name"></div>'
+      }
+      sub_environment +='</div></ul>'
+      sub_environment +='<div class="tab-content"><div class="tab-pane fade show active" id="standalone_tab"></div>'
+      sub_environment +='<div class="tab-pane fade" id="subsea_tab"><input type="text" id="cluster_name" class="form-control on-bottom-space" name="cluster_name" placeholder="Cluster Name" value="{{form.cluster_name.value}}"></div>'
+      sub_environment +='<div class="tab-pane fade" id="padtype_tab"><input type="text" id="pad_name" class="form-control on-bottom-space" name="pad_name" placeholder="Pad name" value="{{form.pad_name.value}}">'
+      sub_environment +='<input type="number" step="any" id="number_of_well_slots_in_pad" class="form-control on-bottom-space" name="number_of_well_slots_in_pad" placeholder="No of Well Slots in Pad" value="{{form.number_of_well_slots_in_pad.value}}">'
+      sub_environment +='<input type="text" id="well_slot_no_or_name" class="form-control on-bottom-space" name="well_slot_no_or_name" placeholder="Well Slot No or Name" value="{{form.well_slot_no_or_name.value}}">'
+      sub_environment +='</div>'
+      sub_environment +='<div class="tab-pane fade" id="platform_tab"><input type="text" id="platform_name" class="form-control on-bottom-space" name="platform_name" value="{{form.platform_name.value}}" placeholder="Platform Name">'
+      sub_environment +='<input type="number" step="any" id="number_of_slots_in_platform" class="form-control on-bottom-space" name="number_of_slots_in_platform" value="{{form.number_of_slots_in_platform.value}}" placeholder="Number of Slots in Platform">'
+      sub_environment +='<input type="number" step="any" id="slot_no" class="form-control on-bottom-space" name="slot_no" value="{{form.slot_no.value}}" placeholder="Slot No"></div></div>'
+      sub_environment +='<table><tr><p class="datu-center">Datum information</p></tr>'
+      if(environment=="Onshore"){
+      sub_environment +='<tr><input type="number" step="any" id="ground_elevations" class="form-control ground_elevations on-bottom-space" name="ground_elevation" value="{{form.ground_elevation.value}}" placeholder="Ground Elevation"  ></tr>'
+      }else if(environment=="Offshore" || environment=="Swamp"){
+        sub_environment +='<tr><input type="number" step="any" id="water_depth" class="form-control" name="water_depth" value="{{form.water_depth.value}}" placeholder="Water Depth" ></tr>'
+      }
+      sub_environment +='<tr><input type="number" step="any" id="air_gap" class="form-control on-bottom-space" name="air_gap" value="{{form.air_gap.value}}" placeholder="Air Gap"  ></tr>'
+      sub_environment +='<tr><input type="number" step="any" id="wellhead_to_datum" class="form-control on-bottom-space" name="wellhead_to_datum" value="{{form.wellhead_to_datum.value}}" placeholder="Wellhead To Datum" ></tr>'
+      sub_environment +='<tr><input type="number" step="any" id="rkb_wellhead" class="form-control on-bottom-space" name="rkb_wellhead" value="{{form.rkb_wellhead.value}}" placeholder="RKB to Wellhead" ></tr>'
+      sub_environment +='<tr><input type="number" step="any" id="rkb_datum" class="form-control on-bottom-space" name="rkb_datum" value="{{form.rkb_datum.value}}" placeholder="RKB to Datum" ></tr></table>'
+      
+      
+      $('#onshore_elements').html(sub_environment);
+    $('#onshore_elements').show();
+    var environment_type=$('.tab').find('a.active').attr('type');
+    $('#environment_sub_type').val(environment_type);
+    if(environment=="Swamp"){
+      $('#environment_sub_type').val('swamp');
+    }
+  // var environment_sub_type='{{form.environment_sub_type.value}}';
+
+  // if(environment=="Onshore")
+  // {
+  //   $(".onshore").show(); 
+
+  //   $('#environment_sub_type').append("<option value='standalone'>STANDALONE</option>","<option value='padtype'>PADTYPE</option>");
+  // }
+  // else if(environment=="Offshore")
+  // {
+  //   $(".offshore").show(); 
+
+  //   $('#environment_sub_type').append("<option value='standalone'>STANDALONE</option>","<option value='platform'>PLATFORM</option>","<option value='subsea'>SUBSEA</option>","<option value='swamp'>SWAMP</option>");
+  // }
+  
+  // $('#environment_sub_type').val(environment_sub_type)
+
+  window.onload = function(){
+      getcoords()
+  };
+  function getcoords(){
+    var latitude=$('#latitude_data').val();
+    var longitude=$('#longtitude_data').val();
+    var slot_latitude=$('#slot_latitude').val();
+    var slot_longtitude=$('#slot_longtitude').val();
+    const latitude_array = latitude.split(" ");
+    
+    if (latitude_array[0]){
+      $("input[name=latitude_coords_degrees]").val(latitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if(latitude_array[1]){
+      $("input[name=latitude_coords_minutes]").val(latitude_array[1].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if(latitude_array[2]){
+      $("input[name=latitude_coords_seconds]").val(latitude_array[2].replace(/['"]+/g, ""));
+    }
+    if(latitude_array[3]){
+      $("select[name=latitude_compass]").val(latitude_array[3]);
+    }
+
+    const longtitude_array = longitude.split(" ");
+    // console.log(longtitude_array)
+    if (longtitude_array[0]){
+      $("input[name=longtitude_coords_degrees]").val(longtitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if (longtitude_array[1]){
+      $("input[name=longtitude_coords_minutes]").val(longtitude_array[1].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if(longtitude_array[2]){
+      $("input[name=longtitude_coords_seconds]").val(longtitude_array[2].replace(/['"]+/g, ""));
+    }
+    if(longtitude_array[3]){
+      $("select[name=longtitude_compass]").val(longtitude_array[3]);
+    }
+   
+
+    const slot_latitude_array = slot_latitude.split(" ");
+    console.log(slot_latitude_array)
+    if(slot_latitude_array[0]){
+      $("input[name=slot_latitude_coords_degrees]").val(slot_latitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if(slot_latitude_array[1]){
+      $("input[name=slot_latitude_coords_minutes]").val(slot_latitude_array[1].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if(slot_latitude_array[2]){
+      $("input[name=slot_latitude_coords_seconds]").val(slot_latitude_array[2].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if(slot_latitude_array[3]){
+      $("select[name=slot_latitude_compass]").val(slot_latitude_array[3]);
+    }
+    
+    
+    const slot_longtitude_array = slot_longtitude.split(" ");
+    if(slot_longtitude_array[0]){
+      $("input[name=slot_longtitude_coords_degrees]").val(slot_longtitude_array[0].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if(slot_longtitude_array[1]){
+      $("input[name=slot_longtitude_coords_minutes]").val(slot_longtitude_array[1].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if(slot_longtitude_array[2]){
+      $("input[name=slot_longtitude_coords_seconds]").val(slot_longtitude_array[2].replace(/[^a-zA-Z0-9 ]/g, ""));
+    }
+    if(slot_longtitude_array[3]){
+      $("select[name=slot_longtitude_compass]").val(slot_longtitude_array[3]);
+    }
+
+  }
+var storedArray = JSON.parse(sessionStorage.getItem("items"));
+var well_id='{{well_id}}'
+if(storedArray){
+  if(well_id == storedArray[1]){
+    $('.warning').show();
+}else{
+    $('.warning').hide();
+}
+}
+
+</script>
+
+
+{% endblock %}
+

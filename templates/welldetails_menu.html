@@ -1,0 +1,55 @@
+{% load static %}
+{% load app_filters %}
+
+<div class="container-fluid">
+<div class="well-details-menu">
+      <div class="container"> 
+<div class="row menu-button">
+     <div class="col-4">
+       
+          <div class="well-button {% if request.session.wellmenu == 'well_details' %}active{% endif %}">
+          <a class ="text-center middle" href="{% url 'wells:detail' request.session.well_id %}">Well Details</a>
+     </div>
+     </div>
+        
+     {% if request.session.welltype == 'PLAN' %}
+
+     <div class="col-4 ">
+          <div class="well-button {% if request.session.wellmenu == 'hydraulics' %}active{% endif %}">
+          <a class ="text-center middle" href="{% url 'muddata:gethydraulicsmenu' request.session.well_id %}">Hydraulics</a>
+     </div>
+     </div>
+   
+     <div class="col-4 ">
+          <div class="well-button {% if request.session.wellmenu == 'optimization' %}active{% endif %}">
+          <a class ="text-center middle" href="{% url 'muddata:getoptimization' request.session.well_id %}">Optimization</a>
+     </div>
+     </div>
+     {%endif%}
+     {% if request.session.welltype == 'ACTUAL' %}
+     <div class="col-4 ">
+          <div class="well-button {% if request.session.wellmenu == 'hydraulics' %}active{% endif %}">
+          <!-- <a class ="text-center middle" href="{% url 'muddata:gethydraulicsmenu' request.session.well_id %}">Well Phase</a> -->
+          <a class ="text-center middle" href="{% url 'wellphases:detail' request.session.well_id %}">Well Phase</a>
+     </div>
+     </div>
+     {% if request.session.wellphasetab %}
+     <div class="col-4 ">
+          <div class="well-button {% if request.session.wellmenu == 'optimization' %}active{% endif %}">
+          <a class ="text-center middle" href="{% url 'muddata:hydraulicdata' request.session.wellphasetab %}">Hydraulic Data</a>
+     </div>
+     </div>
+     <div class="col-4 ">
+          <div class="well-button {% if request.session.wellmenu == 'optimization' %}active{% endif %}">
+          <a class ="text-center middle" href="{% url 'muddata:actual_well_view' request.session.wellphasetab %}">View</a>
+     </div>
+     </div>
+     {%endif%}
+
+     {%endif%}
+
+ </div>
+</div>
+</div>
+</div>
+     

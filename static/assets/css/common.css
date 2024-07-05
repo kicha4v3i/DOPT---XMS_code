@@ -1,0 +1,11 @@
+.red-outline {
+    outline: 1px solid red !important;
+}
+.page-main-title {
+    text-align: center;
+    background: -webkit-linear-gradient( 181deg , #7c0201, #bb1111);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+    font-size: 40px;
+}

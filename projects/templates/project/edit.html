@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+<section id="data-list-view" class="data-list-view-header">
+  <div class="container-fluid">
+  <div class="row align-items-start">
+    <div class="col-md-12  create-pg">
+      <div class="create_project_sec scroll-line">
+        {% include "header.html" %}
+        <div class="card ">
+          <div class="row justify-content-between">
+          <div>
+          <div class="card-header p-0">
+            <h4 class="card-title pl-2 pb-0 pt-2 pr-2">Edit Project </h4>
+          </div>
+        </div>
+          <div class="pl-2 pb-0 pt-2 pr-2">
+            <a class="btn btn-primary pull-right detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+          </div>
+        </div>
+          <div class="card-body">
+            <form class="form form-horizontal" method="POST">
+                {% csrf_token %}
+
+              <div class="row common-row-space">
+                <div class="col-6 pl-0">
+                                         
+                      <label class="project-edit-name pb-1" for="project-name">Project Name</label>  
+                      <input type="text" id="project-name" value="{{form.project_name.value}}" class="form-control proj-edit-inp" name="project_name" placeholder="Project Name">
+                      <span class="project_name_error"></span>
+              
+                </div>
+                <!-- <div class="col-6">
+                  <div class="form-group row">
+                   
+                      <label class="project-edit-name" for="email-id">Well Manager</label>
+                  
+                   
+                        <select class="form-control proj-edit-inp" id="wellmanager" name="well_manager">
+                            <option value="">-- wellmanager Name --</option>
+                            {% for wellmanager in wellmanagers %}
+                            <option value="{{wellmanager.id}}"  {% if wellmanager.id == wellmanager_id  %} selected {% endif %}>{{wellmanager.name}}</option>
+
+                            {% endfor %}
+
+                        </select>
+                  </div>
+                </div> -->
+                <div class="col-6 pl-0">
+                 
+                    
+                      <label class="project-edit-name pb-1" for="email-id">Country</label>
+                      <select name="country" class="form-control proj-edit-inp">
+                        <option value="">------</option>
+                        {% for obj in countries %}
+                            <option value="{{obj.id}}" {% if obj.id == form.country.value %} selected {% endif %}>{{obj.name}}</option>
+
+                            {% endfor %}
+
+                      </select>
+                   <span class="country_error"></span>
+                  </div>
+                
+                
+              </div>
+
+              <div class="row common-row-space">
+                <div class="col-6 pt-2 pl-0">
+                  <!-- <label class="project-edit-name" for="email-id">{{projectform.unit.label}}</label> -->
+                  <div class="form-group row text-center default_units">
+                   
+                    <p class="project-edit-name def-col pl-1" >Default Units</p>
+                    
+                    <div class="lists-types listss-dis default_units"> 
+                    <input type="radio" id="api_Unit" class="unit" name="unit" value="API" {% if "API" == form.unit.value %} checked {%endif%}>
+                    <label for="api_Unit" >API</label>
+                    <input type="radio" id="si_Unit" class="unit" name="unit" value="SI" {% if "SI" == form.unit.value %} checked {%endif%}>
+                    <label for="si_Unit" >SI</label>
+                    <input type="radio" id="mixed_Unit" class="unit" name="unit" value="MIXED" {% if "MIXED" == form.unit.value %} checked {%endif%}>
+                    <label for="mixed_Unit">Mixed API</label>
+                    <span class="unit_error"></span>
+                   </div>
+                  </div>
+                  
+                </div>
+              </div>
+
+              <div class="row common-row-space">
+                <div class="col-12 block-col pl-0">
+                  <div class="row ">
+                    <div class="col-6 pl-1">
+                      <div class="pl-0 pt-2 pr-2 pb-2">
+                      <label class="project-edit-name p-0" for="project-name">Block Name</label>
+                      </div>
+                      {% for block in projectblock %}
+                      <div class="row block-row " data-id="{{block.id}}">
+                        <div class="col-3 pl-1">
+                          <div class="plus-btn">
+                            <button type="button" class="add_block" data-id="{{block.id}}"><i class="fa-solid fa-plus" style="color:#ffffff;" title="Add Block" ></i></button>
+                            <button type="button"  class="remove_block" data-id="{{block.id}}"><i class="fa-solid fa-minus" style="color:#ffffff;" title="Remove Block" ></i></button>
+                          </div>
+                        </div>
+                        <div class="col-4 pl-2">
+                          <input type="text" name="block" class="form-control block proj-edit-inp" value="{{block.block_name}}"><span class="block_error"></span>
+                          <input type="hidden" name="block_id" class="block_id proj-edit-inp" value="{{block.id}}">
+                        </div>
+                        <div class="col-3  btn-col">
+                          <div class="plus-btn"><button type="button"  class="add_field" data-id="{{block.id}}"><i class="fa-solid fa-plus" style="color:#ffffff;" title="Add Field"></i></button></div>
+                        </div>
+                      </div>
+                      {% endfor %}
+
+                    </div>
+                    <div class="col-6">
+                      <div class="pl-0 pt-2 pr-2 pb-2">
+                      <label class="project-edit-name" for="project-name">Field Name</label>
+                      </div>
+                      {% for block in projectblock %}
+                      <table id="field_table{{block.id}}">
+                        <tbody>
+                          {% for field in block.id|getprojectfield:project.id %}
+                          <tr>
+                            <td class="pb-1"><input type="text" name="field{{block.id}}" class="form-control field proj-edit-inp" value="{{field.field_name}}"><input type="hidden" name="field_id{{block.id}}" class="field_id" value="{{field.id}}"><span class="field_error"></span></td>
+                            <td class="pb-1"><div class="plus-btn plus-min-field"><button type="button" class="add_field" data-id='{{block.id}}'><i class="fa-solid fa-plus" style="color:#ffffff;" title="Add Field"></i></button><button type="button"  class="removefield"><i class="fa-solid fa-minus" style="color:#ffffff;" title="Remove Field"></i></button></div></td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+
+                      </table>
+                      {% endfor %}
+                    </div>
+
+                  </div>
+                  
+                </div>
+              </div>
+
+              <div class="row pt-2 pb-2">
+                <div class="col-sm-12 btn-cen">
+                  <button type="submit" class="btn btn-primary mr-1 waves-effect waves-float waves-light detail-button project_submit">Submit</button>
+                  <!-- <button type="reset" class="btn btn-outline-secondary waves-effect detail-button-reset">Reset</button> -->
+                </div>
+              </div>
+
+
+            </form>
+          </div>
+        </div>
+
+
+       
+
+
+        {% include "footer.html" %}
+    </div>
+    </div>
+   
+    </div>
+  </div>
+    </section>
+    {% endblock %}
+
+    {% block scripts %}
+    {{block.super}}
+    <script src="{% static 'js/allvalidation.js' %}"></script>
+    <script>
+      $(function(){
+        $(document).on('click','.add_block',function(){
+          var data_id=parseInt($(this).attr('data-id'))+1
+          var html=''
+          html +='<div class="row">'
+            html +='<div class="col-6">'
+              html +='<div class="row block-row pt-1" data-id="'+data_id+'">'
+                html +='<div class="col-3 pl-1"><div class="plus-btn"><button type="button" class="add_block" data-id='+data_id+'><i class="fa-solid fa-plus" style="color:#ffffff;" title="Add Block"></i></button><button type="button"  data-id='+data_id+' class="remove_block"><i class="fa-solid fa-minus" style="color:#ffffff;" title="Remove Block"></i></button></div></div>'
+                html +='<div class="col-4 pl-2"><input type="text" name="block" class="form-control block proj-edit-inp"><span class="block_error"></span><input type="hidden" name="block_id" class="block_id"></div>'
+                html +='<div class="col-3 btn-col"><div class="plus-btn "><button type="button" data-id='+data_id+' class="add_field"><i class="fa-solid fa-plus" style="color:#ffffff;" title="Add Field"></i></button></div></div>'
+              html +='</div>'  
+            html +='</div>' 
+            html +='<div class="col-6">'
+              html +='<table id="field_table'+data_id+'">'
+                html +='<tbody>'
+                html +='</tbody>'
+              html +='</table>'
+            html +='</div>'
+          html +='</div>'
+          $('.block-col').append(html)
+        })
+        $(document).on('click','.remove_block',function(){
+          var trindex=$(this).attr('data-id');
+          $('div[data-id="'+trindex+'"]').remove();
+          $('#field_table'+trindex+'').remove(); 
+        });
+        $(document).on('click','.removefield',function(){
+            $(this).closest('tr').remove()                             
+        })
+        $(document).on('click','.add_field',function(){
+          var trindex=$(this).attr('data-id')
+          var html=''
+          html +='<tr>'  
+          html +='<td class="pb-1"><input type="text" name="field'+trindex+'" class="form-control field proj-edit-inp"><span class="field_error"></span><input type="hidden" name="field_id'+trindex+'" class="field_id"></td>'
+          html +='<td class="pb-1"><div class="plus-btn plus-min-field"><button type="button" class="add_field" data-id='+trindex+'><i class="fa-solid fa-plus" style="color:#ffffff;" title="Add Field"></i></button><button type="button"  data-id='+trindex+' class="removefield"><i class="fa-solid fa-minus" style="color:#ffffff;" title="Remove Field"></i></button></div></td>'
+        
+          html +='</tr>'  
+  
+          $('#field_table'+trindex+' tbody').append(html)                    
+
+        })
+
+    
+      })
+    </script>
+    
+
+    {%endblock%}
+  
+ 
+

@@ -1,0 +1,250 @@
+{% load static %}
+{% load app_filters %}
+
+
+<section>
+  <div >
+    <img class="log-img" src="/media/logo/DOPT.png">
+    <h1 style="color:#7c0201;text-align:center;font-size:18px;font-family: 'Titillium Web';text-decoration: underline;">Phase Hydraulics Report</h1>
+    <h2 style="color:#7c0201;font-size:16px;font-family: 'Titillium Web';">Phase information</h2>
+    <table id="phase_information" class="pha-hy-tbl">
+        <tbody>
+           <tr>
+                <th style="text-align:left;">From Date</th>
+                <td style="text-align:left;">{{fromdate|date:'d-m-Y'}}</td>
+           </tr>
+           <tr>
+                <th style="text-align:left;">To Date</th>
+                <td style="text-align:left;">{{wellphase.date|date:'d-m-Y'}}</td>
+            </tr>
+            <tr>
+                <th style="text-align:left;">From Depth</th>
+                <td style="text-align:left;">{{fromdepth}} {{fromtvd}}</td>
+            </tr>
+            <tr>
+                <th style="text-align:left;">To Depth</th>
+                <td style="text-align:left;">{{wellphase.measured_depth}} {{wellphase.true_vertical_depth}}</td>
+            </tr>
+            <tr>
+                <th style="text-align:left;">Hole Size</th>
+                <td style="text-align:left;">{{wellphase.hole_size}}</td>
+            </tr>
+            <tr>
+                <th style="text-align:left;">Casing Size</th>
+                <td style="text-align:left;">{{wellphase.casing_size}}</td>
+            </tr>
+            <tr>
+                <th style="text-align:left;">Liner Top</th>
+                <td style="text-align:left;">{{wellphase.lineartop}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 style="color: #3175bc;font-size:16px;text-align:center;text-decoration: underline;">Surface Pressure</h2>
+    <div style="border:1px solid #e7e7e7; padding:10px;margin-bottom:150px;"> <img class="log-img" src="/media/surface_pressure_chart{{wellphase_id}}.png"></div>
+    <h2 style="color:#7c0201;font-size:16px;">Surface Pressure Table</h2>
+    <table style="border:1px solid #e7e7e7;" class="sur-face-tl">
+        <thead>
+            <tr>
+                <th class="text-center">Md</th>
+                <th class="text-center">Surface Pressure</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in hydraulic_data %}
+            <tr >
+                <td style="text-align:center;" class="text-center">{{data.measured_depth }}</td>
+                <td style="text-align:center;" class="text-center">{{data.pump_pressure }}</td>                            
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 style="color: #3175bc;font-size:16px;text-align:center;text-decoration: underline;">ECD</h2>
+    <div style="border:1px solid #e7e7e7; padding:10px;"> <img class="log-img" src="/media/ecdchart{{wellphase_id}}.png"></div>
+    <h2 style="color:#7c0201;font-size:16px;">ECD Table</h2>
+    <table style="border:1px solid #e7e7e7;" class="sur-face-tl">
+        <thead>
+            <tr>
+                <th class="text-center" style="font-size:15px;">Md</th>
+                <th class="text-center" style="font-size:15px;">ECD</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in hydraulic_data %}
+            <tr >
+                <td style="text-align:center;" class="text-center">{{data.measured_depth }}</td>
+                <td style="text-align:center;" class="text-center">{{data.ecd }}</td>                            
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if flowrate == "1" %}
+    <h2 style="color: #3175bc;font-size:16px;text-align:center;text-decoration: underline;">Flowrate</h2>
+    <div style="border:1px solid #e7e7e7; padding:10px;"> <img class="log-img" src="/media/flowrate_chart{{wellphase_id}}.png"></div>
+    <h2 style="color:#7c0201;font-size:16px;">Flowrate Table</h2>
+    <table style="border:1px solid #e7e7e7;" class="sur-face-tl">
+        <thead>
+            <tr>
+                <th class="text-center" style="font-size:15px;">Md</th>
+                <th class="text-center" style="font-size:15px;">Flowrate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in hydraulic_data %}
+            <tr >
+                <td style="text-align:center;" class="text-center">{{data.measured_depth }}</td>
+                <td style="text-align:center;" class="text-center">{{data.flowrate }}</td>                            
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endif %}
+
+    {% if rop == "1" %}
+    <h2 style="color: #3175bc;font-size:16px;text-align:center;text-decoration: underline;">ROP</h2>
+    <div style="border:1px solid #e7e7e7; padding:10px;"> <img class="log-img" src="/media/rop_chart{{wellphase_id}}.png"></div>
+    <h2 style="color:#7c0201;font-size:16px;">ROP Table</h2>
+    <table style="border:1px solid #e7e7e7;" class="sur-face-tl">
+        <thead>
+            <tr>
+                <th class="text-center" style="font-size:15px;">Md</th>
+                <th class="text-center" style="font-size:15px;">ROP</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in hydraulic_data %}
+            <tr >
+                <td style="text-align:center; font-size:13px;" class="text-center">{{data.measured_depth }}</td>
+                <td style="text-align:center; font-size:13px;" class="text-center">{{data.rop }}</td>                            
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endif %}
+
+    {% if rpm == "1" %}
+    <h2 style="color: #3175bc;font-size:16px;text-align:center;text-decoration: underline;">RPM</h2>
+    <div style="border:1px solid #e7e7e7; padding:10px;"> <img class="log-img" src="/media/rpm_chart{{wellphase_id}}.png"></div>
+    <h2 style="color:#7c0201;font-size:16px;">RPM Table</h2>
+    <table style="border:1px solid #e7e7e7;" class="sur-face-tl">
+        <thead>
+            <tr>
+                <th class="text-center" style="font-size:15px;">Md</th>
+                <th class="text-center" style="font-size:15px;">RPM</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in hydraulic_data %}
+            <tr >
+                <td style="text-align:center; font-size:13px;" class="text-center">{{data.measured_depth }}</td>
+                <td style="text-align:center; font-size:13px;" class="text-center">{{data.rpm }}</td>                            
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endif %}
+    
+    
+      
+
+     
+    </div> 
+<style>
+    .pha-hy-tbl{
+     border:1px solid #e7e7e7;;
+    }
+
+    .pha-hy-tbl th{ 
+       color: #007a80;
+       font-size:15px;
+       padding-bottom:0px;
+       padding-top:5px;
+       padding-left:2px;
+       padding-right:0px;
+       margin:0px;
+        height:40px;  
+    }
+
+    .pha-hy-tbl td{ 
+        font-size:13px;
+        color:#000;
+        padding-bottom:0px;
+        padding-top:5px;
+        padding-left:0px;
+        padding-right:0px; 
+        height:40px; 
+    }
+
+    .sur-face-tl th{
+       background:#7c0201 ;
+       color:#fff;
+       font-size:15px;
+       padding-bottom:0px;
+       padding-top:5px;
+       padding-left:2px;
+       padding-right:0px;
+       margin:0px;
+        height:40px;  
+    }
+
+    .sur-face-tl td{
+        font-size:13px;
+        color:#000;
+        padding-bottom:0px;
+        padding-top:5px;
+        padding-left:0px;
+        padding-right:0px; 
+        height:40px; 
+    }
+</style>
+
+</section>
+<style>
+.sur-face-tl td{
+    font-size:13px;
+    color:#000;
+    padding-bottom:0px;
+    padding-top:5px;
+    padding-left:0px;
+    padding-right:0px; 
+    height:40px; 
+}
+.sur-face-tl th{
+    background:#7c0201 ;
+    color:#fff;
+    font-size:15px;
+    padding-bottom:0px;
+    padding-top:5px;
+    padding-left:2px;
+    padding-right:0px;
+    margin:0px;
+    height:40px;  
+}
+.pha-hy-tbl td{ 
+    font-size:13px;
+    color:#000;
+    padding-bottom:0px;
+    padding-top:5px;
+    padding-left:0px;
+    padding-right:0px; 
+    height:40px; 
+}
+.pha-hy-tbl th{ 
+    color: #007a80;
+    font-size:15px;
+    padding-bottom:0px;
+    padding-top:5px;
+    padding-left:2px;
+    padding-right:0px;
+    margin:0px;
+    height:40px;  
+}
+.pha-hy-tbl{
+    border:1px solid #e7e7e7;;
+}
+</style>

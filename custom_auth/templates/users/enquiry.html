@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+{% load static %}
+
+
+
+
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>Sign In -hydraulics</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'vendors/css/vendors.min.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-extended.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/colors.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/themes/dark-layout.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/themes/semi-dark-layout.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/core/menu/menu-types/vertical-menu.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/core/colors/palette-gradient.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pages/authentication.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/common.css' %}">
+
+</head>
+
+
+<body class="vertical-layout vertical-menu-modern 1-column  navbar-floating footer-static bg-full-screen-image  menu-collapsed blank-page blank-page" data-open="click" data-menu="vertical-menu-modern" data-col="1-column">
+    <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+            </div>
+
+            
+
+            <div class="content-body">
+                <section class="row flexbox-container">
+                  
+                    <div class="col-xl-8 col-11 d-flex justify-content-center">
+                        <div class="card login-cart bg-authentication rounded-0 mb-0 enquiry-card">
+                            <div class="login-logo header-logo">
+                                <img class="log-img-login test" src="{% static 'images/logo.png' %}">
+                                </div> 
+                            <div class="row m-0">
+                             
+                                <div class="col-lg-12 col-12 p-0">
+                                    <div class="card rounded-0 mb-0 px-2">
+                                        
+                                        <div class="card-header pb-1">
+                                            <div class="card-title">
+                                                <h4 class="mb-0 card-title sign-title pb-0">Enquiry</h4>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="card-content">
+                                            <div class="card-body pt-1">
+                                                <form action="" method="post" name="enquiry_form" class="login_form">
+                                                  {% csrf_token %}
+                                                    <div class="col-12 onshore ">
+                                                        <div class="form-group row mb-0">
+                                                          <div class="col-sm-4 col-form-label required-field">
+                                                            <label class="project-edit-name" for="ground_elevation">Title</label>
+                                                            <select name="gender" class="form-control">
+                                                              <option value="">Select</option>
+                                                              <option value="Miss">Miss</option>
+                                                              <option value="Mrs">Mrs</option>
+                                                              <option value="Mr">Mr</option>
+                                                          </select>
+                                                          </div>
+                                                          <div class="col-sm-4 col-form-label required-field">
+                                                            <label class="project-edit-name" for="ground_elevation">First Name</label>
+                                                            <input type="text" class="form-control" onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)" name="firstname" id="name" placeholder="First Name">
+                                                            </div>
+                                                            <div class="col-sm-4 col-form-label required-field">
+                                                            <label class="project-edit-name" for="ground_elevation">Last Name</label>
+                                                            <input type="text" class="form-control" onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)" name="lastname" id="name" placeholder="Last Name">
+                                                        </div>
+
+                                                      </div>
+                                                    </div>
+                                                          <!-- <div class="col-sm-3">
+                                                            <select name="gender" class="form-control">
+                                                                <option value="">Select</option>
+                                                                <option value="Miss">Miss</option>
+                                                                <option value="Mrs">Mrs</option>
+                                                                <option value="Mr">Mr</option>
+                                                            </select>
+                                                          </div> -->
+                                                          <!-- <div class="col-sm-9 col-form-label required-field">
+                                                            <label class="project-edit-name" for="ground_elevation">Name</label>
+                                                            <input type="text" class="form-control" onkeypress="return /^[a-zA-Z\s]*$/i.test(event.key)" name="name" id="name" placeholder="Name"  required>
+                                                          </div> -->
+                                                          <!-- <div class="col-sm-5">
+                                                            <input type="text" class="form-control" name="name" id="name" placeholder="Name"  required>
+                                                          </div> -->
+
+                                                    <!-- <div class="col-12 onshore environment-fields">
+                                                        <div class="form-group row">
+                                                          <div class="col-sm-3 col-form-label required-field">
+                                                            <label class="project-edit-name" for="ground_elevation">Name</label>
+                                                          </div>
+                                                          <div class="col-sm-9">
+                                                            <input type="text" class="form-control" name="name" id="name" placeholder="Name"  required>
+                                                          </div>
+                                                        </div>
+                                                    </div> -->
+                                                    <div class="col-12 onshore environment-fields">
+                                                        <div class="form-group row mb-0">
+                                                          <div class="col-sm-12 col-form-label required-field">
+                                                            <label class="project-edit-name" for="ground_elevation">Email</label>
+                                                            <input type="email" class="form-control" name="email" id="email" placeholder="Mail ID">
+                                                          </div>
+                                                          <!-- <div class="col-sm-9">
+                                                            <input type="email" class="form-control" name="email" id="email" placeholder="Mail ID" required>
+                                                          </div> -->
+                                                        </div>
+                                                    </div>
+                                                    
+                                                      <div class="col-sm-12 col-form-label required-field">
+                               
+                                                         <label class="project-edit-name" for="email-id">Country</label>
+                                                         
+                                                         <select name="country" class="form-control" id="project_country" >
+                                                           <option value="">------</option>
+                                                           {% for country in countries %}
+                                                              
+                                                             <option value="{{country.id}}">{{country.name}}</option>
+                                                           {% endfor %}
+                             
+                                                         </select>
+                                                         <span class="country_error"></span>
+                                                     </div>
+                                                   
+                                                    <div class="col-sm-12 col-form-label required-field">
+                                                      <label class="project-edit-name" for="ground_elevation">Company Name</label>
+                                                      <input type="text" class="form-control" name="companyname" id="companyname" placeholder="Company Name">
+                                                  
+                                                  </div>
+
+
+
+                                                    <div class="col-12 onshore environment-fields">
+                                                        <div class="form-group row">
+                                                          <div class="col-sm-12 col-form-label required-field pb-2">
+                                                            <label class="project-edit-name" for="ground_elevation">Message</label>
+                                                            <div class="summernote-container">
+                                                              <textarea id="message" name="message" class="form-control" placeholder="Message"></textarea>
+                                                            </div>
+                                                          </div>
+                                                          <!-- <div class="col-sm-9">
+                                                            <textarea id="message" name="message" class="form-control" placeholder="Message"></textarea>
+                                                          </div> -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="button-cen">
+                                                    <button type="submit" class="btn btn-primary  btn-inline detail-button">Submit</button>
+                                                    <a class="btn btn-primary  detail-button" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                            
+                                    </div>
+                                </div>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'vendors/js/vendors.min.js' %}"></script>
+    <script src="{% static 'js/core/app-menu.js' %}"></script>
+    <script src="{% static 'js/core/app.js' %}"></script>
+    <!-- <script src="{% static 'js/custom.js' %}"></script> -->
+    <script src="{% static 'js/allvalidation.js' %}"></script>
+    <script src="{% static 'js/scripts/components.js' %}"></script>
+
+    <script src="{% static 'vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#message').summernote({
+          toolbar:false
+        })
+      });
+    </script>
+
+</body>
+<style>
+    div.required-field label::after { 
+    content: "*";
+    color: red;
+}
+    body {
+    background-size: cover;
+    background-position: center;
+    background: #eee;
+    }   
+    .card {     background: #fff;}
+    .logo {
+        max-width: 300px;
+        width: 100%;
+        margin: 0 auto;
+        display: block;
+        height: 100%;
+    }
+    .enquiry-card{
+          width:100%;
+          max-width:700px;
+    }
+</style>
+<script src="{% static 'js/auth/enquiry.js' %}"></script>
+
+</html>

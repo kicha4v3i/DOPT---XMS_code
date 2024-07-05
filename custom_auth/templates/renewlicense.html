@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+<section id="data-list-view" class="data-list-view-header">
+    <div class="row align-items-start">
+        <div class="col-md-12 p-0 create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+                <div class="overlay-bg">
+                    <div class="card">
+                        <form method="post" id="renew_form" name="renew_form">
+        
+                        {% csrf_token %}
+           
+                    
+                            <div class="row">
+                                <div class="col-sm-12 col-form-label required-field">
+                                    <label class="project-edit-name pb-1" for="ground_elevation">Subscription Type</label>
+                                    {% for details in license_details %}
+                                    
+                                    <div class="card lable-lic card-clr license-card" onclick="hoverborder()" data-license-id="{{ details.subscription_type }}">
+                                        <input type='hidden' name='selected_license' class='selected_license' value="">
+                                        <label class="label-type">
+                                            <input type="radio"  name="choose_package" data-attr="{{details.no_of_users}}" value="{{ details.subscription_type }}" class="license_package" >
+                                            {% if request.company %}
+                                            <p>No of users :{{details.no_of_users}}</p>
+                                            {% endif %}
+                                            <p>{{details.amount}} $</p>
+                                            <p>{{details.subscription_type}}</p>
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <button id="submit_renew" class="btn btn-primary waves-effect waves-float waves-light detail-button">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% include "footer.html" %}
+            </div>
+        </div>
+        <!-- <div class="col-md-2">
+            {% include "userheader.html" %}
+        </div> -->
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+    $(document).ready(function() {
+        $(".license-card").click(function() {
+            var licenseId = $(this).data("license-id");
+            var subscriptionType = $(this).data("subscription-type");
+            
+            $("#selected_license").val(subscriptionType);
+        });
+    });
+</script>
+
+{%endblock%}

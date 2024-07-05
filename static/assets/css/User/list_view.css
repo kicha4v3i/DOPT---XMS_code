@@ -1,0 +1,84 @@
+/******************** list ********************/
+/* .user-table {
+    border: 1px solid #dfdfdf !important;
+} */
+
+.user-table th {
+    text-align: center;
+}
+
+/* .user-table th, td {
+    border-bottom: 1px solid #dfdfdf !important;
+} */
+.table-title123{
+    justify-content: center !important;
+    color:#7f0302 !important;
+    font-weight: 700;
+}
+
+.table_css thead th {
+    border: 1px solid #dfdfdf !important;  
+   border:none;
+   border-left: none !important;
+   border-bottom: none !important;
+}
+
+.table_css td {
+   border-bottom: 0px !important;
+}
+
+ .table_css th, .table_css td {
+    border-right: 1px solid #dfdfdf !important; 
+   border:none;
+}  
+.table_css th:last-child .table_css tr, .table_css td:last-child {
+    border-top: 1px solid #dfdfdf !important;
+    border-radius: 0px !important;
+}
+
+table.table.table_css {
+   /* background:#fff; */
+   background: none;
+   border: 1px solid #dfdfdf;
+} 
+.table_css thead{
+   text-align: center;
+} 
+/******************** list ********************/
+.ali-cls
+{
+    display: flex;
+    justify-content: space-evenly;
+    padding-bottom: 7px !important;
+    border-radius: 0px !important;
+}
+.custom_disabled{
+    color: #B8C2CC;
+    background-color: #EDEDED; 
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    pointer-events: none;
+    cursor: default;
+}
+
+table.data-list-view.table-border-user.dataTable tbody tr, table.data-thumb-view.table-border-user.dataTable tbody tr{
+box-shadow: none !important;
+background-color:none !important;
+}
+.table-border-user td {
+    border-bottom: 1px solid #dbdade !important;
+}
+
+.detail-button{
+    width:100px;
+    margin-left:0px !important;
+}
+.table-border-user th {
+    text-align: center;
+}
+.table-border-user td:first-child {
+    text-align: center;
+}
+.con_error{
+    border-color: #830403 !important;
+}

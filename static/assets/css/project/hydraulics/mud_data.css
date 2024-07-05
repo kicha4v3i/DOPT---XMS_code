@@ -1,0 +1,73 @@
+
+@media (min-width:768px) and (max-width:1750px){
+.table-scroll-width {
+ width: 100%;
+ overflow: scroll;
+ cursor:pointer;
+ 
+ }
+ .table.mud-edit {
+color: #5d596c !important;
+width: 170%;
+}
+.table-scroll-width::-webkit-scrollbar {
+width: 0px;
+height:3px;
+ }
+                                                                                                  
+ /* Track /
+.scroll-line::-webkit-scrollbar-track {
+ background: #f1f1f1; 
+ }
+                                                                                                   
+ / Handle */
+ .table-scroll-width::-webkit-scrollbar-thumb {
+  background:hsl(0deg 0% 71.65%) !important; 
+ background: transparent; 
+ }
+                                                                                                  
+ /* Handle on hover */
+ .table-scroll-width::-webkit-scrollbar-thumb:hover {
+  /* background: #555;  */
+ background: transparent;
+ }
+                                                                                                
+ /* .scroll-line::-webkit-scrollbar-track {max-height: 50% !important; height: 50% !important;} */
+                                                                                                
+                                                                                                
+}
+
+.mud-scroll-hidden{
+overflow-x: hidden !important;
+}
+
+
+@media (min-width:1024px) and (max-width:1440px){
+ .sample-sub-menu {
+display: flex;
+width: 90%;
+margin: 15px auto;
+ }        
+ .sub-list a {
+color: #626262;
+ font-size: 14px;
+}   
+.bg-white .nav-item {
+ border-top: 1px solid #e5e5e5;
+ padding: 5px 0px 5px 8px;
+ }         
+ .phase-sidemenu{
+        padding:0px;                                                                                            
+ }                                                              
+}
+
+.table.mud-edit td{
+padding:0.2rem !important;
+}
+.card{
+margin:10px;
+}                                                                                   
+.inside-padding{
+       padding-bottom: 15px;
+       padding-top: 10px;
+}

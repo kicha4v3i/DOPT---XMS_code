@@ -1,0 +1,332 @@
+{% load pressureloss_filters %}
+<!DOCTYPE html>
+<html>
+<body>
+    <header>
+        <div style="text-align: center; font-weight: bold;">
+            <table class="main-head-table">
+                <thead>
+                    <tr>
+                        <th>DOPT</th>
+                        <th>{{well_and_project_details.name}}</th>
+                        <th>HYDRAULICS SENSITIVITY REPORT</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </header>
+    <footer>
+        <div style="text-align: center; font-weight: bold;">
+           
+        </div>
+    </footer>
+    <div class="firstpage">
+        <p class="date-format">{{formatted_date}}</p>
+        <div class="project-details">
+            
+            <p>{{well_and_project_details.project.project_name}}</p>
+            <p>{% getblockdetails_bywell well_and_project_details.block_id as block %}
+                {{block.block_name}}
+            </p>
+            <p>{% getfielddetails_bywell well_and_project_details.field_id as field %}
+                {{field.field_name}}
+            </p>
+            <p>{{well_and_project_details.name}}</p>
+        </div>
+        <div>
+            <h2 class="main-heading">HYDRAULICS<br> REPORT</h2>
+        </div>
+        <div>
+            <h4 class="welphase-name">{{wellphase_details.phase_name}}</h4>
+        </div>
+        <div class="wellphase-details">
+            <p>1.0</p>
+            <p>{{user.name}} {{user.lastname}}</p>
+            <p>
+                {% if user.licence_type == 'CompanyPlan' %}
+                Company
+                {% elif user.licence_type == 'Enterprise' %}
+                Enterprise
+                {%else%}
+                Individual
+                {% endif %}
+                {{user.licence_type}}
+            </p>
+        </div>
+    </div>
+
+    <div style="padding-top: 2cm;">
+        <h4 class="heading-title">Well information</h4>
+        <div class="d-flex">
+            <table class="full-wdt">
+                <tr>
+                    <td>
+                        <table class="project-tbl">
+                            <tbody>
+                                <tr>
+                                    <th>Project</th>
+                                    <td>{{well_and_project_details.project.project_name}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Block</th>
+                                    <td>
+                                        {% getblockdetails_bywell well_and_project_details.block_id %}
+                                        {{block.block_name}}
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Field</th>
+                                    <td>
+                                        {% getfielddetails_bywell well_and_project_details.field_id %}
+                                        {{field.field_name}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Well</th>
+                                    <td>{{well_and_project_details.name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="projection-tbl">
+                            <tbody>
+                                <tr>
+                                    <th>Projection</th>
+                                    <td>{{well_and_project_details.project.project_name}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Northing</th>
+                                    <td>{{well_and_project_details.northing}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Easting</th>
+                                    <td>{{well_and_project_details.easting}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Zone</th>
+                                    <td>{{well_and_project_details.zone}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Latitutde</th>
+                                    <td>{{well_and_project_details.latitude}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Longitude</th>
+                                    <td>{{well_and_project_details.longtitude}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <h4 class="heading-title">WELL PHASE</h4>
+        <div class="d-flex">
+            <table class="full-wdt">
+                <tr>
+                    <td>
+                        <table class="project-tbl">
+                            <tbody>
+                                <tr>
+                                    <th>Phase Name</th>
+                                    <td>{{wellphase_details.phase_name}}</td>
+                                </tr>
+                                <tr>
+                                    <th>From</th>
+                                    <td>
+                                        {{muddetail.from_depth}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>To</th>
+                                    <td>
+                                        {{muddetail.todepth}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="projection-tbl">
+                            <tbody>
+                                <tr>
+                                    <th>Hole Size</th>
+                                    <td>{{wellphase_details.hole_size}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Casing Size</th>
+                                    <td>{{wellphase_details.casing_size}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Casing Specs</th>
+                                    <td>{{wellphase_details.weight}}/{{wellphase_details.grade}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Liner Top</th>
+                                    <td>{{wellphase_details.lineartop}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div>
+            <h4 class="heading-title">WELL HYDRAULICS</h4>
+            <div class="border-bottom">
+                <h4 class="section-head">Section: <span class="section-name">{{section_name}} ft</span></h4>
+            </div>
+        </div>
+        <!-- sensitivity mudweight chart start-->
+        <div>
+            <h4 class="heading-title">Sensitivity to Mud Weight</h4>
+            <div class="d-flex">
+                <table class="full-wdt">
+                    <tr>
+                        <td>
+                            {% getmudweight_sensitivity_chart wellphase_details.id section_name as mudweight_sensitivity_charts %}
+                            <img src="data:image/jpeg;base64,{{ mudweight_sensitivity_charts.mudweight_pressure }}" alt="Base64 Image">
+                        </td>
+                        <td>
+                            <img src="data:image/jpeg;base64,{{ mudweight_sensitivity_charts.mudweight_ecd }}" alt="Base64 Image">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- sensitivity mudweight chart end -->
+
+        <!-- sensitivity Plastic Viscocity chart start-->
+        <div>
+            <h4 class="heading-title">Sensitivity to Plastic Viscocity</h4>
+            <div class="d-flex">
+                <table class="full-wdt">
+                    <tr>
+                        <td>
+                            {% getplasticviscocity_sensitivity_chart wellphase_details.id section_name as plastic_viscocity_sensitivity_charts %}
+                            <img src="data:image/jpeg;base64,{{ plastic_viscocity_sensitivity_charts.plastic_viscocity_pressure }}" alt="Base64 Image">
+                        </td>
+                        <td>
+                            <img src="data:image/jpeg;base64,{{ plastic_viscocity_sensitivity_charts.plastic_viscocity_ecd }}" alt="Base64 Image">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- sensitivity Plastic Viscocity chart end -->
+        
+        <!-- sensitivity TFA chart start-->
+         <div>
+            <h4 class="heading-title">Sensitivity to TFA</h4>
+            <div class="d-flex">
+                <table class="full-wdt">
+                    <tr>
+                        <td>
+                            {% gettfa_sensitivity_chart wellphase_details.id section_name as tfa_sensitivity_charts %}
+                            <img src="data:image/jpeg;base64,{{ tfa_sensitivity_charts }}" alt="Base64 Image">
+                        </td>
+                       
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- sensitivity TFA chart end -->
+
+        <!-- sensitivity Yield Point chart start-->
+        <div>
+            <h4 class="heading-title">Sensitivity to Yield Point</h4>
+            <div class="d-flex">
+                <table class="full-wdt">
+                    <tr>
+                        <td>
+                            {% getyieldpoint_sensitivity_chart wellphase_details.id section_name as yieldpoint_sensitivity_charts %}
+                            <img src="data:image/jpeg;base64,{{ yieldpoint_sensitivity_charts }}" alt="Base64 Image">
+                        </td>
+                        
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- sensitivity Yield Point chart end -->
+
+        <!-- sensitivity Flowrate chart start-->
+        {% getflowrate_sensitivity_chart wellphase_details.id section_name as flowrate_sensitivity_charts %}
+        {% if flowrate_sensitivity_charts.flowrate_pressure_chart or flowrate_sensitivity_charts.flowrate_ecd_chart %}
+        <div>
+            <h4 class="heading-title">Sensitivity to Flowrate</h4>
+            <div class="d-flex">
+                <table class="full-wdt">
+                    <tr>
+                        {% if flowrate_sensitivity_charts.flowrate_pressure_chart  %}
+                            <td>
+                                <img src="data:image/jpeg;base64,{{ flowrate_sensitivity_charts.flowrate_pressure_chart }}" alt="Base64 Image">
+                            </td>
+                        {%endif%}
+                        {% if flowrate_sensitivity_charts.flowrate_ecd_chart  %}
+                            <td>
+                                <img src="data:image/jpeg;base64,{{ flowrate_sensitivity_charts.flowrate_ecd_chart }}" alt="Base64 Image">
+                            </td>
+                        {%endif%}
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+        {%endif%}
+        <!-- sensitivity Flowrate chart end -->
+
+        <!-- sensitivity Cutting Size chart start-->
+        <div>
+            <h4 class="heading-title">Sensitivity to Cutting Size</h4>
+            <div class="d-flex">
+                <table class="full-wdt">
+                    <tr>
+                        <td>
+                            {% getcs_sensitivity_chart wellphase_details.id section_name as cs_sensitivity_charts %}
+                            <img src="data:image/jpeg;base64,{{ cs_sensitivity_charts }}" alt="Base64 Image">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- sensitivity Cutting Size chart end -->
+
+        <!-- sensitivity Cutting Density chart start-->
+        <div>
+            <h4 class="heading-title">Sensitivity to Cutting Density</h4>
+            <div class="d-flex">
+                <table class="full-wdt">
+                    <tr>
+                        <td>
+                            {% getcd_sensitivity_chart wellphase_details.id section_name as cd_sensitivity_charts %}
+                            <img src="data:image/jpeg;base64,{{ cd_sensitivity_charts }}" alt="Base64 Image">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- sensitivity Cutting Density chart end -->
+
+        <!-- sensitivity ROP chart start-->
+        <div>
+            <h4 class="heading-title">Sensitivity to ROP</h4>
+            <div class="d-flex">
+                <table class="full-wdt">
+                    <tr>
+                        <td>
+                            {% getrop_sensitivity_chart wellphase_details.id section_name as rop_sensitivity_charts %}
+                            <img src="data:image/jpeg;base64,{{ rop_sensitivity_charts }}" alt="Base64 Image">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- sensitivity ROP chart end -->
+
+    </div>
+</body>
+</html>
+

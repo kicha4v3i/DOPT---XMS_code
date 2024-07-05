@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load app_filters %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/license/license_details.css' %}">
+
+
+<div class="container-fluid">
+<div class="row align-items-start ">
+  
+<div class="col-md-12  create-pg">
+    <div class="create_project_sec scroll-line">
+    {% include "header.html" %}
+  
+    
+
+    <div class="col-12 card-create-user">
+       
+        <div class="card pb-2">
+            <div class="col-sm-12 text-right">
+                <a class="btn btn-primary detail-button top-mrr" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+            </div>
+          <div class="card-header pt-0 pb-1">
+            <h4 class="card-title">User Details</h4>
+          </div>
+          <table class="table">
+            <tbody>
+                <tr>
+                    <th>
+                        <span class="font-weight-bold">Name</span>
+                    </th>
+                    <td>{{user.name}} {{user.lastname}}</td>
+                </tr>
+                <tr>
+                    <th>
+                        <span class="font-weight-bold">Designation</span>
+                    </th>
+                    <td>{{user.designation}}</td>
+                </tr>
+                <tr>
+                    <th class="font-weight-bold">Email</th>
+                    <td>{{user.email}}</td>
+                </tr>
+                <tr>
+                    <th class="font-weight-bold">Role</th>
+                    <td> {{user.id|get_user_roles}}</td>
+                </tr>
+
+               
+            </tbody>
+        </table>
+        </div>
+    </div>
+    
+    {% include "footer.html" %}
+</div>
+</div>
+</div>
+
+</div>
+
+
+{%endblock%}

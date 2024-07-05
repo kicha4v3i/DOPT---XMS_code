@@ -1,0 +1,29 @@
+/* drill bit data */
+.drill-bit-table {
+border: 1px solid #d1d1d1;
+margin: 0px 10px;
+width: 80%;
+margin: 0px auto;
+}
+.drill-bit-table th, .drill-bit-table td {
+border: 1px solid #d1d1d1;
+width: 50%;
+ }
+                                                                                                
+.nozzle-sze {
+border: 1px solid #d1d1d1;
+ width: 80%;
+ margin: 0px auto;
+}
+.nozzle-sze th, .nozzle-sze td{
+border: 1px solid #d1d1d1;
+}
+td.tfa-ui {
+  padding-left: 0px !important;
+ }
+td.tfa-ui p {
+color: #7f0302;
+ }
+.card{
+  padding:0px 15px;
+ }

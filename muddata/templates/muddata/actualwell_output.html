@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<div class="row">
+  <div id="loader" class="lds-dual-ring hidden overlay"></div>
+  {% getcountries countries as countries %}
+  {% include 'projectsidemenu.html' %} 
+  <div class="col-md-8 p-0  create-pg main-section col-md-10">
+    <div class="create_project_sec scroll-line new-cru-well">
+      {% comment %} <div class="well-name-list">{{well.name}}</div>
+      <button class="hide-show fa fa-long-arrow-right"></button> {% endcomment %}
+      {% include "projectheader.html" %}
+      <div class="col-12">
+        {% include "welldetails_menu.html" %}
+      </div>
+      <div class="col-12">
+        <div class="card note-text">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-6"></div>
+              <div class="col-6 view-d-time">
+                <ul class="nav nav-tabs">
+                  <li class="depth-view-cls active"><a data-toggle="tab" class="depth-view-cls" href="#depth">Depth</a>
+                  </li>
+                  <!-- <li class="time-view-cls"><a data-toggle="tab" class="time-view-cls" href="#time">Time</a></li> -->
+                </ul>
+              </div>
+            </div>
+            <div class="tab-content">
+              <div id="depth" class="tab-pane fade in active">
+                <div class="col-12">
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="date">Depth (ft)</label>
+                    </div>
+                    <div class="col-sm-9">
+                      <input type="text" name="user_depth" id="user_depth" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="date">Cutting density (ppg)</label>
+                    </div>
+                    <div class="col-sm-9">
+                      <input type="number" step="any" name="user_cutting_density" id="user_cutting_density"
+                        class="form-control" value="21">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="date">Cutting size (in)</label>
+                    </div>
+                    <div class="col-sm-9">
+                      <input type="number" step="any" name="user_cutting_size" id="user_cutting_size"
+                        class="form-control" value="0.25">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-3 col-form-label">
+                      <label class="project-edit-name" for="date">Select Model</label>
+                    </div>
+                    <div class="col-sm-9">
+                      <select data-id="{{section.section_name}}" tab-index={{forloop.counter0}}
+                        wellphase-id={{wellphase_id}} class="user_modalselect depth-box-sel" name="selected_model">
+                        <option value="">Select</option>
+                        <option value="1">Newtonian</option>
+                        <option value="2">Bingham</option>
+                        <option value="3">Power Law</option>
+                        <option value="4">Hershel Bulkley</option>
+                      </select>
+                      <input type="hidden" name="user_selected_model" class="user_selected">
+                    </div>
+                  </div>
+
+                </div>
+                <div class="row">
+                  <div class="col-1"></div>
+                  <div class="col-5 act-view-box-surface">
+                    <figure class="highcharts-figure charts">
+                      <div id="surfacepressure_depth_chart"></div>
+                    </figure>
+                  </div>
+                  <div class="col-5 act-view-box-ecd">
+                    <figure class="highcharts-figure charts">
+                      <div id="ecd_depth_chart"></div>
+                    </figure>
+                  </div>
+                  <div class="col-1"></div>
+                  <div class="col-12">
+
+                    <div id="all_depth_chart1" class="box-inside-bor">
+                      <div class="compar-gra-dia-depth">
+                        <div class="flo-gra-depth border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="flowratedepth_chart"></div>
+                          </figure>
+                        </div>
+                        <div class="rop-gra-depth border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="ropdepth_chart"></div>
+                          </figure>
+                        </div>
+                        <div class="rpm-gra-depth border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="rpmdepth_chart"></div>
+                          </figure>
+                        </div>
+                        <div class="sur-gra-depth border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="surfacepressuredepth_chart"></div>
+                          </figure>
+                        </div>
+                        <div class="ecd-gra-depth border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="ecddepth_chart"></div>
+                          </figure>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <figure class="highcharts-figure charts">
+                      <div id="all_depth_chart2" class="box-inside-bor">
+                        <div class="compar-gra-dia-depth">
+                          <div class="flo-gra-depth border-rgt-border">
+                            <figure class="highcharts-figure charts">
+                              <div id="slipvel_chart"></div>
+                            </figure>
+                          </div>
+                          <div class="rop-gra-depth border-rgt-border">
+                            <figure class="highcharts-figure charts">
+                              <div id="cutting_conc_chart"></div>
+                            </figure>
+                          </div>
+                          <div class="rpm-gra-depth border-rgt-border">
+                            <figure class="highcharts-figure charts">
+                              <div id="cci_chart"></div>
+                            </figure>
+                          </div>
+                          <div class="ecd-gra-depth border-rgt-border">
+                            <figure class="highcharts-figure charts">
+                              <div id="tr_chart"></div>
+                            </figure>
+                          </div>
+                        </div>
+                      </div>
+                    </figure>
+                  </div>
+                </div>
+              </div>
+              <div id="time" class="tab-pane fade">
+                <div class="row">
+                  <div class="col-1"></div>
+                  <div class="col-5  act-view-box-surface">
+                    <figure class="highcharts-figure charts">
+                      <div id="surfacepressure_time_chart"></div>
+                    </figure>
+                  </div>
+                  <div class="col-5  act-view-box-surface">
+                    <figure class="highcharts-figure charts">
+                      <div id="ecd_time_chart"></div>
+                    </figure>
+                  </div>
+                  <div class="col-1"></div>
+                  <div class="col-12">
+                    <div id="all_time_chart1" class="box-inside-bor">
+
+                      <div class="compar-gra-dia">
+                        <div class="flo-gra border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="flowratetime_chart"></div>
+                          </figure>
+                        </div>
+
+
+                        <div class="rop-gra border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="roptime_chart"></div>
+                          </figure>
+                        </div>
+
+
+                        <div class="rpm-gra border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="rpmtime_chart"></div>
+                          </figure>
+                        </div>
+
+
+                        <div class="sur-gra border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="surfacepressuretime_chart"></div>
+                          </figure>
+                        </div>
+
+
+                        <div class="ecd-gra border-rgt-border">
+                          <figure class="highcharts-figure charts">
+                            <div id="ecdtime_chart_sameline"></div>
+                          </figure>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <figure class="highcharts-figure charts">
+                      <div id="all_time_chart2"></div>
+                    </figure>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <canvas id="pressurelosscharts_canvas" hidden="hidden"></canvas>
+      <canvas id="ecdcharts_canvas" hidden="hidden"></canvas>
+
+
+      {% include "footer.html" %}
+    </div>
+
+  </div>
+  <div class="col-md-2">
+    {% include "userheader.html" %}
+    <div class="left-sidebar">
+      <h4 class="model-caption">Well Phases</h4>
+      {% for wellphase in wellphases %}
+      <div class="row">
+        <div class="col-12">
+          <nav class="navbar bg-white phase-sidemenu">
+            <ul class="nav navbar-nav">
+              <li class="nav-item phs-list {% if request.session.wellphasetab == wellphase.id %}active{% endif %}">
+                <a class="nav-link" href="{% url 'muddata:getwellphasemenubyid' wellphase.id %}">
+                  {{wellphase.phase_name}}</a>
+                <!-- {%if well.well_type == 'Plan'%}
+                        <ul class="myDIV nav navbar-nav custom_active_list pressure-sidemenu  {% if wellphase_id == wellphase.id %}show{% endif %}">
+                          {% getsectionbywellphase_id wellphase.id as sections %}
+                          {% for section in sections %}
+
+                          <li data-id="{{section.section_name}}" wellphase_id="{{wellphase.id}}" class="wellphase_sidemenu remove-line">{{section.section_name | depthunit:request.session.unit}}</li>
+                          {% endfor %}
+                      </ul>
+                      {%endif%} -->
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="report-sec">
+        <a class="phase_report" href="{% url 'muddata:actualwell_generate_report' wellphase_id%}" target="new"
+          id="phase_report_hidden" style="display:none">Phase Report</a>
+        <div class="rep-ort-list"><button class="btn-re-po"><a class="phase_report"
+              href="{% url 'muddata:actualwell_generate_report' wellphase_id%}" target="new" id="phase_report">Phase
+              Report</a></button></div>
+      </div>
+      <div class="lists-ac-frr">
+        <div class="sid-li"><input type="checkbox" name="chart_type" value="Flowrate" class="report_chart_type"
+            id="styled-checkbox-2" wellphase_id="{{wellphase_id}}"><label class="lis-nm"
+            for="styled-checkbox-2">Flowrate</label></div>
+        <div class="sid-li"><input type="checkbox" name="chart_type" value="ROP" class="report_chart_type"
+            id="styled-checkbox-3" wellphase_id="{{wellphase_id}}"><label class="lis-nm"
+            for="styled-checkbox-3">ROP</label></div>
+        <div class="sid-li"><input type="checkbox" name="chart_type" value="RPM" class="report_chart_type"
+            id="styled-checkbox-4" wellphase_id="{{wellphase_id}}"><label class="lis-nm"
+            for="styled-checkbox-4">RPM</label></div>
+      </div>
+    </div>
+    <div class="col-md-12 warning"></div>
+  </div>
+</div>
+
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/navigation.css' %}">
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+  var depth_data = "{{depth}}"
+  var ecd_data = "{{ecd}}"
+  // console.log(ecd_data)
+  var flowrate_data = "{{flowrate}}"
+  var rpm_data = "{{rpm}}"
+  var rop_data = "{{rop}}"
+  var pump_pressure_data = "{{pump_pressure}}"
+
+  var unit = '{%display_depthunit request.session.unit%}';
+  var well_id = '{{well_id}}';
+  var depth = JSON.parse(depth_data);
+  var ecd = JSON.parse(ecd_data);
+  // var ecd=[];
+  // console.log(depth)
+
+  var flowrate = JSON.parse(flowrate_data);
+  var rpm = JSON.parse(rpm_data);
+  var rop = JSON.parse(rop_data);
+  // console.log('{{timestamp}}')
+  // var timestamp=JSON.parse('{{timestamp}}');
+  // var time=JSON.parse('{{time}}'.replace(/&#x27;/g,'"'))
+  var pump_pressure = JSON.parse(pump_pressure_data);
+  var planwell_id = '{{planwell_id}}';
+  var wellphase_id = '{{wellphase_id}}';
+  var csrf_token = '{{csrf_token}}'
+  console.log(csrf_token)
+</script>
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://code.highcharts.com/8.1.2/modules/offline-exporting.js"></script>
+<script src="{% static 'js/actualwell_output.js' %}"></script>
+
+{%endblock%}

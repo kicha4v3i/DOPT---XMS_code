@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+<section id="data-list-view" class="data-list-view-header">
+    <div class="container-fluid">
+    <div class="row align-items-start common-row-space">
+        <div class="col-md-12 p-0 create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+                <div class="overlay-bg">
+                    <div class="card card-create-user">
+                        
+                        <form method="post" id="queries_form"
+                            name="queries_form">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div
+                                    class="col-sm-12 col-form-label required-field pt-0">
+                                    <label class="project-edit-name pb-1"
+                                        for="ground_elevation">License Type</label>
+                                    <select name="license_type"
+                                        class="form-control" id="license_type">
+                                        <option value>Select</option>
+                                        <option value="Individual">Individual</option>
+                                        <option value="CompanyPlan">Company Plan</option>
+                                    </select>
+                                </div>
+                                <div
+                                    class="col-sm-12 col-form-label required-field pt-0"
+                                    id="noofusers_div">
+                                    <label class="project-edit-name pb-1"
+                                        for="ground_elevation">No Of Users</label>
+                                    <select name="no_of_users"
+                                        class="form-control" id="no_of_users">
+                                        <option value>Select</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+
+                                    </select>
+                                </div>
+
+                                <div
+                                    class="col-sm-12 col-form-label required-field pt-0">
+                                    <label class="project-edit-name pb-1"
+                                        for="ground_elevation">Subscription Type</label>
+                                    <select name="subscription_type"
+                                        class="form-control"
+                                        id="subscription_type">
+                                        <option value>Select</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="yearly">Yearly</option>
+                                    </select>
+                                </div>
+
+                                <div
+                                    class="col-sm-12 col-form-label required-field pt-0">
+                                    <label class="project-edit-name pb-1"
+                                        for="ground_elevation">Amount</label>
+                                    <input type="text" class="form-control"
+                                        name="amount" id="amount"
+                                        placeholder="Enter Amount">
+                                </div>
+
+                            </div>
+                            <div class="text-center pt-1">
+                                <button class="btn detail-button">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/license/createlicense.js' %}"></script>
+{%endblock%}

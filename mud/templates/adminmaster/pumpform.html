@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<section>
+  <div class="container-fluid">
+    <!-- <div class="row" id="basic-table"> -->
+      <div class="row common-row-space" id="">
+        <div class="col-md-10 p-0 create-pg">
+        <div class="create_project_sec scroll-line">
+          {% include "header.html" %}
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+</div>
+        <div class="col-12 p-0">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">Pumps</h4>
+            </div>
+            <form method="post" novalidate>
+              {% csrf_token %}
+              <!-- {% for hidden_field in form.hidden_fields %}
+              {{ hidden_field }}
+              {% endfor %}
+              {% for field in form.visible_fields %}
+              <div class="form-group">
+                  {{ field.label_tag }}
+                  {% render_field field class="form-control" %}
+                  {% if field.help_text %}
+                  <small class="form-text text-muted">{{ field.help_text }}</small>
+                  {% endif %}
+              </div>
+              {% endfor %} -->
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="pump_manufacturer">Pump manufacturer:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <select class="form-control select2" id="pump_manufacturer" name="pump_manufacturer">
+                          <option value="">------</option>
+                          {% for pumpmanufacturer in pumpmanufacture %}                           
+                            <option value="{{ pumpmanufacturer.id }}">{{ pumpmanufacturer.name }}</option>
+                          {% endfor %}
+                        </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="name">Name:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="name" class="form-control" name="name">
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="type">Type:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <select class="form-control select2" id="types" name="type">
+                          <option value="">--Choose Type--</option>
+                          <option value="Triplex">Triplex</option>
+                          <option value="Duplex">Duplex</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="unit">Units:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <select class="form-control select2" id="unit" name="unit">
+                          <option value="">--Unit--</option>
+                          <option value="API">API</option>  
+                          <option value="SI">SI</option>  
+                          <option value="MIXED">MIXED</option>    
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 roddiameter">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="roddiameter">Rod Diameter:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="roddiameter" class="form-control" name="roddiameter">
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 stroke_length">
+                <div class="form-group row">
+                  <div class="col-sm-3 col-form-label">
+                    <label for="stroke_length">Stroke length:</label>
+                  </div>
+                  <div class="col-sm-9">
+                    <input type="text" id="stroke_length" class="form-control stroke_length" name="stroke_length">
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <table class="table table-borderless mudpumpdata">
+                  
+                    <h4 class="card-title text-center sub-title">Mud Pump Data Table</h4>
+                  
+                    <!-- <caption style="caption-side: top;">Mud Pump Data Table</caption> -->
+                    <tr  class="linearsize"><th>Liner Size</th>{%for i in colum%}<td><input type="number" class="form-control linear_size" name="linear_size" id="linear_size"></td>{%endfor%}</tr>
+                    <tr class="pressure"><th>Max Discharge Pressure</th>{%for i in colum%}<td><input type="number" class="form-control" name="max_discharge_pressure" ></td>{%endfor%}</tr>
+                </table>
+              </div>
+
+              <div class="col-12">
+                <table class="table table-borderless  mudpumptable" id="mudpumptable">
+                    <tr>
+                      <th class="label">Pump Speed(SPM)</th>
+                      <th class="flowrateth label text-center" colspan="4">Flowrate<span id="flowrateunit"></span>
+                    </tr>
+                    {%for i in row%}<tr class="flowrate"><th><input type="number" class="form-control pump_speed" name="pump_speed" id="pump_speed"></th>{%for i in colum%}<td><input type="number" class="form-control" name="flowrate" id="flowrate"></td>{%endfor%}</tr>{%endfor%}
+                </table>
+            </div>
+
+            <div class="row" style="margin: 0 15px;">
+              <div class="col-12 mb-2 common-txt-center">
+                <button type="submit" class="btn btn-primary detail-button">submit</button>
+              </div>
+              <div class="col-12 mb-5">
+                <button type="button" class="btn btn btn-primary detail-button pull-right removemudpumpcolumn-master mr-2">Remove Column</button>
+                <button type="button" class="btn btn btn-primary detail-button pull-right removemudpumprow-master mr-2">Remove Row</button>
+                <button type="button" class="btn btn btn-primary detail-button pull-right addmudpumpcolumn mr-2">Add Column</button>
+                <button type="button" class="btn btn btn-primary detail-button pull-right addmudpumprow mr-2">Add Row</button>
+
+  
+            </div>
+              </div>
+              
+          </form>
+          </div>
+        </div>
+        {% include "footer.html" %}
+        </div>
+        </div>
+        <div class="col-md-2">
+          {% include "userheader.html" %}
+        </div>
+      </div>
+    </div>
+    </section>
+
+{% endblock %}

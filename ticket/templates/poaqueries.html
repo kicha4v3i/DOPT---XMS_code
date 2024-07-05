@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+{% load custom_auth_tags %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/super_Admin/support-services/queries.css' %}">
+
+<section id="data-list-view" class="data-list-view-header query_pg">
+<div class="container-fluid">
+    <div class="row align-items-start common-row-space">
+
+        <div class="col-md-12 p-0 create-pg">
+            <div class="create_project_sec scroll-line new-cru-well">
+                {% include "header.html" %}
+
+                <div class="overlay-bg">
+                    <button class="btn btn-primary waves-effect ml-1 waves-float waves-light detail-button mt-2">
+                        <a href="{% url 'ticket:email_query' %}">Raise Query</a>
+                    </button>
+
+                    <div class="card">
+                        <table class="table query-table" id="poaquery_list">
+                            <h4 class="card-title">Queries</h4>
+                            <thead>
+                                <tr>
+                                    <th>S.NO</th>
+                                    <th>Company/User Name</th>
+                                    <th>Designation</th>
+                                    <th>Title</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                           
+                        </table>
+                    </div>
+                </div>
+                {% include "footer.html" %}
+            </div>
+
+        </div>
+     
+
+    </div>
+</div>
+</section>
+
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script src="{% static 'js/menuactive.js' %}"></script>
+<script src="{% static 'js/auth/user.js' %}"></script>
+<script src="{% static 'js/queries.js' %}"></script>
+
+{%endblock%}

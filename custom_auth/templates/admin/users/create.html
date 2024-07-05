@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load app_filters %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/project/create_user.css' %}">
+
+<section id="data-list-view" class="data-list-view-header">
+    <div class="row align-items-start">
+        <div class="col-md-12  create-pg">
+        <div class="create_project_sec scroll-line">
+            {% include "header.html" %}
+            <form action="{% url 'custom_auth:adminusercreate' %}" method="post" name="adduserform">
+                {% csrf_token %}
+<div class="card card-create-user">
+            <div class="div mt-2 px-2 d-flex new-data-title justify-content-center">
+                <div>
+                    <h4 class="text-CLR form-title table-title create_hed">Create User</h4>
+                </div>
+                {% comment %} <div class="hide-data-sidebar">
+                    <i class="feather icon-x"></i>
+                </div> {% endcomment %}
+            </div>
+            <div class="data-items pb-2">
+                <div class="data-fields px-2 mt-2">
+                    <div class="row">
+                        <div class="col-sm-4 data-field-col">
+                            <label class="project-edit-name pb-1" for="data-name">Title</label>
+                            <select name="title" class="form-control" id="gender">
+                                <option value="">Select</option>
+                                <option value="Mr">Mr</option>
+                                <option value="Miss">Miss</option>
+                                <option value="Mrs">Mrs</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 data-field-col">
+                            <label class="project-edit-name pb-1" for="data-name">First Name</label>
+                            <input type="hidden" class="form-control" id="id" name="id">
+
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                        <div class="col-sm-4 data-field-col">
+                            <label class="project-edit-name pb-1" for="data-name">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name">
+                        </div>
+                    </div> 
+                    <div class='row' style={{'margin-top:20px'}}>
+                        <div class="col-sm-4 data-field-col edit_hide">
+                           
+                              
+                                <label class="project-edit-name pb-1" for="email-id">Country</label>
+                                <select name="country" class="form-control custom-select" id="project_country" multiple="multiple">
+                                  <option value="">------</option>
+                                  {% for country in countries %}
+                                    <option value="{{country.id}}">{{country.name}}</option>
+                                  {% endfor %}
+    
+                                </select>
+                                <span class="country_error"></span>
+                           
+                          </div>   
+                        <div class="col-sm-4 data-field-col edit_hide">
+                            <label class="project-edit-name pb-1" for="data-name">Designation</label>
+                            <input type="text" class="form-control" id="designation" name="designation">
+                        </div>
+                        <div class="col-sm-4 data-field-col edit_hide">
+                            <label class="project-edit-name pb-1" for="data-name">Email</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="col-sm-4 data-field-col edit_hide all-cnt">
+                            <label for="data-name">All Country</label>
+                            <input type="checkbox" name="is_allcountry" class="is_allcountry" value="1">
+                        </div>
+                      
+                </div>
+            </div>
+            <div class="add-data-footer d-flex justify-content-around px-3 mt-2">
+                <div class="add-data-btn">
+                    <button class="btn btn-primary detail-button">Create</button>
+                </div>
+          
+            </div>
+        </div>
+        </form>
+    
+    </div>
+    </div>
+    {% include "footer.html" %}
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{{block.super}}
+<script>
+    var csrf = '{{ csrf_token }}';
+</script>
+<script src="{% static 'js/auth/user.js' %}"></script>
+<script src="{% static 'js/projects/projectusercreate.js' %}"></script>
+<script src="{% static 'js/adminadduserform.js' %}"></script>
+{%endblock%}

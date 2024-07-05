@@ -1,0 +1,31 @@
+span.unit_error {
+position: absolute;
+bottom: -7px;
+ /* left: 100px; */
+left: 14%;
+}
+
+ span.block_error {
+position: absolute;
+left: -6%;
+bottom: -15px;
+ }
+
+ span.field_error {
+  position: absolute;
+ left: 32%;
+ bottom: -14px;
+ }
+ .stand-css
+ {
+    padding-top:1.5rem;
+    padding-left:1.5rem;
+ }
+ .tab-wid1 th:nth-child(1)
+{
+    width: 15% !important;
+}
+.tab-wid2 td:nth-child(1)
+{
+    width: 15% !important;
+}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<section>
+    <div class="row" id="basic-table">
+
+      <div class="col-12">
+
+        {% include "masters_menu.html" %}  
+
+      </div>
+        <div class="col-12">
+ 
+          <div class="card">
+            
+            <div class="card-header">
+              <h4 class="card-title">DrillCollar</h4>
+            </div>
+            <div class="table-responsive">
+              <table class="table master-data-list-view">
+      
+                  <thead class="text-center">
+                      <tr>      
+                          <th>Length</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for drillcollars in drillcollerlength %}
+                      <tr>
+                          <td>{{drillcollars.length}}</td>
+                          <td  class="text-center">
+                          <a href="">
+                              <span class="action-view"><i class="feather icon-eye"></i></span>
+                          </a>
+                          <a href="">
+                              <span class="action-edit"><i class="feather icon-edit"></i></span>
+                          </a>
+                          <a onclick="confirmation(event)" href="">
+                            <span class="action-delete delete"><i class="feather icon-trash-2"></i></span>
+                          </a>
+                          </td>
+                      </tr>
+                        {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+                </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}
